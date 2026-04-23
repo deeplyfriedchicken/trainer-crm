@@ -1,0 +1,102 @@
+/* Neon UI theme — scoped to the /components showcase */
+.neon {
+  --neon-pink: #fd6dbb;
+  --neon-pink-soft: #ff9de4;
+  --neon-cyan: #34fdfe;
+  --neon-cyan-soft: #a0fffe;
+  --neon-bg: #070712;
+  --neon-surface: #0f0f1e;
+  --neon-surface-2: #141428;
+  --neon-surface-3: #1a1a2e;
+  --neon-border: rgba(255, 255, 255, 0.08);
+  --neon-border-strong: rgba(255, 255, 255, 0.15);
+  --neon-text: #ffffff;
+  --neon-text-muted: rgba(255, 255, 255, 0.5);
+  --neon-text-dim: rgba(255, 255, 255, 0.33);
+  --neon-radius: 10px;
+
+  background: var(--neon-bg);
+  color: var(--neon-text);
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.neon-display {
+  font-family: var(--font-neon-display), "Syne", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.neon-mono {
+  font-family: var(--font-neon-mono), "Space Mono", monospace;
+}
+
+/* noise + ambient glow layers */
+.neon::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.35;
+}
+.neon::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 10%, rgba(253, 109, 187, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 350px at 80% 90%, rgba(52, 253, 254, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.neon-grad-pink {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-pink-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.neon-grad-cyan {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-cyan-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.neon-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.neon-sidebar-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Keyframes from the reference shell */
+@keyframes neon-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes neon-progress-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+@keyframes neon-pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes neon-scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}

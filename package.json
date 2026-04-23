@@ -5,19 +5,39 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "biome check .",
+    "lint:fix": "biome check --fix .",
+    "format": "biome format --write .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx --env-file=.env src/db/seed.ts"
   },
   "dependencies": {
+    "@chakra-ui/react": "3.35.0",
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@paralleldrive/cuid2": "^3.3.0",
+    "@tanstack/react-query": "5.99.2",
+    "@uploadthing/react": "7.3.3",
+    "drizzle-orm": "0.45.2",
+    "framer-motion": "12.38.0",
     "next": "16.2.4",
+    "postgres": "3.4.9",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "uploadthing": "7.7.4"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@biomejs/biome": "2.4.12",
+    "@tailwindcss/postcss": "4",
+    "@types/node": "20",
+    "@types/react": "19",
+    "@types/react-dom": "19",
+    "drizzle-kit": "0.31.10",
+    "tailwindcss": "4",
+    "typescript": "5"
   }
 }

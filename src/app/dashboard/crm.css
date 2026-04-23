@@ -1,0 +1,250 @@
+/* CRM design tokens + layout styles — self-contained under .crm scope */
+.crm {
+  /* Shared neon tokens (duplicated so this route is standalone from .neon) */
+  --neon-pink: #fd6dbb;
+  --neon-pink-soft: #ff9de4;
+  --neon-cyan: #34fdfe;
+  --neon-cyan-soft: #a0fffe;
+  --neon-bg: #070712;
+  --neon-surface: #0f0f1e;
+  --neon-surface-2: #141428;
+  --neon-surface-3: #1a1a2e;
+  --neon-border: rgba(255, 255, 255, 0.07);
+  --neon-border-strong: rgba(255, 255, 255, 0.15);
+  --neon-text: #ffffff;
+  --neon-text-muted: rgba(255, 255, 255, 0.5);
+  --neon-text-dim: rgba(255, 255, 255, 0.33);
+  --neon-radius: 10px;
+
+  --crm-sidebar-w: 260px;
+  --crm-topbar-h: 64px;
+
+  background: var(--neon-bg);
+  color: #fff;
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.crm-display {
+  font-family: var(--font-crm-display), "Barlow Condensed", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* ambient glow layer */
+.crm::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 700px 500px at 15% 20%, rgba(253, 109, 187, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 400px at 85% 80%, rgba(52, 253, 254, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Sidebar ─── */
+.crm-sidebar {
+  width: var(--crm-sidebar-w);
+  height: 100vh;
+  background: rgba(8, 8, 20, 0.95);
+  border-right: 1px solid var(--neon-border);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.crm-sidebar-top {
+  padding: 28px 20px 24px;
+  border-bottom: 1px solid var(--neon-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.crm-profile-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-cyan));
+  padding: 2px;
+  cursor: pointer;
+  position: relative;
+}
+.crm-profile-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--neon-surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-crm-display), "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--neon-pink);
+  letter-spacing: -0.02em;
+}
+.crm-profile-status {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4ade80;
+  border: 2px solid var(--neon-bg);
+  box-shadow: 0 0 8px #4ade80;
+}
+.crm-profile-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+.crm-profile-role {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  font-family: var(--font-neon-mono), "Space Mono", monospace;
+}
+
+.crm-nav-section {
+  padding: 16px 12px 8px;
+}
+.crm-nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.25);
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.crm-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+  margin-bottom: 2px;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  user-select: none;
+}
+.crm-nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
+}
+.crm-nav-item.active {
+  background: rgba(253, 109, 187, 0.1);
+  border-color: rgba(253, 109, 187, 0.2);
+  color: var(--neon-pink);
+}
+.crm-nav-item .crm-nav-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+.crm-nav-item.active .crm-nav-icon {
+  color: var(--neon-pink);
+  filter: drop-shadow(0 0 6px var(--neon-pink));
+  opacity: 1;
+}
+.crm-nav-item-badge {
+  margin-left: auto;
+}
+
+/* ─── Main ─── */
+.crm-main {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+}
+.crm-main::-webkit-scrollbar {
+  width: 5px;
+}
+.crm-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+.crm-main::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* ─── Topbar ─── */
+.crm-topbar {
+  height: var(--crm-topbar-h);
+  background: rgba(7, 7, 18, 0.8);
+  border-bottom: 1px solid var(--neon-border);
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(20px);
+}
+.crm-topbar-title {
+  font-family: var(--font-crm-display), "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.crm-topbar-title-accent {
+  color: var(--neon-pink);
+}
+
+.crm-topbar-search {
+  flex: 1;
+  max-width: 320px;
+  margin-left: auto;
+  position: relative;
+}
+.crm-topbar-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+.crm-topbar-search input {
+  padding-left: 36px !important;
+}
+
+.crm-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crm-notif-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-pink);
+  box-shadow: 0 0 8px var(--neon-pink);
+  border: 2px solid var(--neon-bg);
+  pointer-events: none;
+}

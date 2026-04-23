@@ -1,0 +1,41 @@
+import { Barlow_Condensed, Space_Grotesk, Space_Mono } from "next/font/google";
+import type { ReactNode } from "react";
+import { Sidebar } from "./_components/Sidebar";
+import { Topbar } from "./_components/Topbar";
+import "./crm.css";
+
+const barlow = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-crm-display",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-neon-body",
+});
+
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-neon-mono",
+});
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={`crm ${barlow.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
+    >
+      <Sidebar />
+      <main className="crm-main">
+        <Topbar />
+        {children}
+      </main>
+    </div>
+  );
+}

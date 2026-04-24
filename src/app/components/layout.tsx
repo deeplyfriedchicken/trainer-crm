@@ -1,10 +1,10 @@
-import { Space_Grotesk, Space_Mono, Syne } from "next/font/google";
+import { Barlow_Condensed, Space_Grotesk, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import "./neon.css";
 
-const syne = Syne({
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-neon-display",
 });
 
@@ -23,7 +23,7 @@ const spaceMono = Space_Mono({
 export default function ComponentsLayout({ children }: { children: ReactNode }) {
   return (
     <div
-      className={`neon ${syne.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
+      className={`neon ${barlowCondensed.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
     >
       {children}
     </div>

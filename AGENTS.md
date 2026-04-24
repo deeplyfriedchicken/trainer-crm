@@ -3,6 +3,9 @@
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 
+# PNPM
+Use pnpm
+
 
 # Database schema
 
@@ -173,6 +176,41 @@ Indexes: `video_tags_tag_idx` on `tag_id`.
 
 # Component system
 
+## Icons — `react-icons`
+
+The project uses [`react-icons`](https://react-icons.github.io/react-icons/) for all icons. **Do not write custom inline SVGs** — find the equivalent in react-icons instead.
+
+**Preferred sets (in order):**
+1. **Lucide** (`react-icons/lu`) — stroke-based, consistent weight, matches the UI aesthetic. Use for almost everything: navigation, actions, status, UI chrome.
+2. **Font Awesome 6** (`react-icons/fa6`) — use only when Lucide doesn't have a suitable icon (e.g. `FaPlay` for a filled play triangle on video cards).
+
+**Usage:**
+```tsx
+import { LuSearch, LuBell } from "react-icons/lu";
+import { FaPlay } from "react-icons/fa6";
+
+<LuSearch size={13} />
+<LuBell size={18} />
+<FaPlay size={14} color="#34FDFE" />
+```
+
+All react-icons components accept `size`, `color`, `className`, and standard SVG props.
+
+**Current icon assignments (dashboard nav):**
+
+| Icon | Component | From |
+|---|---|---|
+| Dashboard | `LuLayoutDashboard` | `react-icons/lu` |
+| Trainees | `LuUsers` | `react-icons/lu` |
+| Videos | `LuSquarePlay` | `react-icons/lu` |
+| Trainers | `LuUser` | `react-icons/lu` |
+| Settings | `LuSettings` | `react-icons/lu` |
+| Bell | `LuBell` | `react-icons/lu` |
+| Search | `LuSearch` | `react-icons/lu` |
+| Video play button | `FaPlay` | `react-icons/fa6` |
+
+These are re-exported from `src/app/dashboard/_components/NavIcons.tsx` with CRM-specific class names already applied.
+
 ## Neon UI — `src/app/components/`
 
 This is the project's shared component library. It lives at the `/components` route and has a live showcase at that URL.
@@ -200,7 +238,7 @@ Both the showcase (`.neon`) and the dashboard (`.crm`) scopes define the same CS
 | `--neon-text-dim` | `rgba(255,255,255,0.33)` |
 | `--font-neon-body` | Space Grotesk |
 | `--font-neon-mono` | Space Mono |
-| `--font-crm-display` | Barlow Condensed (dashboard only) |
+| `--font-neon-display` | Barlow Condensed |
 
 ### Styling approach
 

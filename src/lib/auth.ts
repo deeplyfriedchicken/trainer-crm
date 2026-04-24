@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { userRoles, users, type UserRole } from "@/db/schema";
+import { type UserRole, users } from "@/db/schema";
 
 export type CurrentUser = {
   id: string;

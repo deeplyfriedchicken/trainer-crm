@@ -5,7 +5,14 @@ import { useState } from "react";
 import { Alert } from "../Alert";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import { Card, CardBody, CardDescription, CardFooter, CardHeader, CardTitle } from "../Card";
+import {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../Card";
 import { Checkbox } from "../Checkbox";
 import { Field } from "../Field";
 import { IconButton } from "../IconButton";
@@ -22,6 +29,7 @@ import { Switch } from "../Switch";
 import { Tag } from "../Tag";
 import { Textarea } from "../Textarea";
 import { toaster } from "../Toast";
+import { type ColumnDef, Table } from "../Table";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
 function Row({ children }: { children: React.ReactNode }) {
@@ -34,7 +42,13 @@ function Row({ children }: { children: React.ReactNode }) {
 
 export function ButtonsSection() {
   return (
-    <Box as="section" id="buttons" px="60px" py="56px" borderBottom="1px solid var(--neon-border)">
+    <Box
+      as="section"
+      id="buttons"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
       <SectionTitle>Buttons</SectionTitle>
 
       <SubSection title="Color Schemes">
@@ -46,17 +60,33 @@ export function ButtonsSection() {
 
       <SubSection title="Variants">
         <Row>
-          <Button colorScheme="pink" variant="solid">Solid</Button>
-          <Button colorScheme="pink" variant="outline">Outline</Button>
-          <Button colorScheme="pink" variant="ghost">Ghost</Button>
-          <Button colorScheme="pink" variant="link">Link</Button>
+          <Button colorScheme="pink" variant="solid">
+            Solid
+          </Button>
+          <Button colorScheme="pink" variant="outline">
+            Outline
+          </Button>
+          <Button colorScheme="pink" variant="ghost">
+            Ghost
+          </Button>
+          <Button colorScheme="pink" variant="link">
+            Link
+          </Button>
         </Row>
         <Box h="10px" />
         <Row>
-          <Button colorScheme="cyan" variant="solid">Solid</Button>
-          <Button colorScheme="cyan" variant="outline">Outline</Button>
-          <Button colorScheme="cyan" variant="ghost">Ghost</Button>
-          <Button colorScheme="cyan" variant="link">Link</Button>
+          <Button colorScheme="cyan" variant="solid">
+            Solid
+          </Button>
+          <Button colorScheme="cyan" variant="outline">
+            Outline
+          </Button>
+          <Button colorScheme="cyan" variant="ghost">
+            Ghost
+          </Button>
+          <Button colorScheme="cyan" variant="link">
+            Link
+          </Button>
         </Row>
       </SubSection>
 
@@ -72,18 +102,30 @@ export function ButtonsSection() {
       <SubSection title="States">
         <Row>
           <Button loading>Loading</Button>
-          <Button loading loadingText="Saving…">Save</Button>
+          <Button loading loadingText="Saving…">
+            Save
+          </Button>
           <Button disabled>Disabled</Button>
-          <Button colorScheme="cyan" variant="outline" disabled>Disabled Outline</Button>
+          <Button colorScheme="cyan" variant="outline" disabled>
+            Disabled Outline
+          </Button>
         </Row>
       </SubSection>
 
       <SubSection title="Icon Buttons">
         <Row>
-          <IconButton aria-label="Add" colorScheme="pink">+</IconButton>
-          <IconButton aria-label="Close" colorScheme="pink" variant="outline">×</IconButton>
-          <IconButton aria-label="Settings" colorScheme="cyan" variant="ghost">⚙</IconButton>
-          <IconButton aria-label="Search" colorScheme="cyan" size="lg">⌕</IconButton>
+          <IconButton aria-label="Add" colorScheme="pink">
+            +
+          </IconButton>
+          <IconButton aria-label="Close" colorScheme="pink" variant="outline">
+            ×
+          </IconButton>
+          <IconButton aria-label="Settings" colorScheme="cyan" variant="ghost">
+            ⚙
+          </IconButton>
+          <IconButton aria-label="Search" colorScheme="cyan" size="lg">
+            ⌕
+          </IconButton>
         </Row>
       </SubSection>
     </Box>
@@ -94,7 +136,13 @@ export function FormsSection() {
   const [switchOn, setSwitchOn] = useState(true);
   const [radio, setRadio] = useState("monthly");
   return (
-    <Box as="section" id="forms" px="60px" py="56px" borderBottom="1px solid var(--neon-border)">
+    <Box
+      as="section"
+      id="forms"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
       <SectionTitle>Form Elements</SectionTitle>
 
       <Box
@@ -180,7 +228,13 @@ export function FormsSection() {
 export function FeedbackSection() {
   const [progress, setProgress] = useState(62);
   return (
-    <Box as="section" id="feedback" px="60px" py="56px" borderBottom="1px solid var(--neon-border)">
+    <Box
+      as="section"
+      id="feedback"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
       <SectionTitle>Feedback</SectionTitle>
 
       <SubSection title="Alerts">
@@ -202,12 +256,24 @@ export function FeedbackSection() {
 
       <SubSection title="Badges">
         <Row>
-          <Badge colorScheme="pink" variant="subtle">NEW</Badge>
-          <Badge colorScheme="pink" variant="solid">PRO</Badge>
-          <Badge colorScheme="pink" variant="outline">BETA</Badge>
-          <Badge colorScheme="cyan" variant="subtle">v1.0</Badge>
-          <Badge colorScheme="cyan" variant="solid">LIVE</Badge>
-          <Badge colorScheme="cyan" variant="outline">DRAFT</Badge>
+          <Badge colorScheme="pink" variant="subtle">
+            NEW
+          </Badge>
+          <Badge colorScheme="pink" variant="solid">
+            PRO
+          </Badge>
+          <Badge colorScheme="pink" variant="outline">
+            BETA
+          </Badge>
+          <Badge colorScheme="cyan" variant="subtle">
+            v1.0
+          </Badge>
+          <Badge colorScheme="cyan" variant="solid">
+            LIVE
+          </Badge>
+          <Badge colorScheme="cyan" variant="outline">
+            DRAFT
+          </Badge>
         </Row>
       </SubSection>
 
@@ -216,7 +282,9 @@ export function FeedbackSection() {
           <Tag>React</Tag>
           <Tag colorScheme="cyan">TypeScript</Tag>
           <Tag onRemove={() => {}}>removable</Tag>
-          <Tag colorScheme="cyan" onRemove={() => {}}>design-system</Tag>
+          <Tag colorScheme="cyan" onRemove={() => {}}>
+            design-system
+          </Tag>
         </Row>
       </SubSection>
 
@@ -235,10 +303,18 @@ export function FeedbackSection() {
           <Progress value={80} colorScheme="cyan" label="CPU" showValueText />
           <Progress value={null} label="Indeterminate" />
           <Row>
-            <Button size="sm" variant="outline" onClick={() => setProgress((p) => Math.max(0, p - 10))}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setProgress((p) => Math.max(0, p - 10))}
+            >
               −10
             </Button>
-            <Button size="sm" variant="outline" onClick={() => setProgress((p) => Math.min(100, p + 10))}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setProgress((p) => Math.min(100, p + 10))}
+            >
               +10
             </Button>
           </Row>
@@ -312,7 +388,13 @@ export function FeedbackSection() {
 
 export function CardsSection() {
   return (
-    <Box as="section" id="cards" px="60px" py="56px" borderBottom="1px solid var(--neon-border)">
+    <Box
+      as="section"
+      id="cards"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
       <SectionTitle>Cards & Layout</SectionTitle>
 
       <SubSection title="Cards">
@@ -324,7 +406,9 @@ export function CardsSection() {
           <Card variant="solid">
             <CardHeader>
               <CardTitle>Solid Card</CardTitle>
-              <CardDescription>Default surface with subtle border.</CardDescription>
+              <CardDescription>
+                Default surface with subtle border.
+              </CardDescription>
             </CardHeader>
             <CardBody>
               Use the solid variant for most container surfaces — dialogs,
@@ -332,7 +416,9 @@ export function CardsSection() {
             </CardBody>
             <CardFooter>
               <Button size="sm">Action</Button>
-              <Button size="sm" variant="ghost">Cancel</Button>
+              <Button size="sm" variant="ghost">
+                Cancel
+              </Button>
             </CardFooter>
           </Card>
 
@@ -362,7 +448,9 @@ export function CardsSection() {
               the glow stays meaningful.
             </CardBody>
             <CardFooter>
-              <Button size="sm" colorScheme="cyan">Upgrade</Button>
+              <Button size="sm" colorScheme="cyan">
+                Upgrade
+              </Button>
             </CardFooter>
           </Card>
         </Box>
@@ -373,12 +461,31 @@ export function CardsSection() {
           <CardBody>
             <Box
               display="grid"
-              gridTemplateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }}
+              gridTemplateColumns={{
+                base: "repeat(2, 1fr)",
+                md: "repeat(4, 1fr)",
+              }}
               gap="24px"
             >
-              <Stat label="Monthly users" value="24.8k" indicator="up" helpText="+12% MoM" />
-              <Stat label="Revenue" value="$142k" accent="cyan" indicator="up" helpText="+5% WoW" />
-              <Stat label="Churn" value="2.4%" indicator="down" helpText="−0.3% MoM" />
+              <Stat
+                label="Monthly users"
+                value="24.8k"
+                indicator="up"
+                helpText="+12% MoM"
+              />
+              <Stat
+                label="Revenue"
+                value="$142k"
+                accent="cyan"
+                indicator="up"
+                helpText="+5% WoW"
+              />
+              <Stat
+                label="Churn"
+                value="2.4%"
+                indicator="down"
+                helpText="−0.3% MoM"
+              />
               <Stat label="NPS" value="71" accent="cyan" />
             </Box>
           </CardBody>
@@ -395,6 +502,155 @@ export function CardsSection() {
           <Separator accent="cyan" />
           <Box>Content block four</Box>
         </Box>
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── Table showcase ──────────────────────────────────────────────────────────
+
+type ShowcaseMember = {
+  id: string;
+  name: string;
+  role: string;
+  status: "active" | "away" | "offline";
+  sessions: number;
+  joined: string;
+};
+
+const MEMBERS: ShowcaseMember[] = [
+  {
+    id: "1",
+    name: "Alex Rivers",
+    role: "Strength Coach",
+    status: "active",
+    sessions: 24,
+    joined: "Jan 2024",
+  },
+  {
+    id: "2",
+    name: "Blair Kim",
+    role: "Yoga Instructor",
+    status: "active",
+    sessions: 18,
+    joined: "Mar 2024",
+  },
+  {
+    id: "3",
+    name: "Casey Nova",
+    role: "HIIT Trainer",
+    status: "away",
+    sessions: 9,
+    joined: "Feb 2024",
+  },
+  {
+    id: "4",
+    name: "Drew Lane",
+    role: "Mobility Coach",
+    status: "offline",
+    sessions: 31,
+    joined: "Nov 2023",
+  },
+  {
+    id: "5",
+    name: "Ember Walsh",
+    role: "Strength Coach",
+    status: "active",
+    sessions: 12,
+    joined: "Apr 2024",
+  },
+];
+
+const STATUS_COLOR: Record<ShowcaseMember["status"], string> = {
+  active: "#4ade80",
+  away: "#fb923c",
+  offline: "#555",
+};
+
+const MEMBER_COLS: ColumnDef<ShowcaseMember>[] = [
+  {
+    key: "name",
+    label: "Name",
+    render: (row) => (
+      <span style={{ color: "#fff", fontWeight: 600 }}>{row.name}</span>
+    ),
+  },
+  { key: "role", label: "Role" },
+  {
+    key: "sessions",
+    label: "Sessions",
+    render: (row) => (
+      <span
+        style={{ fontFamily: "var(--font-neon-mono), monospace", fontSize: 12 }}
+      >
+        {row.sessions}
+      </span>
+    ),
+  },
+  {
+    key: "status",
+    label: "Status",
+    render: (row) => {
+      const color = STATUS_COLOR[row.status];
+      return (
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            color,
+            textTransform: "capitalize",
+          }}
+        >
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              background: color,
+              display: "inline-block",
+              boxShadow: `0 0 5px ${color}`,
+            }}
+          />
+          {row.status}
+        </span>
+      );
+    },
+  },
+  { key: "joined", label: "Joined" },
+];
+
+export function TableSection() {
+  return (
+    <Box
+      as="section"
+      id="tables"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
+      <SectionTitle>Table</SectionTitle>
+
+      <SubSection title="Sortable Data Table">
+        <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
+          Click any column header to sort. Click again to reverse. Pass a{" "}
+          <Box
+            as="code"
+            fontFamily="var(--font-neon-mono), monospace"
+            color="var(--neon-cyan)"
+            fontSize="12px"
+          >
+            render
+          </Box>{" "}
+          function on any column for custom cell content — sorting still uses
+          the underlying key value.
+        </Box>
+        <Table
+          columns={MEMBER_COLS}
+          rows={MEMBERS}
+          getRowKey={(r) => r.id}
+          defaultSortKey="name"
+        />
       </SubSection>
     </Box>
   );

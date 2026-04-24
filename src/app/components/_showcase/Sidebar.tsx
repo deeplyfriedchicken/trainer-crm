@@ -27,6 +27,7 @@ const groups: NavGroup[] = [
       { id: "forms", label: "Form Elements" },
       { id: "feedback", label: "Feedback" },
       { id: "cards", label: "Cards & Layout" },
+      { id: "tables", label: "Table" },
     ],
   },
 ];

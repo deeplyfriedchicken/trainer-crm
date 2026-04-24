@@ -6,6 +6,7 @@ import {
   CardsSection,
   FeedbackSection,
   FormsSection,
+  TableSection,
 } from "./_showcase/sections";
 import { Sidebar } from "./_showcase/Sidebar";
 import { TypographyScale } from "./_showcase/TypographyScale";
@@ -23,6 +24,7 @@ export default function ComponentsShowcase() {
         <FormsSection />
         <FeedbackSection />
         <CardsSection />
+        <TableSection />
       </Box>
       <Toaster />
     </Box>

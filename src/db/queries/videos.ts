@@ -17,7 +17,10 @@ export async function listVideos(options: ListVideosOptions) {
 
   return db.query.videos.findMany({
     where: filters.length ? and(...filters) : undefined,
-    with: { uploader: { columns: { id: true, name: true, email: true } } },
+    with: {
+      uploader: { columns: { id: true, name: true, email: true } },
+      videoTags: { with: { tag: { columns: { id: true, name: true } } } },
+    },
     orderBy: [desc(videos.createdAt)],
     limit: options.limit,
     offset: options.offset,

@@ -138,14 +138,137 @@ Join table linking an exercise to one or more rows in `videos`. Both sides casca
 Primary key: composite `(exercise_id, video_id)`.
 Indexes: `exercise_videos_video_idx` on `video_id`, `exercise_videos_created_by_idx` on `created_by` (the `exercise_id` side is covered by the composite PK).
 
+## `tags`
+Flat tag vocabulary. Tags are created on-the-fly and linked to videos via `video_tags`.
+
+| column     | type        | notes                        |
+|------------|-------------|------------------------------|
+| id         | text PK     | cuid2                        |
+| name       | text        | NOT NULL, unique (`tags_name_idx`) |
+| created_at | timestamptz | default now()                |
+
+## `video_tags`
+Join table linking videos to tags. Both sides cascade on delete.
+
+| column     | type        | notes                                   |
+|------------|-------------|-----------------------------------------|
+| video_id   | text        | FK → `videos.id` ON DELETE CASCADE      |
+| tag_id     | text        | FK → `tags.id` ON DELETE CASCADE        |
+| created_at | timestamptz | default now()                           |
+
+Primary key: composite `(video_id, tag_id)`.
+Indexes: `video_tags_tag_idx` on `tag_id`.
+
 ## Relations (Drizzle)
 
 - `users` → many `user_roles`; many `trainer_assignments` (as trainer and as trainee); many `videos` (as uploader); many `coaching_sessions` (as trainee, via `coaching_sessions_trainee`).
 - `trainer_assignments` → one trainer, one trainee (both `users`).
-- `videos` → one uploader (`users`); many `exercise_videos`; many `coaching_session_videos`.
+- `videos` → one uploader (`users`); many `exercise_videos`; many `coaching_session_videos`; many `videoTags`.
 - `coaching_sessions` → one trainee, one creator, one updater (all `users`, disambiguated by relation names `coaching_sessions_trainee` / `coaching_sessions_creator` / `coaching_sessions_updater`); many `exercises`; many `coaching_session_videos`.
 - `exercises` → one parent `coaching_session`; one creator, one updater (both `users`, relation names `exercises_creator` / `exercises_updater`); many `exercise_videos`.
 - `coaching_session_videos` → one `coaching_session`, one `video`.
 - `exercise_videos` → one `exercise`, one `video`.
+- `tags` → many `videoTags`.
+- `videoTags` → one `video`, one `tag`.
+
+# Component system
+
+## Neon UI — `src/app/components/`
+
+This is the project's shared component library. It lives at the `/components` route and has a live showcase at that URL.
+
+**Rule: any UI element used in more than one place, or likely to be reused, must live here — not be re-implemented inline.** When you add a component:
+1. Create the component file in `src/app/components/` (e.g. `Table.tsx`).
+2. Add a section to `src/app/components/_showcase/sections.tsx` that exercises the component's variants/states.
+3. Add the section to `src/app/components/page.tsx` (import + render).
+4. Add a nav link to `src/app/components/_showcase/Sidebar.tsx` so it appears in the sidebar.
+
+### Design tokens
+
+Both the showcase (`.neon`) and the dashboard (`.crm`) scopes define the same CSS custom properties. Always use these tokens — never hardcode colors or surfaces.
+
+| Token | Value |
+|---|---|
+| `--neon-pink` | `#fd6dbb` |
+| `--neon-cyan` | `#34fdfe` |
+| `--neon-bg` | `#070712` |
+| `--neon-surface` | `#0f0f1e` |
+| `--neon-surface-2` | `#141428` |
+| `--neon-border` | `rgba(255,255,255,0.07)` |
+| `--neon-text` | `#fff` |
+| `--neon-text-muted` | `rgba(255,255,255,0.5)` |
+| `--neon-text-dim` | `rgba(255,255,255,0.33)` |
+| `--font-neon-body` | Space Grotesk |
+| `--font-neon-mono` | Space Mono |
+| `--font-crm-display` | Barlow Condensed (dashboard only) |
+
+### Styling approach
+
+Components in `src/app/components/` must work in **both** the `.neon` (showcase) and `.crm` (dashboard) contexts. Follow these rules:
+
+- **Use CSS custom properties** (`var(--neon-surface)`, etc.) so styles adapt to whichever scope wraps the component.
+- **Use CSS Modules** (`.module.css` alongside the `.tsx`) for any styles that require pseudo-classes (`:hover`, `:focus`, `.active`), so they stay scoped without polluting globals.
+- **Use Chakra UI** props (`Box`, `forwardRef` wrappers) for layout and simple visual styles when it avoids a separate CSS file.
+- **Never** reference `.crm-*` classes inside `src/app/components/` — those are dashboard-only.
+
+### Existing components
+
+| Component | File | Notes |
+|---|---|---|
+| `Button` | `Button.tsx` | `colorScheme`, `variant`, `size`, `loading`, `disabled` |
+| `IconButton` | `IconButton.tsx` | Square icon-only button |
+| `Badge` | `Badge.tsx` | `colorScheme`, `variant` (solid/subtle/outline) |
+| `Tag` | `Tag.tsx` | Removable label chip |
+| `Card` / `CardHeader` / `CardBody` / `CardFooter` | `Card.tsx` | `variant` (solid/outlined/glow), `glowColor` |
+| `Input` | `Input.tsx` | Neon-styled text input |
+| `Textarea` | `Textarea.tsx` | Multi-line input |
+| `Select` | `Select.tsx` | Dropdown |
+| `Field` | `Field.tsx` | Label + helper/error wrapper for inputs |
+| `Checkbox` | `Checkbox.tsx` | |
+| `Radio` | `Radio.tsx` | Group with options array |
+| `Switch` | `Switch.tsx` | Toggle |
+| `Alert` | `Alert.tsx` | `status` (info/success/warning/error) |
+| `Progress` | `Progress.tsx` | Linear, supports indeterminate |
+| `ProgressCircle` | `ProgressCircle.tsx` | Circular |
+| `Spinner` | `Spinner.tsx` | |
+| `Skeleton` | `Skeleton.tsx` | Loading placeholder |
+| `Stat` | `Stat.tsx` | Metric display with label and trend |
+| `Separator` | `Separator.tsx` | Horizontal rule, optional accent |
+| `Toast` / `toaster` | `Toast.tsx` | Imperative toast API |
+| `Table` | `Table.tsx` | Generic sortable data table (see below) |
+
+### `Table` component
+
+```tsx
+import { type ColumnDef, Table } from "@/app/components/Table";
+
+type ColumnDef<T> = {
+  key: keyof T & string;   // which field to read + sort by
+  label: string;           // header text
+  render?: (row: T) => React.ReactNode;  // custom cell; omit for string cast
+};
+
+<Table
+  columns={cols}           // ColumnDef<T>[]
+  rows={data}              // T[]
+  getRowKey={r => r.id}   // unique key per row
+  defaultSortKey="name"   // optional initial sort column
+  emptyText="No items."   // optional empty state message
+  onRowClick={r => ...}   // optional row click handler
+/>
+```
+
+- Sorting is built-in on every column. Click a header to sort, click again to reverse.
+- `render` is display-only; sorting always uses `row[key]`, so numeric and date columns sort correctly even with rich cell content.
+- Null values always sink to the bottom of the sort.
+- Styles use CSS Modules (`Table.module.css`) with `--neon-*` tokens, so the component works in both showcase and dashboard.
+
+## CRM dashboard — `src/app/dashboard/`
+
+Dashboard-specific layout, styles, and page components live here. The layout imports `crm.css` which defines `.crm-*` utility classes for the dashboard chrome (sidebar, topbar, page padding, stat cards, table wrappers, etc.).
+
+**Dashboard-local components** (things specific to the CRM and unlikely to be reused elsewhere) go in `src/app/dashboard/_components/`. These **may** use `.crm-*` classes and dashboard-only tokens like `--font-crm-display`.
+
+When a dashboard component becomes general enough to reuse (e.g. the `Table`), move it to `src/app/components/` and update the showcase.
 
 <!-- END:nextjs-agent-rules -->

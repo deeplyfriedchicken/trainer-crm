@@ -1,21 +1,19 @@
-import { asc, eq, inArray } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { userRoles, users } from "@/db/schema";
+import { trainerAssignments, userRoles, users, videos } from "@/db/schema";
 
 export type ListTrainersOptions = {
   limit: number;
   offset: number;
 };
 
-const TRAINER_ROLES = ["trainer", "trainer_manager"] as const;
-
 export async function listTrainers(options: ListTrainersOptions) {
   const trainerIds = db
     .select({ userId: userRoles.userId })
     .from(userRoles)
-    .where(inArray(userRoles.role, [...TRAINER_ROLES]));
+    .where(sql`${userRoles.role} in ('trainer', 'trainer_manager')`);
 
-  return db
+  const rows = await db
     .select({
       id: users.id,
       email: users.email,
@@ -28,6 +26,41 @@ export async function listTrainers(options: ListTrainersOptions) {
     .orderBy(asc(users.name))
     .limit(options.limit)
     .offset(options.offset);
+
+  if (rows.length === 0) return [];
+
+  const ids = rows.map((r) => r.id);
+
+  const [traineeCounts, videoCounts] = await Promise.all([
+    db
+      .select({
+        trainerId: trainerAssignments.trainerId,
+        count: count(trainerAssignments.traineeId),
+      })
+      .from(trainerAssignments)
+      .where(
+        and(inArray(trainerAssignments.trainerId, ids), isNull(trainerAssignments.endedAt)),
+      )
+      .groupBy(trainerAssignments.trainerId),
+
+    db
+      .select({
+        uploaderId: videos.uploaderId,
+        count: count(videos.id),
+      })
+      .from(videos)
+      .where(inArray(videos.uploaderId, ids))
+      .groupBy(videos.uploaderId),
+  ]);
+
+  const traineeCountMap = new Map(traineeCounts.map((r) => [r.trainerId, r.count]));
+  const videoCountMap = new Map(videoCounts.map((r) => [r.uploaderId, r.count]));
+
+  return rows.map((r) => ({
+    ...r,
+    activeTraineeCount: traineeCountMap.get(r.id) ?? 0,
+    videoCount: videoCountMap.get(r.id) ?? 0,
+  }));
 }
 
 export async function getTrainerById(id: string) {

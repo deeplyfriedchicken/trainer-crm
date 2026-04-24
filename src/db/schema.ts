@@ -233,6 +233,39 @@ export const exerciseVideos = pgTable(
   ],
 );
 
+/* ─────────────────────────── Video Tags ────────────────────────── */
+
+export const tags = pgTable(
+  "tags",
+  {
+    id: id(),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => [uniqueIndex("tags_name_idx").on(t.name)],
+);
+
+export const videoTags = pgTable(
+  "video_tags",
+  {
+    videoId: text("video_id")
+      .notNull()
+      .references(() => videos.id, { onDelete: "cascade" }),
+    tagId: text("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.videoId, t.tagId] }),
+    index("video_tags_tag_idx").on(t.tagId),
+  ],
+);
+
 /* ──────────────────────────── Relations ────────────────────────── */
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -277,6 +310,22 @@ export const videosRelations = relations(videos, ({ one, many }) => ({
   }),
   exerciseLinks: many(exerciseVideos),
   sessionLinks: many(coachingSessionVideos),
+  videoTags: many(videoTags),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  videoTags: many(videoTags),
+}));
+
+export const videoTagsRelations = relations(videoTags, ({ one }) => ({
+  video: one(videos, {
+    fields: [videoTags.videoId],
+    references: [videos.id],
+  }),
+  tag: one(tags, {
+    fields: [videoTags.tagId],
+    references: [tags.id],
+  }),
 }));
 
 export const coachingSessionsRelations = relations(
@@ -364,3 +413,7 @@ export type NewExerciseVideo = typeof exerciseVideos.$inferInsert;
 export type CoachingSessionVideo = typeof coachingSessionVideos.$inferSelect;
 export type NewCoachingSessionVideo =
   typeof coachingSessionVideos.$inferInsert;
+export type Tag = typeof tags.$inferSelect;
+export type NewTag = typeof tags.$inferInsert;
+export type VideoTag = typeof videoTags.$inferSelect;
+export type NewVideoTag = typeof videoTags.$inferInsert;

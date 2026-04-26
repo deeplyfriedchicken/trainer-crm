@@ -141,6 +141,34 @@ Join table linking an exercise to one or more rows in `videos`. Both sides casca
 Primary key: composite `(exercise_id, video_id)`.
 Indexes: `exercise_videos_video_idx` on `video_id`, `exercise_videos_created_by_idx` on `created_by` (the `exercise_id` side is covered by the composite PK).
 
+## `chats`
+One chat thread per trainer ↔ trainee pair. Created on first message send via `getOrCreateChat`.
+
+| column      | type        | notes                                         |
+|-------------|-------------|-----------------------------------------------|
+| id          | text PK     | cuid2                                         |
+| trainee_id  | text        | FK → `users.id` ON DELETE CASCADE             |
+| trainer_id  | text        | FK → `users.id` ON DELETE CASCADE             |
+| created_at  | timestamptz | default now()                                 |
+| updated_at  | timestamptz | default now(), auto-updates                   |
+
+Indexes: `chats_trainee_trainer_idx` (unique), `chats_trainee_idx`, `chats_trainer_idx`.
+
+## `messages`
+Individual messages within a chat. Content is stored as **JSONB** (`{ text: string }`) so the schema is extensible for future attachments, reactions, etc. without migrations.
+
+| column     | type        | notes                                                          |
+|------------|-------------|----------------------------------------------------------------|
+| id         | text PK     | cuid2                                                          |
+| chat_id    | text        | FK → `chats.id` ON DELETE CASCADE                             |
+| sender_id  | text        | FK → `users.id` ON DELETE RESTRICT                            |
+| content    | jsonb       | NOT NULL · typed as `MessageContent = { text: string }`       |
+| created_at | timestamptz | default now()                                                  |
+
+Indexes: `messages_chat_idx` on `chat_id`, `messages_sender_idx` on `sender_id`.
+
+TypeScript type: `MessageContent` is exported from `src/db/schema.ts`. Extend it there when adding new content fields.
+
 ## `tags`
 Flat tag vocabulary. Tags are created on-the-fly and linked to videos via `video_tags`.
 

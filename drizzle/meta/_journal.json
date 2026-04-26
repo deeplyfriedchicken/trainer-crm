@@ -15,6 +15,13 @@
       "when": 1776994955781,
       "tag": "0001_easy_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777048867140,
+      "tag": "0002_first_screwball",
+      "breakpoints": true
     }
   ]
 }

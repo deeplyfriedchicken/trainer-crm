@@ -4,8 +4,10 @@ import { Hero } from "./_showcase/Hero";
 import {
   ButtonsSection,
   CardsSection,
+  ChatPanelSection,
   FeedbackSection,
   FormsSection,
+  SessionsPanelSection,
   TableSection,
 } from "./_showcase/sections";
 import { Sidebar } from "./_showcase/Sidebar";
@@ -25,6 +27,8 @@ export default function ComponentsShowcase() {
         <FeedbackSection />
         <CardsSection />
         <TableSection />
+        <SessionsPanelSection />
+        <ChatPanelSection />
       </Box>
       <Toaster />
     </Box>

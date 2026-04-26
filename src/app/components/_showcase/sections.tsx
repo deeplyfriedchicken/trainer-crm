@@ -30,6 +30,8 @@ import { Tag } from "../Tag";
 import { Textarea } from "../Textarea";
 import { toaster } from "../Toast";
 import { type ColumnDef, Table } from "../Table";
+import { ChatPanel, type ChatMessage } from "../ChatPanel";
+import { SessionsPanel, type SessionEntry } from "../SessionsPanel";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
 function Row({ children }: { children: React.ReactNode }) {
@@ -651,6 +653,132 @@ export function TableSection() {
           getRowKey={(r) => r.id}
           defaultSortKey="name"
         />
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── SessionsPanel showcase ───────────────────────────────────────────────────
+
+const SHOWCASE_SESSIONS: SessionEntry[] = [
+  {
+    id: "s1",
+    occurredAt: new Date("2026-04-22"),
+    energyRating: 5,
+    painRating: 2,
+    comment: "Felt great today, really pushed through the last set.",
+    exercises: [
+      { id: "e1", name: "Barbell Back Squat", sets: 4, reps: 8 },
+      { id: "e2", name: "Romanian Deadlift", sets: 3, reps: 10 },
+      { id: "e3", name: "Plank Hold", sets: 3, reps: 60 },
+    ],
+  },
+  {
+    id: "s2",
+    occurredAt: new Date("2026-04-19"),
+    energyRating: 3,
+    painRating: 4,
+    comment: "Tough session but got through it. Very tired afterwards.",
+    exercises: [
+      { id: "e4", name: "Dumbbell Row", sets: 4, reps: 10 },
+      { id: "e5", name: "Box Jump", sets: 4, reps: 6 },
+    ],
+  },
+  {
+    id: "s3",
+    occurredAt: new Date("2026-04-16"),
+    energyRating: null,
+    painRating: null,
+    comment: null,
+    exercises: [],
+  },
+];
+
+export function SessionsPanelSection() {
+  return (
+    <Box
+      as="section"
+      id="sessions-panel"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
+      <SectionTitle>Sessions Panel</SectionTitle>
+      <SubSection title="Accordion session list">
+        <Box maxW="520px">
+          <SessionsPanel sessions={SHOWCASE_SESSIONS} accentColor="#FD6DBB" />
+        </Box>
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── ChatPanel showcase ───────────────────────────────────────────────────────
+
+const SHOWCASE_MESSAGES: ChatMessage[] = [
+  {
+    id: "m1",
+    content: { text: "Hey Jordan, great session yesterday! How are you feeling?" },
+    createdAt: new Date("2026-04-22T09:14:00"),
+    sender: { id: "trainer-1", name: "Jordan Ellis", email: "jordan@example.com" },
+  },
+  {
+    id: "m2",
+    content: { text: "Legs are a bit sore but in a good way! Really felt those RDLs." },
+    createdAt: new Date("2026-04-22T09:31:00"),
+    sender: { id: "client-1", name: "Marcus Webb", email: "marcus@example.com" },
+  },
+  {
+    id: "m3",
+    content: { text: "That's the sweet spot. Aim for 150g protein today — I've added a recovery video to your library." },
+    createdAt: new Date("2026-04-22T09:33:00"),
+    sender: { id: "trainer-1", name: "Jordan Ellis", email: "jordan@example.com" },
+  },
+];
+
+function ShowcaseChatPanel() {
+  const [messages, setMessages] = useState<ChatMessage[]>(SHOWCASE_MESSAGES);
+
+  async function handleSend(text: string): Promise<ChatMessage> {
+    const msg: ChatMessage = {
+      id: crypto.randomUUID(),
+      content: { text },
+      createdAt: new Date(),
+      sender: { id: "trainer-1", name: "Jordan Ellis", email: "jordan@example.com" },
+    };
+    setMessages((prev) => [...prev, msg]);
+    return msg;
+  }
+
+  return (
+    <ChatPanel
+      initialMessages={messages}
+      currentUserId="trainer-1"
+      participant={{ id: "client-1", name: "Marcus Webb", email: "marcus@example.com" }}
+      onSend={handleSend}
+    />
+  );
+}
+
+export function ChatPanelSection() {
+  return (
+    <Box
+      as="section"
+      id="chat-panel"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
+      <SectionTitle>Chat Panel</SectionTitle>
+      <SubSection title="Message thread with live input">
+        <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
+          Pass <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">onSend</Box> as an async function that persists the message and returns the saved{" "}
+          <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">ChatMessage</Box>.
+          Messages from <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">currentUserId</Box> appear on the left; others on the right.
+        </Box>
+        <Box maxW="520px">
+          <ShowcaseChatPanel />
+        </Box>
       </SubSection>
     </Box>
   );

@@ -28,6 +28,8 @@ const groups: NavGroup[] = [
       { id: "feedback", label: "Feedback" },
       { id: "cards", label: "Cards & Layout" },
       { id: "tables", label: "Table" },
+      { id: "sessions-panel", label: "Sessions Panel" },
+      { id: "chat-panel", label: "Chat Panel" },
     ],
   },
 ];

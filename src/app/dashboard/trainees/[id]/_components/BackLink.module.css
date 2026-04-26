@@ -1,0 +1,16 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--neon-text-dim);
+  cursor: pointer;
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 13px;
+  margin-bottom: 24px;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.link:hover { color: #fff; }

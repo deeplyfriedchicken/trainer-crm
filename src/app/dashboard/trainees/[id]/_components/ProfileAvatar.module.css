@@ -1,0 +1,23 @@
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.statusDot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--neon-bg);
+}

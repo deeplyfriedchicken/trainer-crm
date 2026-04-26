@@ -18,6 +18,9 @@
 
   --crm-sidebar-w: 260px;
   --crm-topbar-h: 64px;
+  --font-neon-display: var(
+    --font-crm-display
+  ); /* alias so component library components resolve correctly */
 
   background: var(--neon-bg);
   color: #fff;
@@ -38,8 +41,16 @@
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 700px 500px at 15% 20%, rgba(253, 109, 187, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 600px 400px at 85% 80%, rgba(52, 253, 254, 0.05) 0%, transparent 70%);
+    radial-gradient(
+      ellipse 700px 500px at 15% 20%,
+      rgba(253, 109, 187, 0.05) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 600px 400px at 85% 80%,
+      rgba(52, 253, 254, 0.05) 0%,
+      transparent 70%
+    );
   pointer-events: none;
   z-index: 0;
 }
@@ -227,7 +238,7 @@
   z-index: 1;
 }
 .crm-topbar-search input {
-  padding-left: 36px !important;
+  padding-left: 36px;
 }
 
 .crm-topbar-actions {
@@ -256,8 +267,14 @@
 }
 
 @keyframes crm-fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .crm-page-header {
@@ -296,7 +313,9 @@
   padding: 20px;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 .crm-stat-card:hover {
   border-color: rgba(253, 109, 187, 0.3);
@@ -305,13 +324,21 @@
 .crm-stat-card::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
   background: linear-gradient(90deg, var(--neon-pink), transparent);
 }
-.crm-stat-card.cyan::before  { background: linear-gradient(90deg, var(--neon-cyan), transparent); }
-.crm-stat-card.green::before { background: linear-gradient(90deg, #4ade80, transparent); }
-.crm-stat-card.orange::before{ background: linear-gradient(90deg, #fb923c, transparent); }
+.crm-stat-card.cyan::before {
+  background: linear-gradient(90deg, var(--neon-cyan), transparent);
+}
+.crm-stat-card.green::before {
+  background: linear-gradient(90deg, #4ade80, transparent);
+}
+.crm-stat-card.orange::before {
+  background: linear-gradient(90deg, #fb923c, transparent);
+}
 
 .crm-stat-num {
   font-family: var(--font-crm-display), "Barlow Condensed", sans-serif;
@@ -320,9 +347,15 @@
   color: #fff;
   line-height: 1;
 }
-.crm-stat-num.cyan   { color: var(--neon-cyan); }
-.crm-stat-num.green  { color: #4ade80; }
-.crm-stat-num.orange { color: #fb923c; }
+.crm-stat-num.cyan {
+  color: var(--neon-cyan);
+}
+.crm-stat-num.green {
+  color: #4ade80;
+}
+.crm-stat-num.orange {
+  color: #fb923c;
+}
 
 .crm-stat-lbl {
   font-size: 12px;
@@ -335,7 +368,9 @@
   margin-top: 10px;
   color: var(--neon-text-dim);
 }
-.crm-stat-change.up { color: #4ade80; }
+.crm-stat-change.up {
+  color: #4ade80;
+}
 
 /* ─── Trainee table ─── */
 .crm-table-wrap {
@@ -369,16 +404,22 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   transition: color 0.15s;
 }
-.crm-table th.sorted { color: var(--neon-pink); }
+.crm-table th.sorted {
+  color: var(--neon-pink);
+}
 
 .crm-table tbody tr {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
   transition: background 0.15s;
 }
-.crm-table tbody tr:hover { background: rgba(253, 109, 187, 0.05); }
+.crm-table tbody tr:hover {
+  background: rgba(253, 109, 187, 0.05);
+}
 
-.crm-table td { padding: 13px 16px; }
+.crm-table td {
+  padding: 13px 16px;
+}
 
 .crm-table-empty {
   padding: 48px;
@@ -415,7 +456,9 @@
   border-color: rgba(253, 109, 187, 0.4);
   box-shadow: 0 0 14px rgba(253, 109, 187, 0.1);
 }
-.crm-table-search input::placeholder { color: var(--neon-text-dim); }
+.crm-table-search input::placeholder {
+  color: var(--neon-text-dim);
+}
 
 /* ─── Trainer cards ─── */
 .crm-trainer-grid {
@@ -436,7 +479,9 @@
 .crm-trainer-card:hover {
   border-color: rgba(52, 253, 254, 0.3);
   transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(52, 253, 254, 0.07);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 24px rgba(52, 253, 254, 0.07);
 }
 
 .crm-trainer-avatar {
@@ -536,7 +581,9 @@
 .crm-video-card:hover {
   border-color: rgba(52, 253, 254, 0.3);
   transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(52, 253, 254, 0.08);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(52, 253, 254, 0.08);
 }
 
 .crm-video-thumb {
@@ -608,7 +655,9 @@
   z-index: 1;
 }
 
-.crm-video-body { padding: 14px; }
+.crm-video-body {
+  padding: 14px;
+}
 
 .crm-video-title {
   font-size: 14px;
@@ -623,6 +672,7 @@
   line-height: 1.5;
   margin: 6px 0 10px;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;

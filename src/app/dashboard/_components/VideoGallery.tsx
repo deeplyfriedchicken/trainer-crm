@@ -2,18 +2,9 @@
 
 import { useState } from "react";
 import { FaPlay } from "react-icons/fa6";
+import type { VideoRow } from "@/db/queries/videos";
 
-type Tag = { id: string; name: string };
-
-type Video = {
-  id: string;
-  title: string;
-  description: string | null;
-  durationSeconds: number | null;
-  createdAt: Date;
-  uploader: { id: string; name: string; email: string };
-  videoTags: { tag: Tag }[];
-};
+type Tag = VideoRow["videoTags"][number]["tag"];
 
 const TAG_COLORS = ["#FD6DBB", "#34FDFE", "#a78bfa", "#4ade80", "#fb923c"];
 const COLOR_MAP: Record<string, string> = {
@@ -49,7 +40,7 @@ function formatDate(d: Date): string {
   return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export function VideoGallery({ videos }: { videos: Video[] }) {
+export function VideoGallery({ videos }: { videos: VideoRow[] }) {
   const [activeTag, setActiveTag] = useState<string>("All");
 
   // Collect unique tags across all videos

@@ -4,16 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LuSearch } from "react-icons/lu";
 import { type ColumnDef, Table } from "@/app/components/Table";
+import type { TraineeRow } from "@/db/queries/trainees";
 
-type Trainee = {
-  id: string;
-  name: string;
-  email: string;
-  sessionCount: number;
-  lastSessionAt: Date | null;
-  trainerName: string | null;
-  createdAt: Date;
-};
+type Trainee = TraineeRow;
 
 const COLOR_MAP: Record<string, string> = {
   A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",

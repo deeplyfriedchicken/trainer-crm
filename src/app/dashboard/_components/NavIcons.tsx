@@ -2,9 +2,9 @@ import type { IconType } from "react-icons";
 import {
   LuBell,
   LuLayoutDashboard,
-  LuSquarePlay,
   LuSearch,
   LuSettings,
+  LuSquarePlay,
   LuUser,
   LuUsers,
 } from "react-icons/lu";

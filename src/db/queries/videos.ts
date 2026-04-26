@@ -2,6 +2,8 @@ import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { type VideoStatus, videos } from "@/db/schema";
 
+export type VideoRow = Awaited<ReturnType<typeof listVideos>>[number];
+
 export type ListVideosOptions = {
   limit: number;
   offset: number;

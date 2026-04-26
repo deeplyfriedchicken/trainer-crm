@@ -7,6 +7,8 @@ import {
   users,
 } from "@/db/schema";
 
+export type TraineeRow = Awaited<ReturnType<typeof listTrainees>>[number];
+
 export type ListTraineesOptions = {
   limit: number;
   offset: number;

@@ -302,6 +302,8 @@ Components in `src/app/components/` must work in **both** the `.neon` (showcase)
 | `Separator` | `Separator.tsx` | Horizontal rule, optional accent |
 | `Toast` / `toaster` | `Toast.tsx` | Imperative toast API |
 | `Table` | `Table.tsx` | Generic sortable data table (see below) |
+| `SessionsPanel` | `SessionsPanel.tsx` | Accordion list of coaching sessions with exercises and ratings (see below) |
+| `ChatPanel` | `ChatPanel.tsx` | Scrollable message thread with send input; decoupled from persistence via `onSend` prop (see below) |
 
 ### `Table` component
 
@@ -328,6 +330,91 @@ type ColumnDef<T> = {
 - `render` is display-only; sorting always uses `row[key]`, so numeric and date columns sort correctly even with rich cell content.
 - Null values always sink to the bottom of the sort.
 - Styles use CSS Modules (`Table.module.css`) with `--neon-*` tokens, so the component works in both showcase and dashboard.
+
+### `SessionsPanel` component
+
+```tsx
+import { type SessionEntry, SessionsPanel } from "@/app/components/SessionsPanel";
+
+type SessionEntry = {
+  id: string;
+  occurredAt: Date;
+  energyRating?: number | null;  // 1–5; renders star rating in header
+  painRating?: number | null;    // 1–5; renders star rating in header
+  comment?: string | null;       // shown as "Client Feedback" block
+  exercises: {
+    id: string;
+    name: string;
+    sets: number;
+    reps: number;
+    comment?: string | null;
+  }[];
+};
+
+<SessionsPanel
+  sessions={entries}           // SessionEntry[]
+  accentColor="#FD6DBB"        // optional; defaults to --neon-pink
+/>
+```
+
+- Sessions are sorted newest-first automatically; numbered from highest (most recent) down.
+- The first session is expanded by default; click any header to expand/collapse.
+- Energy rating uses `accentColor`; pain rating is always red (`#f87171`).
+- Styles in `SessionsPanel.module.css` — works in both `.neon` and `.crm` contexts.
+
+**Usage with DB types** — derive the prop type directly from the query rather than duplicating fields:
+```tsx
+import type { TraineeRow } from "@/db/queries/trainees";
+// TraineeRow["coachingSessions"] satisfies SessionEntry[]
+```
+
+### `ChatPanel` component
+
+```tsx
+import { type ChatMessage, type ChatParticipant, ChatPanel } from "@/app/components/ChatPanel";
+
+type ChatMessage = {
+  id: string;
+  content: { text: string };
+  createdAt: Date;
+  sender: { id: string; name: string; email: string };
+};
+
+type ChatParticipant = { id: string; name: string; email: string };
+
+<ChatPanel
+  initialMessages={msgs}         // ChatMessage[]
+  currentUserId={user.id}        // messages from this ID appear on the left
+  participant={trainee}          // ChatParticipant — shown in the header
+  onSend={async (text) => msg}   // (text: string) => Promise<ChatMessage>
+/>
+```
+
+- Messages from `currentUserId` appear on the left with pink bubbles; all others appear on the right.
+- Pressing Enter or clicking the send button calls `onSend`. The returned `ChatMessage` is appended optimistically — no refetch needed.
+- A typing indicator (`···`) is shown while `onSend` is in flight via `useTransition`.
+- Styles in `ChatPanel.module.css`.
+
+**Server Component constraint** — `onSend` is a function, so `ChatPanel` cannot be rendered directly from a Server Component. Wrap it in a thin Client Component that imports the server action and binds any route-scoped values (e.g. `chatId`):
+
+```tsx
+// dashboard/trainees/[id]/_components/TraineeChatPanel.tsx
+"use client";
+import { ChatPanel, type ChatMessage } from "@/app/components/ChatPanel";
+import { sendMessage } from "../actions"; // server action
+
+export function TraineeChatPanel({ chatId, ...rest }) {
+  return (
+    <ChatPanel
+      {...rest}
+      onSend={async (text) => {
+        const msg = await sendMessage(chatId, text);
+        return msg as ChatMessage;
+      }}
+    />
+  );
+}
+```
 
 ## CRM dashboard — `src/app/dashboard/`
 

@@ -7,6 +7,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   primaryKey,
@@ -233,6 +234,50 @@ export const exerciseVideos = pgTable(
   ],
 );
 
+/* ──────────────────────────── Chats ────────────────────────────── */
+
+export type MessageContent = { text: string };
+
+export const chats = pgTable(
+  "chats",
+  {
+    id: id(),
+    traineeId: text("trainee_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    trainerId: text("trainer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("chats_trainee_trainer_idx").on(t.traineeId, t.trainerId),
+    index("chats_trainee_idx").on(t.traineeId),
+    index("chats_trainer_idx").on(t.trainerId),
+  ],
+);
+
+export const messages = pgTable(
+  "messages",
+  {
+    id: id(),
+    chatId: text("chat_id")
+      .notNull()
+      .references(() => chats.id, { onDelete: "cascade" }),
+    senderId: text("sender_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    content: jsonb("content").notNull().$type<MessageContent>(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => [
+    index("messages_chat_idx").on(t.chatId),
+    index("messages_sender_idx").on(t.senderId),
+  ],
+);
+
 /* ─────────────────────────── Video Tags ────────────────────────── */
 
 export const tags = pgTable(
@@ -311,6 +356,32 @@ export const videosRelations = relations(videos, ({ one, many }) => ({
   exerciseLinks: many(exerciseVideos),
   sessionLinks: many(coachingSessionVideos),
   videoTags: many(videoTags),
+}));
+
+export const chatsRelations = relations(chats, ({ one, many }) => ({
+  trainee: one(users, {
+    fields: [chats.traineeId],
+    references: [users.id],
+    relationName: "chats_trainee",
+  }),
+  trainer: one(users, {
+    fields: [chats.trainerId],
+    references: [users.id],
+    relationName: "chats_trainer",
+  }),
+  messages: many(messages),
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  chat: one(chats, {
+    fields: [messages.chatId],
+    references: [chats.id],
+  }),
+  sender: one(users, {
+    fields: [messages.senderId],
+    references: [users.id],
+    relationName: "messages_sender",
+  }),
 }));
 
 export const tagsRelations = relations(tags, ({ many }) => ({
@@ -413,6 +484,10 @@ export type NewExerciseVideo = typeof exerciseVideos.$inferInsert;
 export type CoachingSessionVideo = typeof coachingSessionVideos.$inferSelect;
 export type NewCoachingSessionVideo =
   typeof coachingSessionVideos.$inferInsert;
+export type Chat = typeof chats.$inferSelect;
+export type NewChat = typeof chats.$inferInsert;
+export type Message = typeof messages.$inferSelect;
+export type NewMessage = typeof messages.$inferInsert;
 export type Tag = typeof tags.$inferSelect;
 export type NewTag = typeof tags.$inferInsert;
 export type VideoTag = typeof videoTags.$inferSelect;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LuSearch } from "react-icons/lu";
 import { type ColumnDef, Table } from "@/app/components/Table";
@@ -120,6 +121,7 @@ const COLUMNS: ColumnDef<Trainee>[] = [
 ];
 
 export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
 
   const filtered = trainees.filter((t) =>
@@ -153,6 +155,7 @@ export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
         getRowKey={(t) => t.id}
         defaultSortKey="name"
         emptyText="No clients match your search."
+        onRowClick={(t) => router.push(`/dashboard/trainees/${t.id}`)}
       />
     </>
   );

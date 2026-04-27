@@ -61,3 +61,13 @@
   color: var(--neon-text-dim);
   margin-top: 4px;
 }
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+  }
+  .body {
+    gap: 16px;
+  }
+}

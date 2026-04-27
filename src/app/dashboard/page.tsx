@@ -1,3 +1,4 @@
+import "./page.css";
 import { listTrainees } from "@/db/queries/trainees";
 import { listTrainers } from "@/db/queries/trainers";
 import { listVideos } from "@/db/queries/videos";

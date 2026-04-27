@@ -204,6 +204,25 @@ Indexes: `video_tags_tag_idx` on `tag_id`.
 
 # Component system
 
+## Chakra UI + component library — use these first
+
+**Always reach for Chakra primitives and the shared component library before writing plain HTML or inline styles.**
+
+- **Layout:** Use Chakra's `Box`, `Flex`, `HStack`, `VStack`, `SimpleGrid`, `Grid`, `Stack` instead of plain `<div>` with inline `display`/`gap`/`align` styles.
+- **Typography:** Use `Box as="h1/h2/p/span"` with Chakra style props, or the existing library components — not bare `<h1>` / `<p>` tags with CSS classes.
+- **Actions:** Always use the library `Button` or `IconButton` instead of raw `<button>` elements.
+- **Forms:** Use the library `Input`, `Textarea`, `Select`, `Field`, `Checkbox`, `Radio`, `Switch` for all form elements.
+- **Feedback:** Use `Alert`, `Spinner`, `Skeleton`, `Progress`, `Toast` from the library.
+- **Cards / surfaces:** Use the library `Card` (variants: `solid`, `outlined`, `glow`) instead of hand-styled surface divs.
+- **Data display:** Use the library `Badge`, `Tag`, `Stat`, `Separator`, `Table` instead of rolling custom equivalents.
+- **Page sections:** Use `PageHeader` from the library for any title + subtitle + optional action row at the top of a page or section.
+
+**Rule:** If you are about to write a `<div style={{ display: "flex", ... }}>` or a raw `<button>` or `<input>`, stop and use the equivalent Chakra primitive or library component instead.
+
+**New shared components** (anything reused across 2+ places) go in `src/app/components/` — follow the four-step process: component file → showcase section → page.tsx → Sidebar.tsx.
+
+**Dashboard-local components** (CRM-specific, not reused elsewhere) go in `src/app/dashboard/_components/` and may use Chakra primitives directly.
+
 ## Icons — `react-icons`
 
 The project uses [`react-icons`](https://react-icons.github.io/react-icons/) for all icons. **Do not write custom inline SVGs** — find the equivalent in react-icons instead.
@@ -304,6 +323,7 @@ Components in `src/app/components/` must work in **both** the `.neon` (showcase)
 | `Table` | `Table.tsx` | Generic sortable data table (see below) |
 | `SessionsPanel` | `SessionsPanel.tsx` | Accordion list of coaching sessions with exercises and ratings (see below) |
 | `ChatPanel` | `ChatPanel.tsx` | Scrollable message thread with send input; decoupled from persistence via `onSend` prop (see below) |
+| `PageHeader` | `PageHeader.tsx` | Page/section title with optional subtitle and right-side action slot |
 
 ### `Table` component
 

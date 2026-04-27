@@ -2,6 +2,7 @@
 
 import { Box } from "@chakra-ui/react";
 import { useState } from "react";
+import { LuMenu } from "react-icons/lu";
 import { IconButton } from "../../components/IconButton";
 import { Input } from "../../components/Input";
 import { BellIcon, SearchIcon } from "./NavIcons";
@@ -12,8 +13,15 @@ export function Topbar() {
   const [query, setQuery] = useState("");
   const [hasUnread] = useState(true);
 
+  function openNav() {
+    document.body.classList.add("crm-nav-open");
+  }
+
   return (
     <Box as="header" className="crm-topbar">
+      <button className="crm-hamburger" onClick={openNav} aria-label="Open navigation">
+        <LuMenu size={18} />
+      </button>
       <div className="crm-topbar-title">
         TBD<span className="crm-topbar-title-accent">Fit</span>
       </div>

@@ -1,0 +1,63 @@
+/* ─── Stats grid — dashboard home page only ─── */
+.crm-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.crm-stat-card {
+  background: var(--neon-surface);
+  border: 1px solid var(--neon-border);
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.crm-stat-card:hover {
+  border-color: rgba(253, 109, 187, 0.3);
+  box-shadow: 0 0 24px rgba(253, 109, 187, 0.08);
+}
+.crm-stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-pink), transparent);
+}
+.crm-stat-card.cyan::before { background: linear-gradient(90deg, var(--neon-cyan), transparent); }
+.crm-stat-card.green::before { background: linear-gradient(90deg, #4ade80, transparent); }
+.crm-stat-card.orange::before { background: linear-gradient(90deg, #fb923c, transparent); }
+
+.crm-stat-num {
+  font-family: var(--font-crm-display), "Barlow Condensed", sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.crm-stat-num.cyan { color: var(--neon-cyan); }
+.crm-stat-num.green { color: #4ade80; }
+.crm-stat-num.orange { color: #fb923c; }
+
+.crm-stat-lbl {
+  font-size: 12px;
+  color: var(--neon-text-dim);
+  margin-top: 6px;
+}
+
+.crm-stat-change {
+  font-size: 11px;
+  margin-top: 10px;
+  color: var(--neon-text-dim);
+}
+.crm-stat-change.up { color: #4ade80; }
+
+@media (max-width: 768px) {
+  .crm-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+}

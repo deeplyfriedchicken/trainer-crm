@@ -16,6 +16,7 @@ type TableProps<T> = {
   defaultSortKey?: keyof T & string;
   emptyText?: string;
   onRowClick?: (row: T) => void;
+  className?: string;
 };
 
 function compareValues(a: unknown, b: unknown): number {
@@ -39,6 +40,7 @@ export function Table<T>({
   defaultSortKey,
   emptyText = "No data.",
   onRowClick,
+  className,
 }: TableProps<T>) {
   const [sortKey, setSortKey] = useState<keyof T & string | null>(
     defaultSortKey ?? null,
@@ -60,7 +62,7 @@ export function Table<T>({
   });
 
   return (
-    <div className={styles.wrap}>
+    <div className={[styles.wrap, className].filter(Boolean).join(" ")}>
       <table className={styles.table}>
         <thead className={styles.thead}>
           <tr>

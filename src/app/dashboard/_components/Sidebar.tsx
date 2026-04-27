@@ -45,10 +45,18 @@ function isActive(currentPath: string, href: string) {
   return currentPath === href || currentPath.startsWith(`${href}/`);
 }
 
+function closeNav() {
+  document.body.classList.remove("crm-nav-open");
+}
+
 export function Sidebar() {
   const pathname = usePathname() ?? "";
 
   return (
+    <>
+      {/* Mobile overlay — dismisses the flyout */}
+      <div className="crm-nav-overlay" onClick={closeNav} aria-hidden />
+
     <Box as="nav" className="crm-sidebar" aria-label="Primary navigation">
       <div className="crm-sidebar-top">
         <div className="crm-profile-ring" aria-hidden>
@@ -75,6 +83,7 @@ export function Sidebar() {
               href={href}
               className={`crm-nav-item${active ? " active" : ""}`}
               aria-current={active ? "page" : undefined}
+              onClick={closeNav}
             >
               <Icon />
               <span>{label}</span>
@@ -92,5 +101,6 @@ export function Sidebar() {
         })}
       </div>
     </Box>
+    </>
   );
 }

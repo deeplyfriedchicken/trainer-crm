@@ -7,6 +7,7 @@ import { Button } from "@/app/components/Button";
 import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { PageHeader } from "@/app/components/PageHeader";
 import type { VideoRow as VideoRowType } from "@/db/queries/videos";
+import styles from "./VideoGallery.module.css";
 
 type Tag = VideoRowType["videoTags"][number]["tag"];
 
@@ -99,10 +100,10 @@ function VideoCard({
   const duration = formatDuration(v.durationSeconds);
 
   return (
-    <div className="crm-video-card" onClick={onSelect}>
-      <div className="crm-video-thumb" style={{ aspectRatio }}>
+    <div className={styles.videoCard} onClick={onSelect}>
+      <div className={styles.videoThumb} style={{ aspectRatio }}>
         <VideoThumbnail src={v.fileUrl} onAspectRatio={setAspectRatio} />
-        <div className="crm-video-thumb-pattern" />
+        <div className={styles.videoThumbPattern} />
         <div
           style={{
             position: "absolute",
@@ -110,13 +111,13 @@ function VideoCard({
             background: `linear-gradient(135deg, ${color}0a, transparent 60%)`,
           }}
         />
-        <div className="crm-video-play">
+        <div className={styles.videoPlay}>
           <FaPlay size={14} color="#34FDFE" />
         </div>
-        {duration && <div className="crm-video-duration">{duration}</div>}
+        {duration && <div className={styles.videoDuration}>{duration}</div>}
         {primaryTag && (
           <div
-            className="crm-video-tag-pill"
+            className={styles.videoTagPill}
             style={{
               background: `${color}22`,
               color,
@@ -128,7 +129,7 @@ function VideoCard({
         )}
       </div>
 
-      <div className="crm-video-body">
+      <div className={styles.videoBody}>
         <div
           style={{
             display: "flex",
@@ -138,7 +139,7 @@ function VideoCard({
             marginBottom: 4,
           }}
         >
-          <div className="crm-video-title" style={{ flex: 1 }}>
+          <div className={styles.videoTitle} style={{ flex: 1 }}>
             {v.title}
           </div>
           {primaryTag && (
@@ -163,13 +164,13 @@ function VideoCard({
         </div>
 
         {v.description && (
-          <p className="crm-video-desc">{v.description}</p>
+          <p className={styles.videoDesc}>{v.description}</p>
         )}
 
-        <div className="crm-video-meta">
-          <div className="crm-video-uploader">
+        <div className={styles.videoMeta}>
+          <div className={styles.videoUploader}>
             <div
-              className="crm-mini-avatar"
+              className={styles.miniAvatar}
               style={{
                 background: `${uploaderCol}22`,
                 borderColor: `${uploaderCol}55`,
@@ -180,7 +181,7 @@ function VideoCard({
             </div>
             {v.uploader.name}
           </div>
-          <div className="crm-video-date">{formatDate(v.createdAt)}</div>
+          <div className={styles.videoDate}>{formatDate(v.createdAt)}</div>
         </div>
       </div>
     </div>
@@ -235,10 +236,10 @@ export function VideoGallery({
       />
 
       {allTags.length > 0 && (
-        <div className="crm-tag-filters">
+        <div className={styles.tagFilters}>
           <button
             type="button"
-            className={`crm-tag-pill${activeTag === "All" ? " active" : ""}`}
+            className={`${styles.tagPill}${activeTag === "All" ? ` ${styles.active}` : ""}`}
             onClick={() => setActiveTag("All")}
           >
             All
@@ -247,7 +248,7 @@ export function VideoGallery({
             <button
               key={tag.id}
               type="button"
-              className={`crm-tag-pill${activeTag === tag.name ? " active" : ""}`}
+              className={`${styles.tagPill}${activeTag === tag.name ? ` ${styles.active}` : ""}`}
               onClick={() => setActiveTag(tag.name)}
             >
               {tag.name}
@@ -259,7 +260,7 @@ export function VideoGallery({
       {shown.length === 0 ? (
         <div className="crm-table-empty">No videos yet.</div>
       ) : (
-        <div className="crm-video-grid">
+        <div className={styles.videoGrid}>
           {shown.map((v) => (
             <VideoCard key={v.id} v={v} onSelect={() => setSelectedVideo(v)} />
           ))}
@@ -330,7 +331,7 @@ export function VideoGallery({
                 <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <div
-                      className="crm-mini-avatar"
+                      className={styles.miniAvatar}
                       style={{
                         background: `${uploaderCol}22`,
                         borderColor: `${uploaderCol}55`,

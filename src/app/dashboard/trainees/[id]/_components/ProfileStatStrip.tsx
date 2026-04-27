@@ -5,11 +5,12 @@ export type StatEntry = { label: string; value: string; color?: string };
 export function ProfileStatStrip({ stats }: { stats: StatEntry[] }) {
   return (
     <Flex
-      flexShrink={0}
+      flexShrink={{ base: 1, md: 0 }}
+      w={{ base: "100%", md: "auto" }}
       borderRadius="12px"
       overflow="hidden"
       border="1px solid rgba(255,255,255,0.08)"
-      ml="auto"
+      ml={{ base: 0, md: "auto" }}
     >
       {stats.map((s, i) => (
         <Box

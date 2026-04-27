@@ -9,7 +9,13 @@ export interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <Flex justify="space-between" align="flex-end" mb="28px">
+    <Flex
+      justify={{ base: "flex-start", md: "space-between" }}
+      align={{ base: "flex-start", md: "flex-end" }}
+      flexDirection={{ base: "column", md: "row" }}
+      gap={{ base: "12px", md: "0" }}
+      mb="28px"
+    >
       <Box>
         <Box
           fontFamily="var(--font-neon-display), sans-serif"
@@ -27,7 +33,11 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
           </Box>
         )}
       </Box>
-      {action && <Box flexShrink={0}>{action}</Box>}
+      {action && (
+        <Box flexShrink={0} w={{ base: "100%", md: "auto" }}>
+          {action}
+        </Box>
+      )}
     </Flex>
   );
 }

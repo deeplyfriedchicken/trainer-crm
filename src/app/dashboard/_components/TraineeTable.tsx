@@ -151,6 +151,7 @@ export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
         defaultSortKey="name"
         emptyText="No clients match your search."
         onRowClick={(t) => router.push(`/dashboard/trainees/${t.id}`)}
+        className="crm-trainee-table"
       />
     </>
   );

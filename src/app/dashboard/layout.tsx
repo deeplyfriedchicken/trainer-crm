@@ -1,3 +1,6 @@
+// Dashboard is a live CRM — all routes must be rendered at request time, never pre-built.
+export const dynamic = "force-dynamic";
+
 import { Barlow_Condensed, Space_Grotesk, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import { Sidebar } from "./_components/Sidebar";

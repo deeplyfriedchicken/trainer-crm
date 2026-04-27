@@ -1,4 +1,7 @@
+import { Box, SimpleGrid } from "@chakra-ui/react";
+import { PageHeader } from "@/app/components/PageHeader";
 import { listTrainers } from "@/db/queries/trainers";
+import { TrainerCard } from "../_components/TrainerCard";
 
 const COLOR_MAP: Record<string, string> = {
   A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",
@@ -17,68 +20,29 @@ export default async function TrainersPage() {
   const trainers = await listTrainers({ limit: 100, offset: 0 });
 
   return (
-    <div className="crm-page">
-      <div className="crm-page-header">
-        <div>
-          <div className="crm-page-title">Trainers</div>
-          <div className="crm-page-sub">{trainers.length} trainers on your team</div>
-        </div>
-      </div>
+    <Box className="crm-page">
+      <PageHeader
+        title="Trainers"
+        subtitle={`${trainers.length} trainers on your team`}
+      />
 
-      <div className="crm-trainer-grid">
-        {trainers.map((t) => {
-          const color = colorFor(t.name);
-          const initial = t.name[0]?.toUpperCase() ?? "?";
-          return (
-            <div key={t.id} className="crm-trainer-card">
-              <div
-                className="crm-trainer-avatar"
-                style={{
-                  background: `${color}18`,
-                  border: `2px solid ${color}55`,
-                  color,
-                }}
-              >
-                {initial}
-                <div className="crm-trainer-avatar-status" />
-              </div>
-
-              <div className="crm-trainer-name">{t.name}</div>
-              <div className="crm-trainer-email">{t.email}</div>
-
-              <div className="crm-trainer-stats">
-                <div style={{ textAlign: "center" }}>
-                  <div className="crm-trainer-stat-val" style={{ color }}>
-                    {t.activeTraineeCount}
-                  </div>
-                  <div className="crm-trainer-stat-lbl">Clients</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div className="crm-trainer-stat-val" style={{ color }}>
-                    {t.videoCount}
-                  </div>
-                  <div className="crm-trainer-stat-lbl">Videos</div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="crm-trainer-btn"
-                style={{
-                  border: `1px solid ${color}55`,
-                  color,
-                }}
-              >
-                View Profile
-              </button>
-            </div>
-          );
-        })}
-      </div>
-
-      {trainers.length === 0 && (
-        <div className="crm-table-empty">No trainers found.</div>
+      {trainers.length === 0 ? (
+        <Box className="crm-table-empty">No trainers found.</Box>
+      ) : (
+        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap="20px">
+          {trainers.map((t) => (
+            <TrainerCard
+              key={t.id}
+              name={t.name}
+              email={t.email}
+              color={colorFor(t.name)}
+              initial={t.name[0]?.toUpperCase() ?? "?"}
+              activeTraineeCount={t.activeTraineeCount}
+              videoCount={t.videoCount}
+            />
+          ))}
+        </SimpleGrid>
       )}
-    </div>
+    </Box>
   );
 }

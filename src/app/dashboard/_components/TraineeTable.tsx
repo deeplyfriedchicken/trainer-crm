@@ -1,8 +1,11 @@
 "use client";
 
+import { HStack } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LuSearch } from "react-icons/lu";
+import { Input } from "@/app/components/Input";
+import { PageHeader } from "@/app/components/PageHeader";
 import { type ColumnDef, Table } from "@/app/components/Table";
 import type { TraineeRow } from "@/db/queries/trainees";
 
@@ -123,24 +126,23 @@ export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
 
   return (
     <>
-      <div className="crm-page-header" style={{ marginBottom: 16 }}>
-        <div>
-          <div className="crm-page-title">Clients</div>
-          <div className="crm-page-sub">
-            {trainees.length} total · click any row to view profile
-          </div>
-        </div>
-        <div className="crm-table-search">
-          <div className="crm-table-search-icon">
-            <LuSearch size={13} />
-          </div>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search clients…"
-          />
-        </div>
-      </div>
+      <PageHeader
+        title="Clients"
+        subtitle={`${trainees.length} total · click any row to view profile`}
+        action={
+          <HStack>
+            <LuSearch size={13} color="var(--neon-text-dim)" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search clients…"
+              colorScheme="cyan"
+              size="sm"
+              w="200px"
+            />
+          </HStack>
+        }
+      />
 
       <Table
         columns={COLUMNS}

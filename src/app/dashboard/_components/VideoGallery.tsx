@@ -3,7 +3,9 @@
 import { useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
 import { LuCalendar, LuClock, LuFileVideo, LuHardDrive, LuUpload, LuUser } from "react-icons/lu";
+import { Button } from "@/app/components/Button";
 import { Dialog, DialogBody } from "@/app/components/Dialog";
+import { PageHeader } from "@/app/components/PageHeader";
 import type { VideoRow as VideoRowType } from "@/db/queries/videos";
 
 type Tag = VideoRowType["videoTags"][number]["tag"];
@@ -219,32 +221,18 @@ export function VideoGallery({
 
   return (
     <>
-      <div className="crm-page-header" style={{ marginBottom: 16, marginTop: 40 }}>
-        <div>
-          <div className="crm-page-title">{title}</div>
-          <div className="crm-page-sub">{subtitle}</div>
-        </div>
-        {onUpload && (
-          <button
-            type="button"
-            onClick={onUpload}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 7,
-              padding: "8px 18px", borderRadius: 10,
-              background: "rgba(52,253,254,0.1)",
-              border: "1px solid rgba(52,253,254,0.35)",
-              color: "var(--neon-cyan)", fontFamily: "var(--font-neon-body)",
-              fontSize: 13, fontWeight: 600, cursor: "pointer",
-              transition: "all 0.18s",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(52,253,254,0.18)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(52,253,254,0.1)"; }}
-          >
-            <LuUpload size={13} />
-            Upload Video
-          </button>
-        )}
-      </div>
+      <PageHeader
+        title={title}
+        subtitle={subtitle}
+        action={
+          onUpload && (
+            <Button variant="outline" colorScheme="cyan" size="sm" onClick={onUpload}>
+              <LuUpload size={13} />
+              Upload Video
+            </Button>
+          )
+        }
+      />
 
       {allTags.length > 0 && (
         <div className="crm-tag-filters">

@@ -6,7 +6,6 @@ import { LuFilm, LuUpload } from "react-icons/lu";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
-import { useUploadThing } from "@/lib/uploadthing";
 import styles from "./UploadModal.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -168,42 +167,7 @@ export function UploadModal({
     return () => window.removeEventListener("beforeunload", handler);
   }, [phase]);
 
-  const { startUpload, isUploading } = useUploadThing("videoUploader", {
-    onUploadProgress: (pct: number) => {
-      setPerFileProgress((prev) => {
-        const next = { ...prev };
-        for (let i = 0; i < droppedFiles.length; i++) {
-          next[i] = Math.min(pct, 100);
-        }
-        return next;
-      });
-    },
-    onClientUploadComplete: async (res) => {
-      // res is an array matching droppedFiles order, each with { videoId } from server
-      const values = watch("entries");
-      await Promise.all(
-        res.map(async (result, i) => {
-          const videoId = result.serverData?.videoId;
-          if (!videoId) return;
-          const entry = values[i];
-          if (!entry) return;
-          await fetch(`/api/videos/${videoId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: entry.title,
-              description: entry.description || undefined,
-              tagIds: entry.tagIds,
-            }),
-          });
-        }),
-      );
-      setPhase("success");
-    },
-    onUploadError: () => {
-      setPhase("form");
-    },
-  });
+  const [isUploading, setIsUploading] = useState(false);
 
   function addFiles(files: File[]) {
     setDroppedFiles((prev) => [...prev, ...files]);
@@ -253,10 +217,68 @@ export function UploadModal({
     setPerFileProgress({});
   }
 
-  function startActualUpload() {
+  async function startActualUpload() {
     if (droppedFiles.length === 0) return;
     setPhase("uploading");
-    startUpload(droppedFiles);
+    setIsUploading(true);
+    const values = watch("entries");
+    try {
+      const videoIds: string[] = [];
+      for (let i = 0; i < droppedFiles.length; i++) {
+        const file = droppedFiles[i];
+        // 1. Get presigned URL + create DB record
+        const presignRes = await fetch("/api/videos/presign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileName: file.name,
+            mimeType: file.type,
+            fileSizeBytes: file.size,
+          }),
+        });
+        const { videoId, uploadUrl } = await presignRes.json();
+        videoIds.push(videoId);
+        // 2. Upload directly to S3 via XHR for progress tracking
+        await new Promise<void>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.upload.addEventListener("progress", (e) => {
+            if (e.lengthComputable) {
+              setPerFileProgress((prev) => ({ ...prev, [i]: Math.round((e.loaded / e.total) * 100) }));
+            }
+          });
+          xhr.addEventListener("load", () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve();
+            else reject(new Error(`S3 upload failed: ${xhr.status}`));
+          });
+          xhr.addEventListener("error", () => reject(new Error("S3 upload network error")));
+          xhr.open("PUT", uploadUrl);
+          xhr.setRequestHeader("Content-Type", file.type);
+          xhr.send(file);
+        });
+        setPerFileProgress((prev) => ({ ...prev, [i]: 100 }));
+      }
+      // 3. Save metadata for each video
+      await Promise.all(
+        videoIds.map(async (videoId, i) => {
+          const entry = values[i];
+          if (!entry) return;
+          await fetch(`/api/videos/${videoId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: entry.title,
+              description: entry.description || undefined,
+              tagIds: entry.tagIds,
+            }),
+          });
+        }),
+      );
+      setPhase("success");
+    } catch {
+      setPhase("form");
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   const hasErrors = Object.keys(errors.entries ?? {}).length > 0;

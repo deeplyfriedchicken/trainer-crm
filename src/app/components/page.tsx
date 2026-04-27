@@ -8,6 +8,7 @@ import {
   DialogSection,
   FeedbackSection,
   FormsSection,
+  PageHeaderSection,
   SessionsPanelSection,
   TableSection,
 } from "./_showcase/sections";
@@ -31,6 +32,7 @@ export default function ComponentsShowcase() {
         <SessionsPanelSection />
         <ChatPanelSection />
         <DialogSection />
+        <PageHeaderSection />
       </Box>
       <Toaster />
     </Box>

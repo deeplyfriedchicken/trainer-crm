@@ -22,6 +22,7 @@ export function Providers({ children }: { children: ReactNode }) {
     return (
       <style
         data-emotion={`${cache.key} ${names.join(" ")}`}
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: needed for emotion
         dangerouslySetInnerHTML={{
           __html: names.map((n) => cache.inserted[n]).join(" "),
         }}

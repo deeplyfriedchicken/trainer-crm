@@ -33,6 +33,7 @@ import { type ColumnDef, Table } from "../Table";
 import { ChatPanel, type ChatMessage } from "../ChatPanel";
 import { Dialog, DialogBody } from "../Dialog";
 import { SessionsPanel, type SessionEntry } from "../SessionsPanel";
+import { PageHeader } from "../PageHeader";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
 function Row({ children }: { children: React.ReactNode }) {
@@ -809,6 +810,37 @@ function ShowcaseDialog() {
         </DialogBody>
       </Dialog>
     </>
+  );
+}
+
+export function PageHeaderSection() {
+  return (
+    <Box
+      as="section"
+      id="page-header"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
+      <SectionTitle>Page Header</SectionTitle>
+      <SubSection title="Title only">
+        <PageHeader title="Dashboard" />
+      </SubSection>
+      <SubSection title="Title + subtitle">
+        <PageHeader title="Clients" subtitle="24 total · click any row to view profile" />
+      </SubSection>
+      <SubSection title="Title + subtitle + action">
+        <PageHeader
+          title="Videos"
+          subtitle="12 clips ready"
+          action={
+            <Button variant="outline" colorScheme="cyan" size="sm">
+              Upload Video
+            </Button>
+          }
+        />
+      </SubSection>
+    </Box>
   );
 }
 

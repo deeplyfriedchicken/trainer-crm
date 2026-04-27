@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import type { VideoRow } from "@/db/queries/videos";
+import { LuCalendar, LuClock, LuFileVideo, LuHardDrive, LuUpload, LuUser } from "react-icons/lu";
+import { Dialog, DialogBody } from "@/app/components/Dialog";
+import type { VideoRow as VideoRowType } from "@/db/queries/videos";
 
-type Tag = VideoRow["videoTags"][number]["tag"];
+type Tag = VideoRowType["videoTags"][number]["tag"];
 
 const TAG_COLORS = ["#FD6DBB", "#34FDFE", "#a78bfa", "#4ade80", "#fb923c"];
 const COLOR_MAP: Record<string, string> = {
@@ -37,11 +39,165 @@ function formatDuration(seconds: number | null): string | null {
 }
 
 function formatDate(d: Date): string {
-  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-export function VideoGallery({ videos }: { videos: VideoRow[] }) {
+function formatFileSize(bytes: number): string {
+  if (bytes >= 1e9) return `${(bytes / 1e9).toFixed(1)} GB`;
+  if (bytes >= 1e6) return `${(bytes / 1e6).toFixed(1)} MB`;
+  return `${(bytes / 1e3).toFixed(0)} KB`;
+}
+
+function VideoThumbnail({
+  src,
+  onAspectRatio,
+}: {
+  src: string;
+  onAspectRatio?: (ratio: string) => void;
+}) {
+  const ref = useRef<HTMLVideoElement>(null);
+  return (
+    <video
+      ref={ref}
+      src={src}
+      muted
+      playsInline
+      preload="metadata"
+      onLoadedMetadata={() => {
+        const v = ref.current;
+        if (v) {
+          v.currentTime = Math.min(1, v.duration * 0.1);
+          if (v.videoWidth && v.videoHeight) {
+            onAspectRatio?.(`${v.videoWidth} / ${v.videoHeight}`);
+          }
+        }
+      }}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    />
+  );
+}
+
+function VideoCard({
+  v,
+  onSelect,
+}: {
+  v: VideoRowType;
+  onSelect: () => void;
+}) {
+  const [aspectRatio, setAspectRatio] = useState("16 / 9");
+  const primaryTag = v.videoTags[0]?.tag ?? null;
+  const color = primaryTag ? tagColor(primaryTag.name) : "#34FDFE";
+  const uploaderCol = uploaderColor(v.uploader.name);
+  const duration = formatDuration(v.durationSeconds);
+
+  return (
+    <div className="crm-video-card" onClick={onSelect}>
+      <div className="crm-video-thumb" style={{ aspectRatio }}>
+        <VideoThumbnail src={v.fileUrl} onAspectRatio={setAspectRatio} />
+        <div className="crm-video-thumb-pattern" />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: `linear-gradient(135deg, ${color}0a, transparent 60%)`,
+          }}
+        />
+        <div className="crm-video-play">
+          <FaPlay size={14} color="#34FDFE" />
+        </div>
+        {duration && <div className="crm-video-duration">{duration}</div>}
+        {primaryTag && (
+          <div
+            className="crm-video-tag-pill"
+            style={{
+              background: `${color}22`,
+              color,
+              border: `1px solid ${color}44`,
+            }}
+          >
+            {primaryTag.name}
+          </div>
+        )}
+      </div>
+
+      <div className="crm-video-body">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 8,
+            marginBottom: 4,
+          }}
+        >
+          <div className="crm-video-title" style={{ flex: 1 }}>
+            {v.title}
+          </div>
+          {primaryTag && (
+            <span
+              style={{
+                background: `${color}22`,
+                color,
+                border: `1px solid ${color}44`,
+                borderRadius: 20,
+                padding: "2px 9px",
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              {primaryTag.name}
+            </span>
+          )}
+        </div>
+
+        {v.description && (
+          <p className="crm-video-desc">{v.description}</p>
+        )}
+
+        <div className="crm-video-meta">
+          <div className="crm-video-uploader">
+            <div
+              className="crm-mini-avatar"
+              style={{
+                background: `${uploaderCol}22`,
+                borderColor: `${uploaderCol}55`,
+                color: uploaderCol,
+              }}
+            >
+              {v.uploader.name[0]?.toUpperCase()}
+            </div>
+            {v.uploader.name}
+          </div>
+          <div className="crm-video-date">{formatDate(v.createdAt)}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function VideoGallery({
+  videos,
+  title = "Latest Videos",
+  subtitle = "Recently uploaded by your team",
+  onUpload,
+}: {
+  videos: VideoRowType[];
+  title?: string;
+  subtitle?: string;
+  onUpload?: () => void;
+}) {
   const [activeTag, setActiveTag] = useState<string>("All");
+  const [selectedVideo, setSelectedVideo] = useState<VideoRowType | null>(null);
 
   // Collect unique tags across all videos
   const allTags: Tag[] = [];
@@ -65,9 +221,29 @@ export function VideoGallery({ videos }: { videos: VideoRow[] }) {
     <>
       <div className="crm-page-header" style={{ marginBottom: 16, marginTop: 40 }}>
         <div>
-          <div className="crm-page-title">Latest Videos</div>
-          <div className="crm-page-sub">Recently uploaded by your team</div>
+          <div className="crm-page-title">{title}</div>
+          <div className="crm-page-sub">{subtitle}</div>
         </div>
+        {onUpload && (
+          <button
+            type="button"
+            onClick={onUpload}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              padding: "8px 18px", borderRadius: 10,
+              background: "rgba(52,253,254,0.1)",
+              border: "1px solid rgba(52,253,254,0.35)",
+              color: "var(--neon-cyan)", fontFamily: "var(--font-neon-body)",
+              fontSize: 13, fontWeight: 600, cursor: "pointer",
+              transition: "all 0.18s",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(52,253,254,0.18)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(52,253,254,0.1)"; }}
+          >
+            <LuUpload size={13} />
+            Upload Video
+          </button>
+        )}
       </div>
 
       {allTags.length > 0 && (
@@ -96,103 +272,129 @@ export function VideoGallery({ videos }: { videos: VideoRow[] }) {
         <div className="crm-table-empty">No videos yet.</div>
       ) : (
         <div className="crm-video-grid">
-          {shown.map((v) => {
-            const primaryTag = v.videoTags[0]?.tag ?? null;
-            const color = primaryTag ? tagColor(primaryTag.name) : "#34FDFE";
-            const uploaderCol = uploaderColor(v.uploader.name);
-            const duration = formatDuration(v.durationSeconds);
-
-            return (
-              <div key={v.id} className="crm-video-card">
-                <div className="crm-video-thumb">
-                  <div className="crm-video-thumb-pattern" />
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: `linear-gradient(135deg, ${color}0a, transparent 60%)`,
-                    }}
-                  />
-                  <div className="crm-video-play">
-                    <FaPlay size={14} color="#34FDFE" />
-                  </div>
-                  {duration && (
-                    <div className="crm-video-duration">{duration}</div>
-                  )}
-                  {primaryTag && (
-                    <div
-                      className="crm-video-tag-pill"
-                      style={{
-                        background: `${color}22`,
-                        color,
-                        border: `1px solid ${color}44`,
-                      }}
-                    >
-                      {primaryTag.name}
-                    </div>
-                  )}
-                </div>
-
-                <div className="crm-video-body">
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      justifyContent: "space-between",
-                      gap: 8,
-                      marginBottom: 4,
-                    }}
-                  >
-                    <div className="crm-video-title" style={{ flex: 1 }}>
-                      {v.title}
-                    </div>
-                    {primaryTag && (
-                      <span
-                        style={{
-                          background: `${color}22`,
-                          color,
-                          border: `1px solid ${color}44`,
-                          borderRadius: 20,
-                          padding: "2px 9px",
-                          fontSize: 10,
-                          fontWeight: 700,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.05em",
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {primaryTag.name}
-                      </span>
-                    )}
-                  </div>
-
-                  {v.description && (
-                    <p className="crm-video-desc">{v.description}</p>
-                  )}
-
-                  <div className="crm-video-meta">
-                    <div className="crm-video-uploader">
-                      <div
-                        className="crm-mini-avatar"
-                        style={{
-                          background: `${uploaderCol}22`,
-                          borderColor: `${uploaderCol}55`,
-                          color: uploaderCol,
-                        }}
-                      >
-                        {v.uploader.name[0]?.toUpperCase()}
-                      </div>
-                      {v.uploader.name}
-                    </div>
-                    <div className="crm-video-date">{formatDate(v.createdAt)}</div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {shown.map((v) => (
+            <VideoCard key={v.id} v={v} onSelect={() => setSelectedVideo(v)} />
+          ))}
         </div>
       )}
+
+      {selectedVideo && (() => {
+        const v = selectedVideo;
+        const uploaderCol = uploaderColor(v.uploader.name);
+        const duration = formatDuration(v.durationSeconds);
+        return (
+          <Dialog
+            isOpen
+            onClose={() => setSelectedVideo(null)}
+            maxWidth={900}
+          >
+            <video
+              key={v.id}
+              src={v.fileUrl}
+              controls
+              autoPlay
+              style={{
+                width: "100%",
+                display: "block",
+                maxHeight: "52vh",
+                background: "#000",
+              }}
+            />
+            <DialogBody>
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", lineHeight: 1.3, marginBottom: 6 }}>
+                  {v.title}
+                </div>
+                {v.videoTags.length > 0 && (
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {v.videoTags.map(({ tag }: { tag: Tag }) => {
+                      const c = tagColor(tag.name);
+                      return (
+                        <span
+                          key={tag.id}
+                          style={{
+                            background: `${c}22`,
+                            color: c,
+                            border: `1px solid ${c}44`,
+                            borderRadius: 20,
+                            padding: "2px 10px",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
+                          {tag.name}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {v.description && (
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 18 }}>
+                  {v.description}
+                </p>
+              )}
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
+                <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
+                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <div
+                      className="crm-mini-avatar"
+                      style={{
+                        background: `${uploaderCol}22`,
+                        borderColor: `${uploaderCol}55`,
+                        color: uploaderCol,
+                      }}
+                    >
+                      {v.uploader.name[0]?.toUpperCase()}
+                    </div>
+                    {v.uploader.name}
+                  </div>
+                </MetaRow>
+                <MetaRow icon={<LuCalendar size={13} />} label="Uploaded">
+                  {formatDate(v.createdAt)}
+                </MetaRow>
+                {duration && (
+                  <MetaRow icon={<LuClock size={13} />} label="Duration">
+                    {duration}
+                  </MetaRow>
+                )}
+                <MetaRow icon={<LuHardDrive size={13} />} label="File size">
+                  {formatFileSize(v.fileSizeBytes)}
+                </MetaRow>
+                <MetaRow icon={<LuFileVideo size={13} />} label="File">
+                  {v.fileName}
+                </MetaRow>
+              </div>
+            </DialogBody>
+          </Dialog>
+        );
+      })()}
     </>
+  );
+}
+
+function MetaRow({
+  icon,
+  label,
+  children,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 5, color: "rgba(255,255,255,0.35)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>
+        {icon}
+        {label}
+      </div>
+      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>
+        {children}
+      </div>
+    </div>
   );
 }

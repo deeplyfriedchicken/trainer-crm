@@ -5,6 +5,7 @@ import {
   ButtonsSection,
   CardsSection,
   ChatPanelSection,
+  DialogSection,
   FeedbackSection,
   FormsSection,
   SessionsPanelSection,
@@ -29,6 +30,7 @@ export default function ComponentsShowcase() {
         <TableSection />
         <SessionsPanelSection />
         <ChatPanelSection />
+        <DialogSection />
       </Box>
       <Toaster />
     </Box>

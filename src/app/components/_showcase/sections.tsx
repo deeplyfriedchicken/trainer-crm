@@ -31,6 +31,7 @@ import { Textarea } from "../Textarea";
 import { toaster } from "../Toast";
 import { type ColumnDef, Table } from "../Table";
 import { ChatPanel, type ChatMessage } from "../ChatPanel";
+import { Dialog, DialogBody } from "../Dialog";
 import { SessionsPanel, type SessionEntry } from "../SessionsPanel";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
@@ -668,9 +669,9 @@ const SHOWCASE_SESSIONS: SessionEntry[] = [
     painRating: 2,
     comment: "Felt great today, really pushed through the last set.",
     exercises: [
-      { id: "e1", name: "Barbell Back Squat", sets: 4, reps: 8 },
-      { id: "e2", name: "Romanian Deadlift", sets: 3, reps: 10 },
-      { id: "e3", name: "Plank Hold", sets: 3, reps: 60 },
+      { id: "e1", name: "Barbell Back Squat", sets: 4, reps: 8, videos: [] },
+      { id: "e2", name: "Romanian Deadlift", sets: 3, reps: 10, videos: [] },
+      { id: "e3", name: "Plank Hold", sets: 3, reps: 60, videos: [] },
     ],
   },
   {
@@ -680,8 +681,8 @@ const SHOWCASE_SESSIONS: SessionEntry[] = [
     painRating: 4,
     comment: "Tough session but got through it. Very tired afterwards.",
     exercises: [
-      { id: "e4", name: "Dumbbell Row", sets: 4, reps: 10 },
-      { id: "e5", name: "Box Jump", sets: 4, reps: 6 },
+      { id: "e4", name: "Dumbbell Row", sets: 4, reps: 10, videos: [] },
+      { id: "e5", name: "Box Jump", sets: 4, reps: 6, videos: [] },
     ],
   },
   {
@@ -779,6 +780,56 @@ export function ChatPanelSection() {
         <Box maxW="520px">
           <ShowcaseChatPanel />
         </Box>
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── Dialog showcase ──────────────────────────────────────────────────────────
+
+function ShowcaseDialog() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open Dialog</Button>
+      <Dialog isOpen={open} onClose={() => setOpen(false)} title="Example Dialog" maxWidth={480}>
+        <DialogBody>
+          <Box display="flex" flexDirection="column" gap="16px">
+            <Box fontSize="14px" color="var(--neon-text-muted)" lineHeight="1.6">
+              This is a reusable dialog shell. Drop any content inside — forms,
+              confirmations, detail panels. Esc or clicking the backdrop closes it.
+            </Box>
+            <Box display="flex" gap="10px" justifyContent="flex-end">
+              <Button variant="ghost" colorScheme="pink" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={() => setOpen(false)}>Confirm</Button>
+            </Box>
+          </Box>
+        </DialogBody>
+      </Dialog>
+    </>
+  );
+}
+
+export function DialogSection() {
+  return (
+    <Box
+      as="section"
+      id="dialog"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
+      <SectionTitle>Dialog</SectionTitle>
+      <SubSection title="Modal overlay">
+        <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
+          Generic modal shell. Pass{" "}
+          <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">title</Box> for the built-in header row, or omit it and render your own header inside{" "}
+          <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">children</Box>.
+          Backdrop click and Esc both close.
+        </Box>
+        <ShowcaseDialog />
       </SubSection>
     </Box>
   );

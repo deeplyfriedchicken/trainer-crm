@@ -1,0 +1,281 @@
+/* ── Custom header ── */
+.header {
+  padding: 22px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.headerTitle {
+  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.headerSub { font-size: 12px; color: rgba(255, 255, 255, 0.35); margin-top: 3px; }
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.closeBtn:hover { background: rgba(255, 255, 255, 0.12); }
+
+/* ── Scrollable body ── */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.body::-webkit-scrollbar { width: 4px; }
+.body::-webkit-scrollbar-track { background: transparent; }
+.body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+
+/* ── Section title ── */
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 10px;
+}
+
+/* ── Field label ── */
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.45);
+}
+.fieldLabelError { color: #f87171; }
+.fieldError { font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+/* ── Input / Textarea / Select ── */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  padding: 9px 12px;
+  color: #fff;
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.input:focus,
+.textarea:focus,
+.select:focus { border-color: rgba(52, 253, 254, 0.5); }
+.inputError { background: rgba(248, 113, 113, 0.06); border-color: rgba(248, 113, 113, 0.5); }
+.inputError:focus { border-color: #f87171; }
+.textarea { resize: vertical; min-height: 72px; }
+.select { appearance: none; cursor: pointer; }
+.select option { background: #0f0f1e; }
+
+/* ── Two-col grid ── */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── Exercise cards ── */
+.exerciseList { display: flex; flex-direction: column; gap: 12px; }
+
+.exerciseCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.exerciseCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.exerciseCardNum {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.3);
+}
+.removeExBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  cursor: pointer;
+  color: #f87171;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.removeExBtn:hover { background: rgba(248, 113, 113, 0.2); }
+
+/* ── Row inside exercise card ── */
+.threeCol {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* ── Video chips (linked videos per exercise) ── */
+.videoChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.videoChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(52, 253, 254, 0.1);
+  border: 1px solid rgba(52, 253, 254, 0.3);
+  border-radius: 6px;
+  padding: 3px 6px 3px 9px;
+  max-width: 200px;
+}
+
+.videoChipTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(52, 253, 254, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.videoChipRemove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(52, 253, 254, 0.5);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.videoChipRemove:hover { color: rgba(52, 253, 254, 0.9); }
+
+.linkVideoBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1px dashed rgba(52, 253, 254, 0.3);
+  background: transparent;
+  color: rgba(52, 253, 254, 0.6);
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.linkVideoBtn:hover {
+  border-color: rgba(52, 253, 254, 0.6);
+  color: var(--neon-cyan, #34fdfe);
+}
+
+/* ── Add exercise button ── */
+.addExBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1.5px dashed rgba(52, 253, 254, 0.25);
+  background: transparent;
+  color: rgba(52, 253, 254, 0.55);
+  cursor: pointer;
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+  width: 100%;
+}
+.addExBtn:hover { border-color: rgba(52, 253, 254, 0.5); color: var(--neon-cyan, #34fdfe); }
+
+/* ── Error banner ── */
+.errorBanner {
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #f87171;
+}
+
+/* ── Footer ── */
+.footer {
+  padding: 16px 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.cancelBtn {
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+.cancelBtn:hover { color: rgba(255, 255, 255, 0.8); }
+
+.saveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 22px;
+  border-radius: 10px;
+  border: none;
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.saveBtn:disabled { opacity: 0.45; cursor: not-allowed; }

@@ -7,7 +7,7 @@ const f = createUploadthing();
 
 export const ourFileRouter = {
   videoUploader: f({
-    video: { maxFileSize: "512MB", maxFileCount: 1 },
+    video: { maxFileSize: "512MB", maxFileCount: 10 },
   })
     .middleware(async () => {
       const user = await getCurrentUser();
@@ -24,7 +24,7 @@ export const ourFileRouter = {
           fileName: file.name,
           fileSizeBytes: file.size,
           mimeType: file.type,
-          status: "ready",
+          status: "uploading",
         })
         .onConflictDoNothing({ target: videos.fileKey })
         .returning({ id: videos.id });

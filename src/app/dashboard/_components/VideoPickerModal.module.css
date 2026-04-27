@@ -1,0 +1,160 @@
+.searchBar {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.searchInput {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #fff;
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.searchInput:focus { border-color: rgba(52, 253, 254, 0.5); }
+.searchInput::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 16px 20px;
+}
+.body::-webkit-scrollbar { width: 4px; }
+.body::-webkit-scrollbar-track { background: transparent; }
+.body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--neon-surface-2, #141428);
+  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.card:hover {
+  border-color: rgba(52, 253, 254, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.cardSelected {
+  border-color: rgba(52, 253, 254, 0.6);
+  box-shadow: 0 0 0 2px rgba(52, 253, 254, 0.25);
+}
+.cardAlreadyLinked {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0a0a18;
+  overflow: hidden;
+}
+
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.card:hover .playOverlay { opacity: 1; }
+
+.playCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(52, 253, 254, 0.2);
+  border: 1.5px solid rgba(52, 253, 254, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.linkedBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(52, 253, 254, 0.9);
+  color: #001a1a;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.cardBody {
+  padding: 8px 10px;
+}
+.cardTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cardDuration {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--font-neon-mono), "Space Mono", monospace;
+  margin-top: 2px;
+}
+
+.loadMore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 14px;
+  transition: all 0.15s;
+}
+.loadMore:hover:not(:disabled) { border-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.7); }
+.loadMore:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.empty {
+  padding: 40px 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+}
+
+.spinner {
+  padding: 40px 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+}

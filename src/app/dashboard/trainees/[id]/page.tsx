@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
-import { SessionsPanel } from "@/app/components/SessionsPanel";
 import { getOrCreateChat } from "@/db/queries/chats";
 import { getTraineeById } from "@/db/queries/trainees";
 import { getCurrentUser } from "@/lib/auth";
 import { BackLink } from "./_components/BackLink";
 import { ProfileHero } from "./_components/ProfileHero";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
+import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
 import "./page.css";
 
 const COLOR_MAP: Record<string, string> = {
@@ -63,6 +63,26 @@ export default async function TraineePage({
     year: "numeric",
   });
 
+  const sessions = trainee.coachingSessions.map((s) => ({
+    id: s.id,
+    occurredAt: s.occurredAt,
+    energyRating: s.energyRating,
+    painRating: s.painRating,
+    comment: s.comment,
+    exercises: s.exercises.map((ex) => ({
+      id: ex.id,
+      name: ex.name,
+      sets: ex.sets,
+      reps: ex.reps,
+      comment: ex.comment,
+      videos: ex.videoLinks.map((vl) => ({
+        id: vl.video.id,
+        title: vl.video.title,
+        url: vl.video.fileUrl,
+      })),
+    })),
+  }));
+
   return (
     <div className="crm-page" style={{ paddingBottom: 60 }}>
       <BackLink href="/dashboard">Back to Dashboard</BackLink>
@@ -85,8 +105,9 @@ export default async function TraineePage({
       />
 
       <div className="crm-split-panel">
-        <SessionsPanel
-          sessions={trainee.coachingSessions}
+        <TraineeSessionsPanel
+          traineeId={trainee.id}
+          sessions={sessions}
           accentColor={accentColor}
         />
         <TraineeChatPanel

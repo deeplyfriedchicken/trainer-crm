@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
     status = statusParam as VideoStatus;
   }
 
-  const data = await listVideos({ limit, offset, uploaderId, status });
+  const search = params.get("q") ?? undefined;
+  const data = await listVideos({ limit, offset, uploaderId, status, search });
 
   return Response.json({
     data,

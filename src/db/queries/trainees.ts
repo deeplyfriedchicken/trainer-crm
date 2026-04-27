@@ -99,6 +99,11 @@ export async function getTraineeById(id: string) {
         with: {
           exercises: {
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
+            with: {
+              videoLinks: {
+                with: { video: { columns: { id: true, title: true, fileUrl: true } } },
+              },
+            },
           },
         },
       },

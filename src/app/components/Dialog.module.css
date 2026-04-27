@@ -1,0 +1,81 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 4, 14, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.panel {
+  position: relative;
+  width: min(var(--dialog-max-width, 740px), 95vw);
+  max-height: 90vh;
+  background: #0a0a1a;
+  border: 1.5px solid rgba(52, 253, 254, 0.27);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0 60px rgba(52, 253, 254, 0.1),
+    0 40px 100px rgba(0, 0, 0, 0.9);
+  animation: dialog-scale-in 0.2s ease forwards;
+  overflow: hidden;
+}
+
+@keyframes dialog-scale-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+.header {
+  padding: 22px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.closeBtn:hover { background: rgba(255, 255, 255, 0.12); }
+
+/* Opt-in scroll body — use <DialogBody> when the Dialog has a title header and you want built-in scroll */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 24px 28px;
+}
+.body::-webkit-scrollbar { width: 4px; }
+.body::-webkit-scrollbar-track { background: transparent; }
+.body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }

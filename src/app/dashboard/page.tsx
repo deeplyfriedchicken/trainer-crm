@@ -8,8 +8,10 @@ export default async function DashboardHome() {
   const [trainees, trainers, videos] = await Promise.all([
     listTrainees({ limit: 100, offset: 0 }),
     listTrainers({ limit: 100, offset: 0 }),
-    listVideos({ limit: 12, offset: 0 }),
+    listVideos({ limit: 12, offset: 0, status: "ready" }),
   ]);
+
+  console.log({ videos });
 
   const totalSessions = trainees.reduce((sum, t) => sum + t.sessionCount, 0);
 

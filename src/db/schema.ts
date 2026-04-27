@@ -123,7 +123,6 @@ export const videos = pgTable(
       .references(() => users.id, { onDelete: "restrict" }),
     title: text("title").notNull(),
     description: text("description"),
-    // UploadThing fields — map directly from the webhook payload.
     fileKey: text("file_key").notNull(),
     fileUrl: text("file_url").notNull(),
     fileName: text("file_name").notNull(),

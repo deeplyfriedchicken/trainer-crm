@@ -9,9 +9,7 @@ export type CurrentUser = {
   roles: UserRole[];
 };
 
-// TODO(auth): replace with real session lookup. For now we resolve a single
-// seeded user so route handlers and the UploadThing middleware share one
-// integration point.
+// TODO(auth): replace with real session lookup.
 export async function getCurrentUser(): Promise<CurrentUser> {
   const email =
     process.env.STUB_CURRENT_USER_EMAIL ?? "kevin.a.cunanan@gmail.com";

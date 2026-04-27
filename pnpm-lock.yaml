@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       '@aws-sdk/client-s3':
-        specifier: ^3.1037.0
+        specifier: 3.1037.0
         version: 3.1037.0
       '@aws-sdk/s3-request-presigner':
-        specifier: ^3.1037.0
+        specifier: 3.1037.0
         version: 3.1037.0
       '@chakra-ui/react':
         specifier: 3.35.0
         version: 3.35.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@emotion/cache':
-        specifier: ^11.14.0
+        specifier: 11.14.0
         version: 11.14.0
       '@emotion/react':
         specifier: 11.14.0
@@ -30,7 +30,7 @@ importers:
         specifier: 5.2.2
         version: 5.2.2(react-hook-form@7.74.0(react@19.2.4))
       '@paralleldrive/cuid2':
-        specifier: ^3.3.0
+        specifier: 3.3.0
         version: 3.3.0
       '@tanstack/react-query':
         specifier: 5.99.2
@@ -54,13 +54,13 @@ importers:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
       react-hook-form:
-        specifier: ^7.74.0
+        specifier: 7.74.0
         version: 7.74.0(react@19.2.4)
       react-icons:
-        specifier: ^5.6.0
+        specifier: 5.6.0
         version: 5.6.0(react@19.2.4)
       zod:
-        specifier: ^4.3.6
+        specifier: 4.3.6
         version: 4.3.6
     devDependencies:
       '@biomejs/biome':

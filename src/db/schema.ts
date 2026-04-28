@@ -48,6 +48,8 @@ export const users = pgTable(
     id: id(),
     email: text("email").notNull(),
     name: text("name").notNull(),
+    pin: text("pin"),
+    pinUpdatedAt: timestamp("pin_updated_at", { withTimezone: true }),
     ...timestamps,
   },
   (t) => [uniqueIndex("users_email_idx").on(t.email)],

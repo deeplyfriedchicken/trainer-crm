@@ -1,9 +1,8 @@
-import { and, asc, count, eq, inArray, isNull, max, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNull, max } from "drizzle-orm";
 import { db } from "@/db";
 import {
   coachingSessions,
   trainerAssignments,
-  userRoles,
   users,
 } from "@/db/schema";
 
@@ -16,25 +15,22 @@ export type ListTraineesOptions = {
 };
 
 export async function listTrainees(options: ListTraineesOptions) {
-  const traineeIdsSubquery = db
-    .select({ userId: userRoles.userId })
-    .from(userRoles)
-    .where(sql`${userRoles.role} = 'trainee'`);
-
-  const conditions = [inArray(users.id, traineeIdsSubquery)];
-
-  if (options.trainerId) {
-    const activeTraineeIds = db
-      .select({ traineeId: trainerAssignments.traineeId })
-      .from(trainerAssignments)
-      .where(
-        and(
-          eq(trainerAssignments.trainerId, options.trainerId),
-          isNull(trainerAssignments.endedAt),
-        ),
-      );
-    conditions.push(inArray(users.id, activeTraineeIds));
-  }
+  // When filtering by trainer, only show their assigned clients.
+  // Otherwise return every user in the system.
+  const whereClause = options.trainerId
+    ? inArray(
+        users.id,
+        db
+          .select({ traineeId: trainerAssignments.traineeId })
+          .from(trainerAssignments)
+          .where(
+            and(
+              eq(trainerAssignments.trainerId, options.trainerId),
+              isNull(trainerAssignments.endedAt),
+            ),
+          ),
+      )
+    : undefined;
 
   const rows = await db
     .select({
@@ -47,7 +43,7 @@ export async function listTrainees(options: ListTraineesOptions) {
       lastSessionAt: max(coachingSessions.occurredAt),
     })
     .from(users)
-    .where(and(...conditions))
+    .where(whereClause)
     .leftJoin(coachingSessions, eq(coachingSessions.traineeId, users.id))
     .groupBy(users.id, users.email, users.name, users.createdAt, users.updatedAt)
     .orderBy(asc(users.name))
@@ -111,7 +107,6 @@ export async function getTraineeById(id: string) {
   });
 
   if (!user) return null;
-  if (!user.roles.some((r) => r.role === "trainee")) return null;
 
   const [activeAssignment] = user.traineeAssignments;
 

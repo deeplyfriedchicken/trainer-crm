@@ -2,7 +2,9 @@ import { notFound } from "next/navigation";
 import { getOrCreateChat } from "@/db/queries/chats";
 import { getTraineeById } from "@/db/queries/trainees";
 import { getCurrentUser } from "@/lib/auth";
+import { encryptUserId } from "@/lib/client-token";
 import { BackLink } from "./_components/BackLink";
+import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
 import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
@@ -58,6 +60,7 @@ export default async function TraineePage({
 
   const accentColor = colorFor(trainee.name);
   const trainerName = trainee.activeTrainer?.trainer.name ?? "Unassigned";
+  const clientToken = encryptUserId(trainee.id);
   const memberSince = trainee.createdAt.toLocaleDateString("en-US", {
     month: "short",
     year: "numeric",
@@ -85,7 +88,10 @@ export default async function TraineePage({
 
   return (
     <div className="crm-page" style={{ paddingBottom: 60 }}>
-      <BackLink href="/dashboard">Back to Dashboard</BackLink>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        <BackLink href="/dashboard">Back to Dashboard</BackLink>
+        <ClientPortalLink encryptedToken={clientToken} />
+      </div>
 
       <ProfileHero
         name={trainee.name}

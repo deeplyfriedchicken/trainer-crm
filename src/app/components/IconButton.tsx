@@ -1,6 +1,6 @@
 "use client";
 
-import { IconButton as ChakraIconButton } from "@chakra-ui/react";
+import { IconButton as ChakraIconButton, chakra } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import type { NeonColorScheme, NeonSize, NeonVariant } from "./Button";
 
@@ -22,7 +22,7 @@ const sizeMap: Record<NeonSize, { box: string; fontSize: string }> = {
   xl: { box: "54px", fontSize: "20px" },
 };
 
-export const IconButton = forwardRef<HTMLButtonElement, NeonIconButtonProps>(
+const IconButtonBase = forwardRef<HTMLButtonElement, NeonIconButtonProps>(
   function IconButton(
     { colorScheme = "pink", variant = "solid", size = "md", children, ...rest },
     ref,
@@ -68,3 +68,5 @@ export const IconButton = forwardRef<HTMLButtonElement, NeonIconButtonProps>(
     );
   },
 );
+
+export const IconButton = chakra(IconButtonBase);

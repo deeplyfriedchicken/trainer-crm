@@ -1,6 +1,6 @@
 "use client";
 
-import { RadioGroup } from "@chakra-ui/react";
+import { RadioGroup, chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import type { NeonColorScheme } from "./Button";
 
@@ -10,7 +10,7 @@ export interface NeonRadioOption {
   disabled?: boolean;
 }
 
-export interface NeonRadioGroupProps {
+export interface NeonRadioGroupProps extends React.HTMLAttributes<HTMLElement> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -20,7 +20,7 @@ export interface NeonRadioGroupProps {
   colorScheme?: NeonColorScheme;
 }
 
-export function Radio({
+function RadioBase({
   value,
   defaultValue,
   onValueChange,
@@ -28,6 +28,7 @@ export function Radio({
   name,
   orientation = "vertical",
   colorScheme = "pink",
+  ...rest
 }: NeonRadioGroupProps) {
   const color = `var(--neon-${colorScheme})`;
   return (
@@ -40,6 +41,7 @@ export function Radio({
       display="flex"
       flexDirection={orientation === "vertical" ? "column" : "row"}
       gap={orientation === "vertical" ? "10px" : "18px"}
+      {...rest}
     >
       {options.map((opt) => (
         <RadioGroup.Item
@@ -83,3 +85,5 @@ export function Radio({
     </RadioGroup.Root>
   );
 }
+
+export const Radio = chakra(RadioBase);

@@ -1,10 +1,10 @@
 "use client";
 
-import { Switch as ChakraSwitch } from "@chakra-ui/react";
+import { Switch as ChakraSwitch, chakra } from "@chakra-ui/react";
 import { forwardRef, type ReactNode } from "react";
 import type { NeonColorScheme } from "./Button";
 
-export interface NeonSwitchProps {
+export interface NeonSwitchProps extends React.HTMLAttributes<HTMLElement> {
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -14,7 +14,7 @@ export interface NeonSwitchProps {
   children?: ReactNode;
 }
 
-export const Switch = forwardRef<HTMLLabelElement, NeonSwitchProps>(
+const SwitchBase = forwardRef<HTMLLabelElement, NeonSwitchProps>(
   function Switch(
     {
       checked,
@@ -24,6 +24,7 @@ export const Switch = forwardRef<HTMLLabelElement, NeonSwitchProps>(
       name,
       colorScheme = "pink",
       children,
+      ...rest
     },
     ref,
   ) {
@@ -38,6 +39,7 @@ export const Switch = forwardRef<HTMLLabelElement, NeonSwitchProps>(
         name={name}
         gap="10px"
         cursor={disabled ? "not-allowed" : "pointer"}
+        {...rest}
       >
         <ChakraSwitch.HiddenInput />
         <ChakraSwitch.Control
@@ -76,3 +78,5 @@ export const Switch = forwardRef<HTMLLabelElement, NeonSwitchProps>(
     );
   },
 );
+
+export const Switch = chakra(SwitchBase);

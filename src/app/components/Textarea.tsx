@@ -3,6 +3,7 @@
 import {
   Textarea as ChakraTextarea,
   type TextareaProps as ChakraTextareaProps,
+  chakra,
 } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import type { NeonColorScheme } from "./Button";
@@ -12,7 +13,7 @@ export interface NeonTextareaProps extends ChakraTextareaProps {
   invalid?: boolean;
 }
 
-export const Textarea = forwardRef<HTMLTextAreaElement, NeonTextareaProps>(
+const TextareaBase = forwardRef<HTMLTextAreaElement, NeonTextareaProps>(
   function Textarea({ colorScheme = "pink", invalid = false, ...rest }, ref) {
     const color = `var(--neon-${colorScheme})`;
     return (
@@ -40,3 +41,5 @@ export const Textarea = forwardRef<HTMLTextAreaElement, NeonTextareaProps>(
     );
   },
 );
+
+export const Textarea = chakra(TextareaBase);

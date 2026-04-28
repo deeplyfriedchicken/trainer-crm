@@ -1,11 +1,16 @@
 "use client";
 
-import { Alert as ChakraAlert, type AlertRootProps } from "@chakra-ui/react";
+import {
+  type AlertRootProps,
+  Alert as ChakraAlert,
+  chakra,
+} from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
 export type NeonAlertStatus = "info" | "success" | "warning" | "error";
 
-export interface NeonAlertProps extends Omit<AlertRootProps, "status" | "title"> {
+export interface NeonAlertProps
+  extends Omit<AlertRootProps, "status" | "title"> {
   status?: NeonAlertStatus;
   title?: ReactNode;
   children?: ReactNode;
@@ -26,7 +31,7 @@ const iconMap: Record<NeonAlertStatus, string> = {
   error: "×",
 };
 
-export function Alert({
+function AlertBase({
   status = "info",
   title,
   children,
@@ -63,7 +68,12 @@ export function Alert({
       >
         {icon ?? iconMap[status]}
       </ChakraAlert.Indicator>
-      <ChakraAlert.Content flex="1" display="flex" flexDirection="column" gap="3px">
+      <ChakraAlert.Content
+        flex="1"
+        display="flex"
+        flexDirection="column"
+        gap="3px"
+      >
         {title && (
           <ChakraAlert.Title
             fontSize="13px"
@@ -88,3 +98,5 @@ export function Alert({
     </ChakraAlert.Root>
   );
 }
+
+export const Alert = chakra(AlertBase);

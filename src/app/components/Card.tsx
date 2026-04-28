@@ -1,6 +1,6 @@
 "use client";
 
-import { Card as ChakraCard, type CardRootProps } from "@chakra-ui/react";
+import { Card as ChakraCard, type CardRootProps, chakra } from "@chakra-ui/react";
 import { forwardRef } from "react";
 
 export type NeonCardVariant = "solid" | "outlined" | "glow";
@@ -11,7 +11,7 @@ export interface NeonCardProps
   glowColor?: "pink" | "cyan";
 }
 
-export const Card = forwardRef<HTMLDivElement, NeonCardProps>(function Card(
+const CardBase = forwardRef<HTMLDivElement, NeonCardProps>(function Card(
   { variant = "solid", glowColor = "pink", children, ...rest },
   ref,
 ) {
@@ -49,7 +49,9 @@ export const Card = forwardRef<HTMLDivElement, NeonCardProps>(function Card(
   );
 });
 
-export const CardHeader = forwardRef<
+export const Card = chakra(CardBase);
+
+const CardHeaderBase = forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof ChakraCard.Header>
 >(function CardHeader(props, ref) {
@@ -63,7 +65,9 @@ export const CardHeader = forwardRef<
   );
 });
 
-export const CardTitle = forwardRef<
+export const CardHeader = chakra(CardHeaderBase);
+
+const CardTitleBase = forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof ChakraCard.Title>
 >(function CardTitle(props, ref) {
@@ -80,7 +84,9 @@ export const CardTitle = forwardRef<
   );
 });
 
-export const CardDescription = forwardRef<
+export const CardTitle = chakra(CardTitleBase);
+
+const CardDescriptionBase = forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof ChakraCard.Description>
 >(function CardDescription(props, ref) {
@@ -95,7 +101,9 @@ export const CardDescription = forwardRef<
   );
 });
 
-export const CardBody = forwardRef<
+export const CardDescription = chakra(CardDescriptionBase);
+
+const CardBodyBase = forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof ChakraCard.Body>
 >(function CardBody(props, ref) {
@@ -110,7 +118,9 @@ export const CardBody = forwardRef<
   );
 });
 
-export const CardFooter = forwardRef<
+export const CardBody = chakra(CardBodyBase);
+
+const CardFooterBase = forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof ChakraCard.Footer>
 >(function CardFooter(props, ref) {
@@ -125,3 +135,5 @@ export const CardFooter = forwardRef<
     />
   );
 });
+
+export const CardFooter = chakra(CardFooterBase);

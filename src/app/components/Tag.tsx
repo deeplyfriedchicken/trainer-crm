@@ -1,16 +1,16 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
+import { Box, chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import type { NeonColorScheme } from "./Button";
 
-export interface NeonTagProps {
+export interface NeonTagProps extends React.HTMLAttributes<HTMLElement> {
   children: ReactNode;
   colorScheme?: NeonColorScheme;
   onRemove?: () => void;
 }
 
-export function Tag({ children, colorScheme = "pink", onRemove }: NeonTagProps) {
+function TagBase({ children, colorScheme = "pink", onRemove, ...rest }: NeonTagProps) {
   const color = `var(--neon-${colorScheme})`;
   return (
     <Box
@@ -28,6 +28,7 @@ export function Tag({ children, colorScheme = "pink", onRemove }: NeonTagProps) 
       fontSize="12px"
       fontWeight={600}
       fontFamily="var(--font-neon-body), sans-serif"
+      {...rest}
     >
       {children}
       {onRemove && (
@@ -51,3 +52,5 @@ export function Tag({ children, colorScheme = "pink", onRemove }: NeonTagProps) 
     </Box>
   );
 }
+
+export const Tag = chakra(TagBase);

@@ -3,13 +3,14 @@
 import {
   Separator as ChakraSeparator,
   type SeparatorProps,
+  chakra,
 } from "@chakra-ui/react";
 
 export interface NeonSeparatorProps extends SeparatorProps {
   accent?: "pink" | "cyan" | "none";
 }
 
-export function Separator({ accent = "none", ...rest }: NeonSeparatorProps) {
+function SeparatorBase({ accent = "none", ...rest }: NeonSeparatorProps) {
   const color =
     accent === "pink"
       ? "var(--neon-pink)"
@@ -25,3 +26,5 @@ export function Separator({ accent = "none", ...rest }: NeonSeparatorProps) {
     />
   );
 }
+
+export const Separator = chakra(SeparatorBase);

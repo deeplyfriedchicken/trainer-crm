@@ -1,6 +1,6 @@
 "use client";
 
-import { NativeSelect } from "@chakra-ui/react";
+import { chakra, NativeSelect } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import type { NeonColorScheme, NeonSize } from "./Button";
 
@@ -19,13 +19,16 @@ export interface NeonSelectProps
   invalid?: boolean;
 }
 
-const sizeMap: Record<Exclude<NeonSize, "xl">, { h: string; fontSize: string; px: string }> = {
+const sizeMap: Record<
+  Exclude<NeonSize, "xl">,
+  { h: string; fontSize: string; px: string }
+> = {
   sm: { h: "30px", fontSize: "12px", px: "10px" },
   md: { h: "38px", fontSize: "13px", px: "12px" },
   lg: { h: "46px", fontSize: "14px", px: "14px" },
 };
 
-export const Select = forwardRef<HTMLSelectElement, NeonSelectProps>(
+const SelectBase = forwardRef<HTMLSelectElement, NeonSelectProps>(
   function Select(
     {
       options,
@@ -33,6 +36,8 @@ export const Select = forwardRef<HTMLSelectElement, NeonSelectProps>(
       colorScheme = "pink",
       size = "md",
       invalid = false,
+      className,
+      style,
       ...rest
     },
     ref,
@@ -44,6 +49,8 @@ export const Select = forwardRef<HTMLSelectElement, NeonSelectProps>(
         size={size}
         borderRadius="var(--neon-radius)"
         w="full"
+        className={className}
+        style={style}
       >
         <NativeSelect.Field
           ref={ref}
@@ -81,3 +88,5 @@ export const Select = forwardRef<HTMLSelectElement, NeonSelectProps>(
     );
   },
 );
+
+export const Select = chakra(SelectBase);

@@ -1,13 +1,20 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, chakra, Flex } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
-export interface PageHeaderProps {
+// Omit "title" — HTMLAttributes.title is string, but our title is ReactNode
+export interface PageHeaderProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
   title: ReactNode;
   subtitle?: ReactNode;
   action?: ReactNode;
 }
 
-export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
+function PageHeaderComponent({
+  title,
+  subtitle,
+  action,
+  ...rest
+}: PageHeaderProps) {
   return (
     <Flex
       justify={{ base: "flex-start", md: "space-between" }}
@@ -15,6 +22,7 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
       flexDirection={{ base: "column", md: "row" }}
       gap={{ base: "12px", md: "0" }}
       mb="28px"
+      {...rest}
     >
       <Box>
         <Box
@@ -41,3 +49,5 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
     </Flex>
   );
 }
+
+export const PageHeader = chakra(PageHeaderComponent);

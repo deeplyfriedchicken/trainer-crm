@@ -1,9 +1,9 @@
 "use client";
 
-import { Field as ChakraField } from "@chakra-ui/react";
+import { Field as ChakraField, chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
-export interface NeonFieldProps {
+export interface NeonFieldProps extends React.HTMLAttributes<HTMLElement> {
   label?: ReactNode;
   helperText?: ReactNode;
   errorText?: ReactNode;
@@ -13,7 +13,7 @@ export interface NeonFieldProps {
   children: ReactNode;
 }
 
-export function Field({
+function FieldBase({
   label,
   helperText,
   errorText,
@@ -21,6 +21,7 @@ export function Field({
   invalid,
   disabled,
   children,
+  ...rest
 }: NeonFieldProps) {
   return (
     <ChakraField.Root
@@ -30,6 +31,7 @@ export function Field({
       gap="6px"
       display="flex"
       flexDirection="column"
+      {...rest}
     >
       {label && (
         <ChakraField.Label
@@ -68,3 +70,5 @@ export function Field({
     </ChakraField.Root>
   );
 }
+
+export const Field = chakra(FieldBase);

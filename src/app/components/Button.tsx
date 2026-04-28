@@ -3,6 +3,7 @@
 import {
   Button as ChakraButton,
   type ButtonProps as ChakraButtonProps,
+  chakra,
 } from "@chakra-ui/react";
 import { forwardRef } from "react";
 
@@ -50,7 +51,11 @@ function stylesFor(
       bg: color,
       color: "#070712",
       boxShadow: `0 0 18px ${color}66`,
-      _hover: { bg: colorSoft, boxShadow: `0 0 28px ${color}cc`, transform: "translateY(-1px)" },
+      _hover: {
+        bg: colorSoft,
+        boxShadow: `0 0 28px ${color}cc`,
+        transform: "translateY(-1px)",
+      },
       _active: { transform: "translateY(0)" },
     };
   }
@@ -89,15 +94,9 @@ function stylesFor(
   };
 }
 
-export const Button = forwardRef<HTMLButtonElement, NeonButtonProps>(
+const ButtonBase = forwardRef<HTMLButtonElement, NeonButtonProps>(
   function Button(
-    {
-      colorScheme = "pink",
-      variant = "solid",
-      size = "md",
-      children,
-      ...rest
-    },
+    { colorScheme = "pink", variant = "solid", size = "md", children, ...rest },
     ref,
   ) {
     const s = sizeMap[size];
@@ -116,3 +115,6 @@ export const Button = forwardRef<HTMLButtonElement, NeonButtonProps>(
     );
   },
 );
+
+// chakra() strips "size" via PatchHtmlProps — cast back to restore it
+export const Button = chakra(ButtonBase) as unknown as typeof ButtonBase;

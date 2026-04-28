@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge as ChakraBadge, type BadgeProps } from "@chakra-ui/react";
+import { Badge as ChakraBadge, type BadgeProps, chakra } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import type { NeonColorScheme } from "./Button";
 
@@ -12,7 +12,7 @@ export interface NeonBadgeProps
   variant?: NeonBadgeVariant;
 }
 
-export const Badge = forwardRef<HTMLSpanElement, NeonBadgeProps>(
+const BadgeBase = forwardRef<HTMLSpanElement, NeonBadgeProps>(
   function Badge(
     { colorScheme = "pink", variant = "subtle", children, ...rest },
     ref,
@@ -61,3 +61,5 @@ export const Badge = forwardRef<HTMLSpanElement, NeonBadgeProps>(
     );
   },
 );
+
+export const Badge = chakra(BadgeBase);

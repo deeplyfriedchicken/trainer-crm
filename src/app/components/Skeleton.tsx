@@ -1,11 +1,11 @@
 "use client";
 
-import { Skeleton as ChakraSkeleton, type SkeletonProps } from "@chakra-ui/react";
+import { Skeleton as ChakraSkeleton, type SkeletonProps, chakra } from "@chakra-ui/react";
 import { forwardRef } from "react";
 
 export type NeonSkeletonProps = SkeletonProps;
 
-export const Skeleton = forwardRef<HTMLDivElement, NeonSkeletonProps>(
+const SkeletonBase = forwardRef<HTMLDivElement, NeonSkeletonProps>(
   function Skeleton(props, ref) {
     return (
       <ChakraSkeleton
@@ -21,3 +21,5 @@ export const Skeleton = forwardRef<HTMLDivElement, NeonSkeletonProps>(
     );
   },
 );
+
+export const Skeleton = chakra(SkeletonBase);

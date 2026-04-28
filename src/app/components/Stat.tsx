@@ -1,9 +1,9 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
+import { Box, chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
-export interface NeonStatProps {
+export interface NeonStatProps extends React.HTMLAttributes<HTMLElement> {
   label: ReactNode;
   value: ReactNode;
   helpText?: ReactNode;
@@ -11,12 +11,13 @@ export interface NeonStatProps {
   accent?: "pink" | "cyan";
 }
 
-export function Stat({
+function StatBase({
   label,
   value,
   helpText,
   indicator = null,
   accent = "pink",
+  ...rest
 }: NeonStatProps) {
   const color = `var(--neon-${accent})`;
   const indicatorColor =
@@ -27,6 +28,7 @@ export function Stat({
       flexDirection="column"
       gap="4px"
       fontFamily="var(--font-neon-body), sans-serif"
+      {...rest}
     >
       <Box
         as="span"
@@ -65,3 +67,5 @@ export function Stat({
     </Box>
   );
 }
+
+export const Stat = chakra(StatBase);

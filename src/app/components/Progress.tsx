@@ -1,22 +1,25 @@
 "use client";
 
-import { Progress as ChakraProgress } from "@chakra-ui/react";
+import { Progress as ChakraProgress, chakra } from "@chakra-ui/react";
 import type { NeonColorScheme } from "./Button";
 
-export interface NeonProgressProps {
-  value?: number | null; // null = indeterminate
+// Omit defaultValue/defaultChecked — HTMLAttributes types conflict with ProgressRootProps
+export interface NeonProgressProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, "defaultValue" | "defaultChecked"> {
+  value?: number | null;
   max?: number;
   colorScheme?: NeonColorScheme;
   showValueText?: boolean;
   label?: string;
 }
 
-export function Progress({
+function ProgressBase({
   value = 50,
   max = 100,
   colorScheme = "pink",
   showValueText = false,
   label,
+  ...rest
 }: NeonProgressProps) {
   const color = `var(--neon-${colorScheme})`;
   const indeterminate = value === null;
@@ -28,6 +31,7 @@ export function Progress({
       display="flex"
       flexDirection="column"
       gap="8px"
+      {...rest}
     >
       {(label || showValueText) && (
         <div
@@ -88,3 +92,5 @@ export function Progress({
     </ChakraProgress.Root>
   );
 }
+
+export const Progress = chakra(ProgressBase);

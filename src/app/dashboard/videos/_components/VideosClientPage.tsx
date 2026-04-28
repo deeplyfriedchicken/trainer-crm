@@ -2,11 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { VideoGallery } from "@/app/dashboard/_components/VideoGallery";
 import { UploadModal } from "@/app/dashboard/_components/UploadModal";
+import { VideoGallery } from "@/app/dashboard/_components/VideoGallery";
 import type { VideoRow } from "@/db/queries/videos";
 
-export function VideosClientPage({ initialVideos }: { initialVideos: VideoRow[] }) {
+export function VideosClientPage({
+  initialVideos,
+}: {
+  initialVideos: VideoRow[];
+}) {
   const router = useRouter();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
 

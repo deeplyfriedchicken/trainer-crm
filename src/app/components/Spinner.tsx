@@ -1,9 +1,9 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
+import { Box, chakra } from "@chakra-ui/react";
 import type { NeonColorScheme, NeonSize } from "./Button";
 
-export interface NeonSpinnerProps {
+export interface NeonSpinnerProps extends React.HTMLAttributes<HTMLElement> {
   colorScheme?: NeonColorScheme;
   size?: NeonSize;
   label?: string;
@@ -16,10 +16,11 @@ const sizeMap: Record<NeonSize, string> = {
   xl: "44px",
 };
 
-export function Spinner({
+function SpinnerBase({
   colorScheme = "pink",
   size = "md",
   label = "Loading",
+  ...rest
 }: NeonSpinnerProps) {
   const color = `var(--neon-${colorScheme})`;
   const s = sizeMap[size];
@@ -36,6 +37,10 @@ export function Spinner({
       borderTopColor={color}
       boxShadow={`0 0 14px ${color}66`}
       animation="neon-spin 0.8s linear infinite"
+      {...rest}
     />
   );
 }
+
+// chakra() strips "size" via PatchHtmlProps — cast back to preserve it alongside style props
+export const Spinner = chakra(SpinnerBase);

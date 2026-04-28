@@ -7,10 +7,15 @@
 
 /* ─── Video card ─── */
 .videoCard {
+  appearance: none;
   background: var(--neon-surface);
   border: 1px solid var(--neon-border);
   border-radius: 14px;
+  color: inherit;
+  font: inherit;
   overflow: hidden;
+  padding: 0;
+  text-align: inherit;
   cursor: pointer;
   transition: all 0.22s;
 }

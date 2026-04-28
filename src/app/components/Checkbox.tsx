@@ -1,10 +1,10 @@
 "use client";
 
-import { Checkbox as ChakraCheckbox } from "@chakra-ui/react";
+import { Checkbox as ChakraCheckbox, chakra } from "@chakra-ui/react";
 import { forwardRef, type ReactNode } from "react";
 import type { NeonColorScheme } from "./Button";
 
-export interface NeonCheckboxProps {
+export interface NeonCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -15,7 +15,7 @@ export interface NeonCheckboxProps {
   children?: ReactNode;
 }
 
-export const Checkbox = forwardRef<HTMLLabelElement, NeonCheckboxProps>(
+const CheckboxBase = forwardRef<HTMLLabelElement, NeonCheckboxProps>(
   function Checkbox(
     {
       checked,
@@ -26,6 +26,7 @@ export const Checkbox = forwardRef<HTMLLabelElement, NeonCheckboxProps>(
       value,
       colorScheme = "pink",
       children,
+      ...rest
     },
     ref,
   ) {
@@ -41,6 +42,7 @@ export const Checkbox = forwardRef<HTMLLabelElement, NeonCheckboxProps>(
         value={value}
         gap="10px"
         cursor={disabled ? "not-allowed" : "pointer"}
+        {...rest}
       >
         <ChakraCheckbox.HiddenInput />
         <ChakraCheckbox.Control
@@ -73,3 +75,5 @@ export const Checkbox = forwardRef<HTMLLabelElement, NeonCheckboxProps>(
     );
   },
 );
+
+export const Checkbox = chakra(CheckboxBase);

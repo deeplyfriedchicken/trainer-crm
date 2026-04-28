@@ -2,7 +2,14 @@
 
 import { useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import { LuCalendar, LuClock, LuFileVideo, LuHardDrive, LuUpload, LuUser } from "react-icons/lu";
+import {
+  LuCalendar,
+  LuClock,
+  LuFileVideo,
+  LuHardDrive,
+  LuUpload,
+  LuUser,
+} from "react-icons/lu";
 import { Button } from "@/app/components/Button";
 import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { PageHeader } from "@/app/components/PageHeader";
@@ -13,11 +20,31 @@ type Tag = VideoRowType["videoTags"][number]["tag"];
 
 const TAG_COLORS = ["#FD6DBB", "#34FDFE", "#a78bfa", "#4ade80", "#fb923c"];
 const COLOR_MAP: Record<string, string> = {
-  A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",
-  F: "#FD6DBB", G: "#34FDFE", H: "#a78bfa", I: "#4ade80", J: "#FD6DBB",
-  K: "#34FDFE", L: "#a78bfa", M: "#4ade80", N: "#fb923c", O: "#FD6DBB",
-  P: "#34FDFE", Q: "#a78bfa", R: "#4ade80", S: "#FD6DBB", T: "#34FDFE",
-  U: "#a78bfa", V: "#4ade80", W: "#fb923c", X: "#FD6DBB", Y: "#34FDFE",
+  A: "#FD6DBB",
+  B: "#34FDFE",
+  C: "#a78bfa",
+  D: "#4ade80",
+  E: "#fb923c",
+  F: "#FD6DBB",
+  G: "#34FDFE",
+  H: "#a78bfa",
+  I: "#4ade80",
+  J: "#FD6DBB",
+  K: "#34FDFE",
+  L: "#a78bfa",
+  M: "#4ade80",
+  N: "#fb923c",
+  O: "#FD6DBB",
+  P: "#34FDFE",
+  Q: "#a78bfa",
+  R: "#4ade80",
+  S: "#FD6DBB",
+  T: "#34FDFE",
+  U: "#a78bfa",
+  V: "#4ade80",
+  W: "#fb923c",
+  X: "#FD6DBB",
+  Y: "#34FDFE",
   Z: "#a78bfa",
 };
 
@@ -42,7 +69,11 @@ function formatDuration(seconds: number | null): string | null {
 }
 
 function formatDate(d: Date): string {
-  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function formatFileSize(bytes: number): string {
@@ -86,13 +117,7 @@ function VideoThumbnail({
   );
 }
 
-function VideoCard({
-  v,
-  onSelect,
-}: {
-  v: VideoRowType;
-  onSelect: () => void;
-}) {
+function VideoCard({ v, onSelect }: { v: VideoRowType; onSelect: () => void }) {
   const [aspectRatio, setAspectRatio] = useState("16 / 9");
   const primaryTag = v.videoTags[0]?.tag ?? null;
   const color = primaryTag ? tagColor(primaryTag.name) : "#34FDFE";
@@ -100,7 +125,7 @@ function VideoCard({
   const duration = formatDuration(v.durationSeconds);
 
   return (
-    <div className={styles.videoCard} onClick={onSelect}>
+    <button type="button" className={styles.videoCard} onClick={onSelect}>
       <div className={styles.videoThumb} style={{ aspectRatio }}>
         <VideoThumbnail src={v.fileUrl} onAspectRatio={setAspectRatio} />
         <div className={styles.videoThumbPattern} />
@@ -163,9 +188,7 @@ function VideoCard({
           )}
         </div>
 
-        {v.description && (
-          <p className={styles.videoDesc}>{v.description}</p>
-        )}
+        {v.description && <p className={styles.videoDesc}>{v.description}</p>}
 
         <div className={styles.videoMeta}>
           <div className={styles.videoUploader}>
@@ -184,7 +207,7 @@ function VideoCard({
           <div className={styles.videoDate}>{formatDate(v.createdAt)}</div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -193,6 +216,7 @@ export function VideoGallery({
   title = "Latest Videos",
   subtitle = "Recently uploaded by your team",
   onUpload,
+  ...rest
 }: {
   videos: VideoRowType[];
   title?: string;
@@ -218,16 +242,23 @@ export function VideoGallery({
   const shown =
     activeTag === "All"
       ? videos
-      : videos.filter((v) => v.videoTags.some((vt) => vt.tag.name === activeTag));
+      : videos.filter((v) =>
+          v.videoTags.some((vt) => vt.tag.name === activeTag),
+        );
 
   return (
-    <>
+    <div {...rest}>
       <PageHeader
         title={title}
         subtitle={subtitle}
         action={
           onUpload && (
-            <Button variant="outline" colorScheme="cyan" size="sm" onClick={onUpload}>
+            <Button
+              variant="outline"
+              colorScheme="cyan"
+              size="sm"
+              onClick={onUpload}
+            >
               <LuUpload size={13} />
               Upload Video
             </Button>
@@ -267,102 +298,134 @@ export function VideoGallery({
         </div>
       )}
 
-      {selectedVideo && (() => {
-        const v = selectedVideo;
-        const uploaderCol = uploaderColor(v.uploader.name);
-        const duration = formatDuration(v.durationSeconds);
-        return (
-          <Dialog
-            isOpen
-            onClose={() => setSelectedVideo(null)}
-            maxWidth={900}
-          >
-            <video
-              key={v.id}
-              src={v.fileUrl}
-              controls
-              autoPlay
-              style={{
-                width: "100%",
-                display: "block",
-                maxHeight: "52vh",
-                background: "#000",
-              }}
-            />
-            <DialogBody>
-              <div style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", lineHeight: 1.3, marginBottom: 6 }}>
-                  {v.title}
-                </div>
-                {v.videoTags.length > 0 && (
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {v.videoTags.map(({ tag }: { tag: Tag }) => {
-                      const c = tagColor(tag.name);
-                      return (
-                        <span
-                          key={tag.id}
-                          style={{
-                            background: `${c}22`,
-                            color: c,
-                            border: `1px solid ${c}44`,
-                            borderRadius: 20,
-                            padding: "2px 10px",
-                            fontSize: 11,
-                            fontWeight: 700,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.05em",
-                          }}
-                        >
-                          {tag.name}
-                        </span>
-                      );
-                    })}
+      {selectedVideo &&
+        (() => {
+          const v = selectedVideo;
+          const uploaderCol = uploaderColor(v.uploader.name);
+          const duration = formatDuration(v.durationSeconds);
+          return (
+            <Dialog
+              isOpen
+              onClose={() => setSelectedVideo(null)}
+              maxWidth={900}
+            >
+              <video
+                key={v.id}
+                src={v.fileUrl}
+                controls
+                autoPlay
+                style={{
+                  width: "100%",
+                  display: "block",
+                  maxHeight: "52vh",
+                  background: "#000",
+                }}
+              >
+                <track
+                  kind="captions"
+                  srcLang="en"
+                  label="English"
+                  src="data:text/vtt;charset=utf-8,WEBVTT"
+                  default
+                />
+              </video>
+              <DialogBody>
+                <div style={{ marginBottom: 14 }}>
+                  <div
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 700,
+                      color: "#fff",
+                      lineHeight: 1.3,
+                      marginBottom: 6,
+                    }}
+                  >
+                    {v.title}
                   </div>
-                )}
-              </div>
-
-              {v.description && (
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 18 }}>
-                  {v.description}
-                </p>
-              )}
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
-                <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
-                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <div
-                      className={styles.miniAvatar}
-                      style={{
-                        background: `${uploaderCol}22`,
-                        borderColor: `${uploaderCol}55`,
-                        color: uploaderCol,
-                      }}
-                    >
-                      {v.uploader.name[0]?.toUpperCase()}
+                  {v.videoTags.length > 0 && (
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {v.videoTags.map(({ tag }: { tag: Tag }) => {
+                        const c = tagColor(tag.name);
+                        return (
+                          <span
+                            key={tag.id}
+                            style={{
+                              background: `${c}22`,
+                              color: c,
+                              border: `1px solid ${c}44`,
+                              borderRadius: 20,
+                              padding: "2px 10px",
+                              fontSize: 11,
+                              fontWeight: 700,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.05em",
+                            }}
+                          >
+                            {tag.name}
+                          </span>
+                        );
+                      })}
                     </div>
-                    {v.uploader.name}
-                  </div>
-                </MetaRow>
-                <MetaRow icon={<LuCalendar size={13} />} label="Uploaded">
-                  {formatDate(v.createdAt)}
-                </MetaRow>
-                {duration && (
-                  <MetaRow icon={<LuClock size={13} />} label="Duration">
-                    {duration}
-                  </MetaRow>
+                  )}
+                </div>
+
+                {v.description && (
+                  <p
+                    style={{
+                      fontSize: 13,
+                      color: "rgba(255,255,255,0.5)",
+                      lineHeight: 1.6,
+                      marginBottom: 18,
+                    }}
+                  >
+                    {v.description}
+                  </p>
                 )}
-                <MetaRow icon={<LuHardDrive size={13} />} label="File size">
-                  {formatFileSize(v.fileSizeBytes)}
-                </MetaRow>
-                <MetaRow icon={<LuFileVideo size={13} />} label="File">
-                  {v.fileName}
-                </MetaRow>
-              </div>
-            </DialogBody>
-          </Dialog>
-        );
-      })()}
-    </>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "10px 24px",
+                  }}
+                >
+                  <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 7 }}
+                    >
+                      <div
+                        className={styles.miniAvatar}
+                        style={{
+                          background: `${uploaderCol}22`,
+                          borderColor: `${uploaderCol}55`,
+                          color: uploaderCol,
+                        }}
+                      >
+                        {v.uploader.name[0]?.toUpperCase()}
+                      </div>
+                      {v.uploader.name}
+                    </div>
+                  </MetaRow>
+                  <MetaRow icon={<LuCalendar size={13} />} label="Uploaded">
+                    {formatDate(v.createdAt)}
+                  </MetaRow>
+                  {duration && (
+                    <MetaRow icon={<LuClock size={13} />} label="Duration">
+                      {duration}
+                    </MetaRow>
+                  )}
+                  <MetaRow icon={<LuHardDrive size={13} />} label="File size">
+                    {formatFileSize(v.fileSizeBytes)}
+                  </MetaRow>
+                  <MetaRow icon={<LuFileVideo size={13} />} label="File">
+                    {v.fileName}
+                  </MetaRow>
+                </div>
+              </DialogBody>
+            </Dialog>
+          );
+        })()}
+    </div>
   );
 }
 
@@ -376,14 +439,26 @@ function MetaRow({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center", gap: 5, color: "rgba(255,255,255,0.35)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>
+    <>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 5,
+          color: "rgba(255,255,255,0.35)",
+          fontSize: 11,
+          fontWeight: 600,
+          textTransform: "uppercase",
+          letterSpacing: "0.06em",
+          marginBottom: 4,
+        }}
+      >
         {icon}
         {label}
       </div>
       <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>
         {children}
       </div>
-    </div>
+    </>
   );
 }

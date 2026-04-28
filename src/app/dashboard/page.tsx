@@ -1,4 +1,5 @@
 import "./page.css";
+import { Flex } from "@chakra-ui/react";
 import { listTrainees } from "@/db/queries/trainees";
 import { listTrainers } from "@/db/queries/trainers";
 import { listVideos } from "@/db/queries/videos";
@@ -55,9 +56,10 @@ export default async function DashboardHome() {
         ))}
       </div>
 
-      <TraineeTable trainees={trainees} />
-
-      <VideoGallery videos={videos} />
+      <Flex direction="column" gap="28px">
+        <TraineeTable trainees={trainees} />
+        <VideoGallery videos={videos} />
+      </Flex>
     </div>
   );
 }

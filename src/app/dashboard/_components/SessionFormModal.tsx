@@ -1,15 +1,15 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { LuDumbbell, LuLink, LuPlus, LuX } from "react-icons/lu";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
 import type { SessionEntry } from "@/app/components/SessionsPanel";
 import { createSession, updateSession } from "../trainees/[id]/actions";
-import { type PickedVideo, VideoPickerModal } from "./VideoPickerModal";
 import styles from "./SessionFormModal.module.css";
+import { type PickedVideo, VideoPickerModal } from "./VideoPickerModal";
 
 // ── Schema ────────────────────────────────────────────────────────────────
 
@@ -90,7 +90,10 @@ export function SessionFormModal({
     defaultValues: buildDefaults(initialData),
   });
 
-  const { fields, append, remove } = useFieldArray({ control, name: "exercises" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "exercises",
+  });
 
   // Per-exercise video lists — parallel to `fields`.
   const [exVideos, setExVideos] = useState<PickedVideo[][]>(() =>
@@ -205,7 +208,12 @@ export function SessionFormModal({
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            minHeight: 0,
+          }}
         >
           <div className={styles.body}>
             {rootError && <div className={styles.errorBanner}>{rootError}</div>}
@@ -221,7 +229,8 @@ export function SessionFormModal({
                     Date
                     {errors.occurredAt && (
                       <span className={styles.fieldError}>
-                        {" "}— {errors.occurredAt.message}
+                        {" "}
+                        — {errors.occurredAt.message}
                       </span>
                     )}
                   </label>
@@ -283,7 +292,8 @@ export function SessionFormModal({
                               Name
                               {exErrors?.name && (
                                 <span className={styles.fieldError}>
-                                  {" "}— {exErrors.name.message}
+                                  {" "}
+                                  — {exErrors.name.message}
                                 </span>
                               )}
                             </label>
@@ -415,9 +425,10 @@ export function SessionFormModal({
         isOpen={pickerIdx !== null}
         onClose={() => setPickerIdx(null)}
         onSelect={handleVideoSelect}
-        alreadyLinkedIds={(pickerIdx !== null ? exVideos[pickerIdx] : null)?.map(
-          (v) => v.id,
-        ) ?? []}
+        alreadyLinkedIds={
+          (pickerIdx !== null ? exVideos[pickerIdx] : null)?.map((v) => v.id) ??
+          []
+        }
       />
     </>
   );

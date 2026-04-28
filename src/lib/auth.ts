@@ -1,6 +1,10 @@
+import "server-only";
+import { cache } from "react";
+import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { type UserRole, users } from "@/db/schema";
+import { getSession } from "@/lib/session";
 
 export type CurrentUser = {
   id: string;
@@ -9,21 +13,16 @@ export type CurrentUser = {
   roles: UserRole[];
 };
 
-// TODO(auth): replace with real session lookup.
-export async function getCurrentUser(): Promise<CurrentUser> {
-  const email =
-    process.env.STUB_CURRENT_USER_EMAIL ?? "kevin.a.cunanan@gmail.com";
+export const getCurrentUser = cache(async (): Promise<CurrentUser> => {
+  const session = await getSession();
+  if (!session) redirect("/login");
 
   const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
+    where: eq(users.id, session.userId),
     with: { roles: true },
   });
 
-  if (!user) {
-    throw new Error(
-      `Stub current user not found for email "${email}". Run \`npm run db:seed\` or set STUB_CURRENT_USER_EMAIL.`,
-    );
-  }
+  if (!user) redirect("/login");
 
   return {
     id: user.id,
@@ -31,4 +30,4 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     name: user.name,
     roles: user.roles.map((r) => r.role),
   };
-}
+});

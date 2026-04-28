@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, chakra, Flex } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

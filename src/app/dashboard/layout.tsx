@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { Barlow_Condensed, Space_Grotesk, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
+import { getCurrentUser } from "@/lib/auth";
 import { Sidebar } from "./_components/Sidebar";
 import { Topbar } from "./_components/Topbar";
 import "./crm.css";
@@ -25,16 +26,18 @@ const spaceMono = Space_Mono({
   variable: "--font-neon-mono",
 });
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+  const user = await getCurrentUser();
+
   return (
     <div
       className={`crm ${barlow.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
     >
-      <Sidebar />
+      <Sidebar user={user} />
       <main className="crm-main">
         <Topbar />
         {children}

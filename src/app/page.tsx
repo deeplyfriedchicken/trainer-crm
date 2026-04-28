@@ -65,10 +65,10 @@ export default function Home() {
                 <rect y="14" width="18" height="2" rx="1" fill="currentColor" />
               </svg>
             </button>
-            <Link href="/dashboard" className={s.btnGhost}>
+            <Link href="/login" className={s.btnGhost}>
               Sign In
             </Link>
-            <Link href="/dashboard" className={s.btnPrimary}>
+            <Link href="/login" className={s.btnPrimary}>
               Get Started
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path
@@ -93,7 +93,7 @@ export default function Home() {
             <a href="#clients" onClick={() => setMobileNavOpen(false)}>
               For Clients
             </a>
-            <Link href="/dashboard" onClick={() => setMobileNavOpen(false)}>
+            <Link href="/login" onClick={() => setMobileNavOpen(false)}>
               Sign In
             </Link>
           </div>
@@ -120,7 +120,7 @@ export default function Home() {
             own their rehab — all in one place.
           </p>
           <div className={s.heroCta}>
-            <Link href="/dashboard" className={s.btnHero}>
+            <Link href="/login" className={s.btnHero}>
               Start for free
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path
@@ -901,7 +901,7 @@ export default function Home() {
               spreadsheets and into the future.
             </p>
             <div className={s.ctaButtons}>
-              <Link href="/dashboard" className={s.btnHeroGhost}>
+              <Link href="/login" className={s.btnHeroGhost}>
                 Sign in to your account
               </Link>
             </div>

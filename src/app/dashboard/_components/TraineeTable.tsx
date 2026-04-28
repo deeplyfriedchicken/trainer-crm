@@ -3,11 +3,13 @@
 import { HStack } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LuSearch } from "react-icons/lu";
+import { LuSearch, LuUserPlus } from "react-icons/lu";
+import { Button } from "@/app/components/Button";
 import { Input } from "@/app/components/Input";
 import { PageHeader } from "@/app/components/PageHeader";
 import { type ColumnDef, Table } from "@/app/components/Table";
 import type { TraineeRow } from "@/db/queries/trainees";
+import { AddTraineeModal } from "./AddTraineeModal";
 
 type Trainee = TraineeRow;
 
@@ -116,9 +118,16 @@ const COLUMNS: ColumnDef<Trainee>[] = [
   },
 ];
 
-export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
+export function TraineeTable({
+  trainees,
+  canAdd,
+}: {
+  trainees: Trainee[];
+  canAdd: boolean;
+}) {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   const filtered = trainees.filter((t) =>
     `${t.name} ${t.email}`.toLowerCase().includes(search.toLowerCase()),
@@ -140,9 +149,29 @@ export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
               size="sm"
               w="200px"
             />
+            {canAdd && (
+              <Button
+                colorScheme="pink"
+                size="sm"
+                onClick={() => setModalOpen(true)}
+                display="flex"
+                alignItems="center"
+                gap="6px"
+              >
+                <LuUserPlus size={13} />
+                Add Client
+              </Button>
+            )}
           </HStack>
         }
       />
+
+      {canAdd && (
+        <AddTraineeModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
 
       <Table
         columns={COLUMNS}

@@ -1,6 +1,8 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
+import { getCurrentUser } from "@/lib/auth";
 import { PageHeader } from "@/app/components/PageHeader";
 import { listTrainers } from "@/db/queries/trainers";
+import { AddTrainerButton } from "../_components/AddTrainerButton";
 import { TrainerCard } from "../_components/TrainerCard";
 
 const COLOR_MAP: Record<string, string> = {
@@ -17,13 +19,22 @@ function colorFor(name: string) {
 }
 
 export default async function TrainersPage() {
-  const trainers = await listTrainers({ limit: 100, offset: 0 });
+  const [currentUser, trainers] = await Promise.all([
+    getCurrentUser(),
+    listTrainers({ limit: 100, offset: 0 }),
+  ]);
+
+  const canAdd = currentUser.roles.some((r) =>
+    (["admin", "trainer_manager"] as const).includes(r as never),
+  );
+  const isAdmin = currentUser.roles.includes("admin");
 
   return (
     <Box className="crm-page">
       <PageHeader
         title="Trainers"
         subtitle={`${trainers.length} trainers on your team`}
+        action={canAdd ? <AddTrainerButton isAdmin={isAdmin} /> : null}
       />
 
       {trainers.length === 0 ? (

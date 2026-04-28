@@ -1,18 +1,21 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { coachingSessions, exercises, exerciseVideos } from "@/db/schema";
+import { exercises, exerciseVideos, workoutPlans } from "@/db/schema";
 
-type ExerciseInput = {
+export type ExerciseInput = {
   name: string;
+  type: "reps" | "duration";
   sets: number;
-  reps: number;
+  reps?: number | null;
+  durationSeconds?: number | null;
+  weightLbs?: number | null;
   comment?: string | null;
   videoIds?: string[];
 };
 
 async function insertExercises(
   tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
-  sessionId: string,
+  workoutPlanId: string,
   inputs: ExerciseInput[],
   userId: string,
 ) {
@@ -20,11 +23,14 @@ async function insertExercises(
     const [exercise] = await tx
       .insert(exercises)
       .values({
-        sessionId,
+        workoutPlanId,
         name: ex.name,
+        type: ex.type,
         sets: ex.sets,
-        reps: ex.reps,
-        comment: ex.comment || null,
+        reps: ex.type === "reps" ? (ex.reps ?? null) : null,
+        durationSeconds: ex.type === "duration" ? (ex.durationSeconds ?? null) : null,
+        weightLbs: ex.weightLbs ?? null,
+        comment: ex.comment ?? null,
         createdBy: userId,
         updatedBy: userId,
       })
@@ -38,53 +44,57 @@ async function insertExercises(
   }
 }
 
-export async function createCoachingSession({
+export async function createWorkoutPlan({
   traineeId,
+  name,
   occurredAt,
   comment,
   createdBy,
   exerciseInputs,
 }: {
   traineeId: string;
+  name: string;
   occurredAt: Date;
   comment?: string | null;
   createdBy: string;
   exerciseInputs: ExerciseInput[];
 }) {
   return db.transaction(async (tx) => {
-    const [session] = await tx
-      .insert(coachingSessions)
-      .values({ traineeId, occurredAt, comment: comment || null, createdBy, updatedBy: createdBy })
+    const [plan] = await tx
+      .insert(workoutPlans)
+      .values({ traineeId, name, occurredAt, comment: comment ?? null, createdBy, updatedBy: createdBy })
       .returning();
 
-    await insertExercises(tx, session.id, exerciseInputs, createdBy);
-    return session;
+    await insertExercises(tx, plan.id, exerciseInputs, createdBy);
+    return plan;
   });
 }
 
-export async function updateCoachingSession({
-  sessionId,
+export async function updateWorkoutPlan({
+  planId,
+  name,
   occurredAt,
   comment,
   updatedBy,
   exerciseInputs,
 }: {
-  sessionId: string;
+  planId: string;
+  name: string;
   occurredAt: Date;
   comment?: string | null;
   updatedBy: string;
   exerciseInputs: ExerciseInput[];
 }) {
   return db.transaction(async (tx) => {
-    const [session] = await tx
-      .update(coachingSessions)
-      .set({ occurredAt, comment: comment || null, updatedBy })
-      .where(eq(coachingSessions.id, sessionId))
+    const [plan] = await tx
+      .update(workoutPlans)
+      .set({ name, occurredAt, comment: comment ?? null, updatedBy })
+      .where(eq(workoutPlans.id, planId))
       .returning();
 
     // Cascade delete removes exercise_videos; re-insert fresh.
-    await tx.delete(exercises).where(eq(exercises.sessionId, sessionId));
-    await insertExercises(tx, sessionId, exerciseInputs, updatedBy);
-    return session;
+    await tx.delete(exercises).where(eq(exercises.workoutPlanId, planId));
+    await insertExercises(tx, planId, exerciseInputs, updatedBy);
+    return plan;
   });
 }

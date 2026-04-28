@@ -5,29 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1776965835604,
-      "tag": "0000_deep_invaders",
+      "when": 1777366922565,
+      "tag": "0000_burly_sugar_man",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1776994955781,
-      "tag": "0001_easy_vin_gonzales",
+      "when": 1777394183956,
+      "tag": "0001_add_sets_data_to_workout_exercises",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
-      "when": 1777048867140,
-      "tag": "0002_first_screwball",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1777363234693,
-      "tag": "0003_empty_stellaris",
+      "when": 1777395576565,
+      "tag": "0002_add_name_to_workout_plans",
       "breakpoints": true
     }
   ]

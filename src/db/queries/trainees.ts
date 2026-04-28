@@ -1,9 +1,9 @@
 import { and, asc, count, eq, inArray, isNull, max } from "drizzle-orm";
 import { db } from "@/db";
 import {
-  coachingSessions,
   trainerAssignments,
   users,
+  workoutPlans,
 } from "@/db/schema";
 
 export type TraineeRow = Awaited<ReturnType<typeof listTrainees>>[number];
@@ -15,8 +15,6 @@ export type ListTraineesOptions = {
 };
 
 export async function listTrainees(options: ListTraineesOptions) {
-  // When filtering by trainer, only show their assigned clients.
-  // Otherwise return every user in the system.
   const whereClause = options.trainerId
     ? inArray(
         users.id,
@@ -39,12 +37,12 @@ export async function listTrainees(options: ListTraineesOptions) {
       name: users.name,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
-      sessionCount: count(coachingSessions.id),
-      lastSessionAt: max(coachingSessions.occurredAt),
+      planCount: count(workoutPlans.id),
+      lastPlanAt: max(workoutPlans.occurredAt),
     })
     .from(users)
     .where(whereClause)
-    .leftJoin(coachingSessions, eq(coachingSessions.traineeId, users.id))
+    .leftJoin(workoutPlans, eq(workoutPlans.traineeId, users.id))
     .groupBy(users.id, users.email, users.name, users.createdAt, users.updatedAt)
     .orderBy(asc(users.name))
     .limit(options.limit)
@@ -89,15 +87,27 @@ export async function getTraineeById(id: string) {
           },
         },
       },
-      coachingSessions: {
-        orderBy: (cs, { desc }) => [desc(cs.occurredAt)],
-        limit: 20,
+      workoutPlans: {
+        orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
           exercises: {
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
             with: {
               videoLinks: {
                 with: { video: { columns: { id: true, title: true, fileUrl: true } } },
+              },
+            },
+          },
+        },
+      },
+      workouts: {
+        orderBy: (w, { desc }) => [desc(w.createdAt)],
+        with: {
+          workoutPlan: { columns: { id: true, name: true, occurredAt: true } },
+          exerciseLinks: {
+            with: {
+              exercise: {
+                columns: { id: true, name: true, type: true, sets: true, reps: true, durationSeconds: true, weightLbs: true },
               },
             },
           },
@@ -123,6 +133,7 @@ export async function getTraineeById(id: string) {
           trainer: activeAssignment.trainer,
         }
       : null,
-    coachingSessions: user.coachingSessions,
+    workoutPlans: user.workoutPlans,
+    workouts: user.workouts,
   };
 }

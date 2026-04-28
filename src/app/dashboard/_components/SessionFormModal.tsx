@@ -2,25 +2,36 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { LuDumbbell, LuLink, LuPlus, LuX } from "react-icons/lu";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
 import type { SessionEntry } from "@/app/components/SessionsPanel";
-import { createSession, updateSession } from "../trainees/[id]/actions";
+import { createPlan, updatePlan } from "../trainees/[id]/actions";
 import styles from "./SessionFormModal.module.css";
 import { type PickedVideo, VideoPickerModal } from "./VideoPickerModal";
 
 // ── Schema ────────────────────────────────────────────────────────────────
 
-const exerciseSchema = z.object({
-  name: z.string().min(1, "Name required"),
-  sets: z.number().int().min(1, "Min 1"),
-  reps: z.number().int().min(1, "Min 1"),
-  comment: z.string().optional(),
-});
+const exerciseSchema = z
+  .object({
+    name: z.string().min(1, "Name required"),
+    type: z.enum(["reps", "duration"]),
+    sets: z.number().int().min(1, "Min 1"),
+    reps: z.number().int().min(1, "Min 1").optional(),
+    durationSeconds: z.number().int().min(1, "Min 1").optional(),
+    weightLbs: z.number().min(0).optional(),
+    comment: z.string().optional(),
+  })
+  .refine(
+    (d) =>
+      (d.type === "reps" && d.reps != null) ||
+      (d.type === "duration" && d.durationSeconds != null),
+    { message: "Provide reps or duration based on type" },
+  );
 
 const sessionSchema = z.object({
+  name: z.string().min(1, "Name required"),
   occurredAt: z.string().min(1, "Date required"),
   comment: z.string().optional(),
   exercises: z.array(exerciseSchema),
@@ -38,15 +49,23 @@ function today(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+function defaultName(): string {
+  return new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
 function buildDefaults(session?: SessionEntry | null): FormValues {
-  if (!session) return { occurredAt: today(), comment: "", exercises: [] };
+  if (!session) return { name: defaultName(), occurredAt: today(), comment: "", exercises: [] };
   return {
+    name: session.name ?? defaultName(),
     occurredAt: toDateInput(session.occurredAt),
     comment: session.comment ?? "",
     exercises: session.exercises.map((ex) => ({
       name: ex.name,
+      type: ex.type ?? "reps",
       sets: ex.sets,
-      reps: ex.reps,
+      reps: ex.reps ?? undefined,
+      durationSeconds: ex.durationSeconds ?? undefined,
+      weightLbs: ex.weightLbs ?? undefined,
       comment: ex.comment ?? "",
     })),
   };
@@ -56,6 +75,194 @@ function buildInitialVideos(session?: SessionEntry | null): PickedVideo[][] {
   if (!session) return [];
   return session.exercises.map((ex) =>
     (ex.videos ?? []).map((v) => ({ id: v.id, title: v.title, url: v.url })),
+  );
+}
+
+// ── Exercise card ─────────────────────────────────────────────────────────
+
+function ExerciseCard({
+  idx,
+  register,
+  control,
+  errors,
+  onRemove,
+  linkedVideos,
+  onPickVideo,
+  onRemoveVideo,
+}: {
+  idx: number;
+  register: ReturnType<typeof useForm<FormValues>>["register"];
+  control: ReturnType<typeof useForm<FormValues>>["control"];
+  errors: ReturnType<typeof useForm<FormValues>>["formState"]["errors"];
+  onRemove: () => void;
+  linkedVideos: PickedVideo[];
+  onPickVideo: () => void;
+  onRemoveVideo: (videoId: string) => void;
+}) {
+  const exErrors = errors.exercises?.[idx];
+  const type = useWatch({ control, name: `exercises.${idx}.type` }) ?? "reps";
+
+  return (
+    <div className={styles.exerciseCard}>
+      <div className={styles.exerciseCardHeader}>
+        <div className={styles.exerciseCardNum}>Exercise {idx + 1}</div>
+        <button
+          type="button"
+          className={styles.removeExBtn}
+          onClick={onRemove}
+          aria-label="Remove exercise"
+        >
+          ×
+        </button>
+      </div>
+
+      {/* Type toggle */}
+      <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
+        {(["reps", "duration"] as const).map((t) => (
+          <label
+            key={t}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: "pointer",
+              color: type === t ? "var(--neon-pink)" : "rgba(255,255,255,0.5)",
+            }}
+          >
+            <input
+              type="radio"
+              value={t}
+              {...register(`exercises.${idx}.type`)}
+              style={{ accentColor: "var(--neon-pink)" }}
+            />
+            {t === "reps" ? "Reps-based" : "Duration-based"}
+          </label>
+        ))}
+      </div>
+
+      {/* Name / Sets / Reps-or-Duration */}
+      <div className={styles.threeCol}>
+        <div>
+          <label
+            className={`${styles.fieldLabel}${exErrors?.name ? ` ${styles.fieldLabelError}` : ""}`}
+          >
+            Name
+            {exErrors?.name && (
+              <span className={styles.fieldError}>
+                {" "}
+                — {exErrors.name.message}
+              </span>
+            )}
+          </label>
+          <input
+            {...register(`exercises.${idx}.name`)}
+            placeholder="e.g. Squat"
+            className={`${styles.input}${exErrors?.name ? ` ${styles.inputError}` : ""}`}
+          />
+        </div>
+        <div>
+          <label className={styles.fieldLabel}>Sets</label>
+          <input
+            type="number"
+            min={1}
+            {...register(`exercises.${idx}.sets`, {
+                  setValueAs: (v) =>
+                    v === "" || v == null ? undefined : parseInt(v, 10),
+                })}
+            className={`${styles.input}${exErrors?.sets ? ` ${styles.inputError}` : ""}`}
+          />
+        </div>
+        <div>
+          {type === "reps" ? (
+            <>
+              <label className={styles.fieldLabel}>Reps</label>
+              <input
+                type="number"
+                min={1}
+                {...register(`exercises.${idx}.reps`, {
+                    setValueAs: (v) =>
+                      v === "" || v == null ? undefined : parseInt(v, 10),
+                  })}
+                className={`${styles.input}${exErrors?.reps ? ` ${styles.inputError}` : ""}`}
+              />
+            </>
+          ) : (
+            <>
+              <label className={styles.fieldLabel}>Duration (sec)</label>
+              <input
+                type="number"
+                min={1}
+                {...register(`exercises.${idx}.durationSeconds`, {
+                    setValueAs: (v) =>
+                      v === "" || v == null ? undefined : parseInt(v, 10),
+                  })}
+                className={`${styles.input}${exErrors?.durationSeconds ? ` ${styles.inputError}` : ""}`}
+              />
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Weight (optional) */}
+      <div style={{ marginBottom: 12 }}>
+        <label className={styles.fieldLabel}>Weight, lbs (optional)</label>
+        <input
+          type="number"
+          min={0}
+          step={2.5}
+          placeholder="e.g. 135"
+          {...register(`exercises.${idx}.weightLbs`, {
+                  setValueAs: (v) =>
+                    v === "" || v == null ? undefined : parseFloat(v),
+                })}
+          className={styles.input}
+          style={{ maxWidth: 140 }}
+        />
+      </div>
+
+      {/* Linked videos */}
+      <div style={{ marginBottom: 10 }}>
+        <label className={styles.fieldLabel}>Videos (optional)</label>
+        {linkedVideos.length > 0 && (
+          <div className={styles.videoChips}>
+            {linkedVideos.map((vid) => (
+              <div key={vid.id} className={styles.videoChip}>
+                <span className={styles.videoChipTitle}>{vid.title}</span>
+                <button
+                  type="button"
+                  className={styles.videoChipRemove}
+                  onClick={() => onRemoveVideo(vid.id)}
+                  aria-label={`Remove ${vid.title}`}
+                >
+                  <LuX size={10} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <button
+          type="button"
+          className={styles.linkVideoBtn}
+          onClick={onPickVideo}
+        >
+          <LuLink size={11} />
+          Link video
+        </button>
+      </div>
+
+      {/* Exercise notes */}
+      <div>
+        <label className={styles.fieldLabel}>Notes (optional)</label>
+        <textarea
+          {...register(`exercises.${idx}.comment`)}
+          rows={2}
+          placeholder="Cues, modifications, notes for this exercise…"
+          className={styles.textarea}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -95,24 +302,24 @@ export function SessionFormModal({
     name: "exercises",
   });
 
-  // Per-exercise video lists — parallel to `fields`.
   const [exVideos, setExVideos] = useState<PickedVideo[][]>(() =>
     buildInitialVideos(initialData),
   );
-
-  // Which exercise is the video picker currently open for.
   const [pickerIdx, setPickerIdx] = useState<number | null>(null);
 
-  // Reset when initialData changes (create vs. edit toggle).
   useEffect(() => {
     reset(buildDefaults(initialData));
     setExVideos(buildInitialVideos(initialData));
   }, [initialData, reset]);
 
-  // ── Exercise helpers ────────────────────────────────────────────────────
-
   function addExercise() {
-    append({ name: "", sets: 3 as number, reps: 10 as number, comment: "" });
+    append({
+      name: "",
+      type: "reps",
+      sets: 3 as number,
+      reps: 10 as number,
+      comment: "",
+    });
     setExVideos((prev) => [...prev, []]);
   }
 
@@ -142,29 +349,42 @@ export function SessionFormModal({
     });
   }
 
-  // ── Submit ──────────────────────────────────────────────────────────────
-
   async function onSubmit(values: FormValues) {
-    const exercises = values.exercises.map((ex, idx) => ({
+    const exList = values.exercises.map((ex, idx) => ({
       name: ex.name,
+      type: ex.type,
       sets: Number(ex.sets),
-      reps: Number(ex.reps),
+      reps:
+        ex.type === "reps"
+          ? ex.reps
+            ? Number(ex.reps)
+            : undefined
+          : undefined,
+      durationSeconds:
+        ex.type === "duration"
+          ? ex.durationSeconds
+            ? Number(ex.durationSeconds)
+            : undefined
+          : undefined,
+      weightLbs: ex.weightLbs ? Number(ex.weightLbs) : undefined,
       comment: ex.comment || null,
       videoIds: (exVideos[idx] ?? []).map((v) => v.id),
     }));
 
     try {
       if (isEdit && initialData) {
-        await updateSession(initialData.id, {
+        await updatePlan(initialData.id, {
+          name: values.name,
           occurredAt: new Date(values.occurredAt),
           comment: values.comment || null,
-          exercises,
+          exercises: exList,
         });
       } else {
-        await createSession(traineeId, {
+        await createPlan(traineeId, {
+          name: values.name,
           occurredAt: new Date(values.occurredAt),
           comment: values.comment || null,
-          exercises,
+          exercises: exList,
         });
       }
       onSuccess();
@@ -183,16 +403,15 @@ export function SessionFormModal({
   return (
     <>
       <Dialog isOpen={isOpen} onClose={handleClose} maxWidth={680}>
-        {/* Header */}
         <div className={styles.header}>
           <div>
             <div className={styles.headerTitle}>
-              {isEdit ? "Edit Session" : "New Session"}
+              {isEdit ? "Edit Workout Plan" : "New Workout Plan"}
             </div>
             <div className={styles.headerSub}>
               {isEdit
-                ? "Update session details and exercises"
-                : "Log a new coaching session"}
+                ? "Update plan details and exercises"
+                : "Create a new workout plan for this trainee"}
             </div>
           </div>
           <button
@@ -218,20 +437,31 @@ export function SessionFormModal({
           <div className={styles.body}>
             {rootError && <div className={styles.errorBanner}>{rootError}</div>}
 
-            {/* Session details */}
             <div>
-              <div className={styles.sectionTitle}>Session Details</div>
+              <div className={styles.sectionTitle}>Plan Details</div>
               <div className={styles.twoCol}>
+                <div>
+                  <label
+                    className={`${styles.fieldLabel}${errors.name ? ` ${styles.fieldLabelError}` : ""}`}
+                  >
+                    Plan Name
+                    {errors.name && (
+                      <span className={styles.fieldError}> — {errors.name.message}</span>
+                    )}
+                  </label>
+                  <input
+                    {...register("name")}
+                    placeholder="e.g. Lower Body Power"
+                    className={`${styles.input}${errors.name ? ` ${styles.inputError}` : ""}`}
+                  />
+                </div>
                 <div>
                   <label
                     className={`${styles.fieldLabel}${errors.occurredAt ? ` ${styles.fieldLabelError}` : ""}`}
                   >
                     Date
                     {errors.occurredAt && (
-                      <span className={styles.fieldError}>
-                        {" "}
-                        — {errors.occurredAt.message}
-                      </span>
+                      <span className={styles.fieldError}> — {errors.occurredAt.message}</span>
                     )}
                   </label>
                   <input
@@ -241,7 +471,6 @@ export function SessionFormModal({
                     style={{ colorScheme: "dark" }}
                   />
                 </div>
-                <div />
               </div>
 
               <div style={{ marginTop: 12 }}>
@@ -249,13 +478,12 @@ export function SessionFormModal({
                 <textarea
                   {...register("comment")}
                   rows={3}
-                  placeholder="Session notes, observations, trainer feedback…"
+                  placeholder="Trainer notes, focus areas, instructions…"
                   className={styles.textarea}
                 />
               </div>
             </div>
 
-            {/* Exercises */}
             <div>
               <div className={styles.sectionTitle}>
                 Exercises —{" "}
@@ -264,118 +492,19 @@ export function SessionFormModal({
 
               {fields.length > 0 && (
                 <div className={styles.exerciseList}>
-                  {fields.map((field, idx) => {
-                    const exErrors = errors.exercises?.[idx];
-                    const linkedVideos = exVideos[idx] ?? [];
-                    return (
-                      <div key={field.id} className={styles.exerciseCard}>
-                        <div className={styles.exerciseCardHeader}>
-                          <div className={styles.exerciseCardNum}>
-                            Exercise {idx + 1}
-                          </div>
-                          <button
-                            type="button"
-                            className={styles.removeExBtn}
-                            onClick={() => removeExercise(idx)}
-                            aria-label="Remove exercise"
-                          >
-                            ×
-                          </button>
-                        </div>
-
-                        {/* Name / Sets / Reps */}
-                        <div className={styles.threeCol}>
-                          <div>
-                            <label
-                              className={`${styles.fieldLabel}${exErrors?.name ? ` ${styles.fieldLabelError}` : ""}`}
-                            >
-                              Name
-                              {exErrors?.name && (
-                                <span className={styles.fieldError}>
-                                  {" "}
-                                  — {exErrors.name.message}
-                                </span>
-                              )}
-                            </label>
-                            <input
-                              {...register(`exercises.${idx}.name`)}
-                              placeholder="e.g. Squat"
-                              className={`${styles.input}${exErrors?.name ? ` ${styles.inputError}` : ""}`}
-                            />
-                          </div>
-                          <div>
-                            <label className={styles.fieldLabel}>Sets</label>
-                            <input
-                              type="number"
-                              min={1}
-                              {...register(`exercises.${idx}.sets`, {
-                                valueAsNumber: true,
-                              })}
-                              className={`${styles.input}${exErrors?.sets ? ` ${styles.inputError}` : ""}`}
-                            />
-                          </div>
-                          <div>
-                            <label className={styles.fieldLabel}>Reps</label>
-                            <input
-                              type="number"
-                              min={1}
-                              {...register(`exercises.${idx}.reps`, {
-                                valueAsNumber: true,
-                              })}
-                              className={`${styles.input}${exErrors?.reps ? ` ${styles.inputError}` : ""}`}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Linked videos */}
-                        <div style={{ marginBottom: 10 }}>
-                          <label className={styles.fieldLabel}>
-                            Videos (optional)
-                          </label>
-                          {linkedVideos.length > 0 && (
-                            <div className={styles.videoChips}>
-                              {linkedVideos.map((vid) => (
-                                <div key={vid.id} className={styles.videoChip}>
-                                  <span className={styles.videoChipTitle}>
-                                    {vid.title}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    className={styles.videoChipRemove}
-                                    onClick={() => removeVideo(idx, vid.id)}
-                                    aria-label={`Remove ${vid.title}`}
-                                  >
-                                    <LuX size={10} />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          <button
-                            type="button"
-                            className={styles.linkVideoBtn}
-                            onClick={() => setPickerIdx(idx)}
-                          >
-                            <LuLink size={11} />
-                            Link video
-                          </button>
-                        </div>
-
-                        {/* Exercise notes */}
-                        <div>
-                          <label className={styles.fieldLabel}>
-                            Notes (optional)
-                          </label>
-                          <textarea
-                            {...register(`exercises.${idx}.comment`)}
-                            rows={2}
-                            placeholder="Cues, modifications, notes for this exercise…"
-                            className={styles.textarea}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {fields.map((field, idx) => (
+                    <ExerciseCard
+                      key={field.id}
+                      idx={idx}
+                      register={register}
+                      control={control}
+                      errors={errors}
+                      onRemove={() => removeExercise(idx)}
+                      linkedVideos={exVideos[idx] ?? []}
+                      onPickVideo={() => setPickerIdx(idx)}
+                      onRemoveVideo={(vid) => removeVideo(idx, vid)}
+                    />
+                  ))}
                 </div>
               )}
 
@@ -414,13 +543,12 @@ export function SessionFormModal({
                 ? "Saving…"
                 : isEdit
                   ? "Save Changes"
-                  : "Create Session"}
+                  : "Create Plan"}
             </button>
           </div>
         </form>
       </Dialog>
 
-      {/* Video picker — rendered outside the session dialog so z-index stacks correctly */}
       <VideoPickerModal
         isOpen={pickerIdx !== null}
         onClose={() => setPickerIdx(null)}

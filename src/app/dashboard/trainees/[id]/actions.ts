@@ -1,7 +1,7 @@
 "use server";
 
 import { createMessage } from "@/db/queries/chats";
-import { createCoachingSession, updateCoachingSession } from "@/db/queries/sessions";
+import { type ExerciseInput, createWorkoutPlan, updateWorkoutPlan } from "@/db/queries/workout-plans";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function sendMessage(chatId: string, text: string) {
@@ -9,21 +9,14 @@ export async function sendMessage(chatId: string, text: string) {
   return createMessage(chatId, user.id, { text });
 }
 
-type ExerciseInput = {
-  name: string;
-  sets: number;
-  reps: number;
-  comment?: string | null;
-  videoIds?: string[];
-};
-
-export async function createSession(
+export async function createPlan(
   traineeId: string,
-  data: { occurredAt: Date; comment?: string | null; exercises: ExerciseInput[] },
+  data: { name: string; occurredAt: Date; comment?: string | null; exercises: ExerciseInput[] },
 ) {
   const user = await getCurrentUser();
-  return createCoachingSession({
+  return createWorkoutPlan({
     traineeId,
+    name: data.name,
     occurredAt: data.occurredAt,
     comment: data.comment,
     createdBy: user.id,
@@ -31,13 +24,14 @@ export async function createSession(
   });
 }
 
-export async function updateSession(
-  sessionId: string,
-  data: { occurredAt: Date; comment?: string | null; exercises: ExerciseInput[] },
+export async function updatePlan(
+  planId: string,
+  data: { name: string; occurredAt: Date; comment?: string | null; exercises: ExerciseInput[] },
 ) {
   const user = await getCurrentUser();
-  return updateCoachingSession({
-    sessionId,
+  return updateWorkoutPlan({
+    planId,
+    name: data.name,
     occurredAt: data.occurredAt,
     comment: data.comment,
     updatedBy: user.id,

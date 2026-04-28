@@ -13,14 +13,18 @@ export type ExerciseVideo = { id: string; title: string; url: string };
 export type SessionExercise = {
   id: string;
   name: string;
+  type?: "reps" | "duration";
   sets: number;
-  reps: number;
+  reps?: number | null;
+  durationSeconds?: number | null;
+  weightLbs?: number | null;
   comment?: string | null;
   videos: ExerciseVideo[];
 };
 
 export type SessionEntry = {
   id: string;
+  name: string;
   occurredAt: Date;
   energyRating?: number | null;
   painRating?: number | null;
@@ -131,14 +135,19 @@ function ExerciseVideoModal({
           </div>
         )}
 
-        <div style={{ display: "flex", gap: 8, marginBottom: exercise.comment ? 14 : 0 }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: exercise.comment ? 14 : 0, flexWrap: "wrap" }}>
           <span style={{ fontSize: 12, fontWeight: 700, color: accentColor, background: `${accentColor}15`, border: `1px solid ${accentColor}30`, borderRadius: 6, padding: "3px 10px" }}>
             {exercise.sets} sets
           </span>
           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", alignSelf: "center" }}>×</span>
           <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 10px" }}>
-            {exercise.reps} reps
+            {exercise.type === "duration" ? `${exercise.durationSeconds}s` : `${exercise.reps} reps`}
           </span>
+          {exercise.weightLbs != null && (
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", alignSelf: "center" }}>
+              @ {exercise.weightLbs}lbs
+            </span>
+          )}
         </div>
 
         {exercise.comment && (
@@ -229,7 +238,7 @@ export function SessionsPanel({
                     </div>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>
-                        Session #{sessionNumber}
+                        {s.name}
                       </div>
                       <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
                         {formatDate(s.occurredAt)}
@@ -292,15 +301,22 @@ export function SessionsPanel({
                                 {ex.name}
                               </div>
 
-                              {/* Sets × Reps */}
+                              {/* Sets × Reps/Duration */}
                               <div style={{ display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }}>
                                 <span style={{ fontSize: 11, fontWeight: 700, color: accentColor, background: `${accentColor}15`, border: `1px solid ${accentColor}30`, borderRadius: 5, padding: "2px 7px" }}>
                                   {ex.sets} sets
                                 </span>
                                 <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>×</span>
                                 <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 5, padding: "2px 7px" }}>
-                                  {ex.reps} reps
+                                  {ex.type === "duration"
+                                    ? `${ex.durationSeconds}s`
+                                    : `${ex.reps} reps`}
                                 </span>
+                                {ex.weightLbs != null && (
+                                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                                    @ {ex.weightLbs}lbs
+                                  </span>
+                                )}
                               </div>
 
                               {/* Play button — shown when at least one video is linked */}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { ClientData } from "@/db/queries/client";
 
@@ -29,31 +30,50 @@ function VideoIcon() {
   );
 }
 
-type Session = ClientData["coachingSessions"][number];
+function PlusIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
 
-function PlanCard({ session, token }: { session: Session; token: string }) {
+type Plan = ClientData["workoutPlans"][number];
+type Workout = ClientData["workouts"][number];
+
+function fmtDate(d: Date | string) {
+  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function fmtDuration(secs: number): string {
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function PlanCard({ plan, token }: { plan: Plan; token: string }) {
   const [open, setOpen] = useState(false);
-  const date = new Date(session.occurredAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 
   return (
     <div className="client-card">
       <div className="plan-header" onClick={() => setOpen((o) => !o)}>
         <div className="plan-dot" />
         <div style={{ flex: 1 }}>
-          <div className="plan-name">{date}</div>
-          <div className="plan-meta">{session.exercises.length} exercise{session.exercises.length !== 1 ? "s" : ""}</div>
+          <div className="plan-name">{plan.name}</div>
+          <div className="plan-meta">
+            {fmtDate(plan.occurredAt)} · {plan.exercises.length} exercise{plan.exercises.length !== 1 ? "s" : ""}
+          </div>
         </div>
         <div className={`plan-chevron${open ? " open" : ""}`}>
           <ChevronDown />
         </div>
       </div>
+
       {open && (
         <div className="plan-exercises">
-          {session.exercises.map((ex) => (
+          {plan.exercises.map((ex) => (
             <Link
               key={ex.id}
               href={`/client/${token}/exercise/${ex.id}`}
@@ -66,27 +86,31 @@ function PlanCard({ session, token }: { session: Session; token: string }) {
                 </span>
               )}
               <span className="ex-tag">
-                {ex.sets}×{ex.reps}
+                {ex.type === "duration"
+                  ? `${ex.sets}×${ex.durationSeconds}s`
+                  : `${ex.sets}×${ex.reps}`}
               </span>
               <span className="ex-arrow">
                 <ArrowRight />
               </span>
             </Link>
           ))}
-          <div className="plan-actions" />
+          <div className="plan-actions">
+            <Link
+              href={`/client/${token}/log/${plan.id}`}
+              className="client-btn client-btn-primary client-btn-sm"
+            >
+              Start Workout
+            </Link>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function HistoryCard({ session }: { session: Session }) {
+function HistoryCard({ workout }: { workout: Workout }) {
   const [open, setOpen] = useState(false);
-  const date = new Date(session.occurredAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 
   return (
     <div className="history-card">
@@ -96,74 +120,78 @@ function HistoryCard({ session }: { session: Session }) {
       >
         <div className="history-top">
           <div>
-            <div className="history-name">{date}</div>
+            <div className="history-name">
+              {workout.workoutPlan?.name ?? fmtDate(workout.createdAt)}
+            </div>
+            <div className="history-date">{fmtDate(workout.createdAt)}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="history-badge">
-              {session.exercises.length} exercise{session.exercises.length !== 1 ? "s" : ""}
-            </span>
+            <span className="history-badge">{fmtDuration(workout.durationSeconds)}</span>
             <span
               style={{
                 color: "var(--text-3)",
-                transition: "transform 0.2s",
                 display: "inline-flex",
                 transform: open ? "rotate(180deg)" : "none",
+                transition: "transform 0.2s",
               }}
             >
               <ChevronDown />
             </span>
           </div>
         </div>
-        {(session.comment || session.painRating || session.energyRating) && (
+        {(workout.comment || workout.painRating || workout.energyRating) && (
           <div className="history-feedback">
-            {session.comment && (
-              <div className="history-comment">"{session.comment}"</div>
+            {workout.comment && (
+              <div className="history-comment">"{workout.comment}"</div>
             )}
             <div className="scales-row">
-              {session.painRating != null && (
-                <span className="scale-badge scale-pain">
-                  Pain {session.painRating}/5
-                </span>
+              {workout.painRating != null && (
+                <span className="scale-badge scale-pain">Pain {workout.painRating}/10</span>
               )}
-              {session.energyRating != null && (
-                <span className="scale-badge scale-energy">
-                  Energy {session.energyRating}/5
-                </span>
+              {workout.energyRating != null && (
+                <span className="scale-badge scale-energy">Energy {workout.energyRating}/10</span>
               )}
             </div>
           </div>
         )}
       </div>
-      {open && (
-        <div style={{ borderTop: "1px solid var(--border)" }}>
-          {session.exercises.map((ex, exIdx) => (
-            <div
-              key={ex.id}
-              style={{ borderBottom: "1px solid var(--border)" }}
-            >
-              <div
-                style={{
-                  padding: "10px 16px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  background: "var(--surface2)",
-                }}
-              >
-                <div
-                  style={{
-                    width: 22, height: 22, borderRadius: "50%",
-                    background: "rgba(253,109,187,0.15)", color: "var(--pink)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, flexShrink: 0,
-                  }}
-                >
-                  {exIdx + 1}
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 600, flex: 1 }}>{ex.name}</div>
-                <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
-                  {ex.sets}×{ex.reps}
-                </div>
+
+      {open && workout.exerciseLinks.length > 0 && (
+        <div className="history-exercises">
+          {workout.exerciseLinks.map(({ exercise, setsData }) => (
+            <div key={exercise.id} className="history-ex-card">
+              <div className="history-ex-card-name">{exercise.name}</div>
+              <div className="history-ex-set-rows">
+                {setsData && setsData.length > 0 ? (
+                  setsData.map((s, i) => {
+                    const isDur = s.durationSeconds != null;
+                    return (
+                      <div key={i} className={`history-ex-set-row${!s.completed ? " skipped" : ""}`}>
+                        <span className="history-ex-set-label">SET {i + 1}</span>
+                        <span className="history-ex-set-val">
+                          {isDur ? s.durationSeconds : s.reps}
+                          <span className="history-ex-set-unit">{isDur ? "SEC" : "REPS"}</span>
+                        </span>
+                        <span className="history-ex-set-weight">
+                          {s.weightLbs ? `${s.weightLbs} lbs` : "—"}
+                        </span>
+                        {s.completed
+                          ? <span className="history-ex-set-check">✓</span>
+                          : <span className="history-ex-set-skip">✕</span>}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="history-ex-set-row">
+                    <span className="history-ex-set-label">PLAN</span>
+                    <span className="history-ex-set-val">
+                      {exercise.type === "duration" ? exercise.durationSeconds : exercise.reps}
+                      <span className="history-ex-set-unit">{exercise.type === "duration" ? "SEC" : "REPS"}</span>
+                    </span>
+                    <span className="history-ex-set-weight">{exercise.sets} sets</span>
+                    <span />
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -173,17 +201,63 @@ function HistoryCard({ session }: { session: Session }) {
   );
 }
 
+function ChoosePlanSheet({
+  plans,
+  token,
+  onClose,
+}: {
+  plans: Plan[];
+  token: string;
+  onClose: () => void;
+}) {
+  const router = useRouter();
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="sheet-handle" />
+        <div className="sheet-title">Choose a Workout Plan</div>
+        {plans.length === 0 ? (
+          <div style={{ padding: "20px 16px", color: "var(--text-3)", fontSize: 14 }}>
+            No plans available. Your trainer will assign plans here.
+          </div>
+        ) : (
+          plans.map((p) => (
+            <div
+              key={p.id}
+              className="sheet-plan-row"
+              onClick={() => { onClose(); router.push(`/client/${token}/log/${p.id}`); }}
+            >
+              <div className="sheet-plan-dot" />
+              <div style={{ flex: 1 }}>
+                <div className="sheet-plan-name">{p.name}</div>
+                <div style={{ fontSize: 11, color: "var(--text-3)", marginTop: 2 }}>{fmtDate(p.occurredAt)}</div>
+              </div>
+              <span className="sheet-plan-count">
+                {p.exercises.length} exercise{p.exercises.length !== 1 ? "s" : ""}
+              </span>
+              <span style={{ color: "var(--text-3)", marginLeft: 8 }}>
+                <ArrowRight />
+              </span>
+            </div>
+          ))
+        )}
+        <div style={{ height: 16 }} />
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   trainee: { name: string; email: string };
-  sessions: ClientData["coachingSessions"];
+  workoutPlans: Plan[];
+  workouts: Workout[];
   token: string;
 }
 
-export function WorkoutPlansView({ trainee, sessions, token }: Props) {
+export function WorkoutPlansView({ trainee, workoutPlans, workouts, token }: Props) {
   const [tab, setTab] = useState<"plans" | "history">("plans");
-
-  const plans = sessions.filter((s) => !s.completed);
-  const history = sessions.filter((s) => s.completed === true);
+  const [showChoosePlan, setShowChoosePlan] = useState(false);
 
   const initials = trainee.name
     .split(" ")
@@ -210,7 +284,7 @@ export function WorkoutPlansView({ trainee, sessions, token }: Props) {
             <div className="client-info">
               <div className="client-name">{trainee.name}</div>
               <div className="client-meta">
-                {plans.length} active plan{plans.length !== 1 ? "s" : ""} · {history.length} completed
+                {workoutPlans.length} plan{workoutPlans.length !== 1 ? "s" : ""} · {workouts.length} completed
               </div>
             </div>
           </div>
@@ -229,38 +303,55 @@ export function WorkoutPlansView({ trainee, sessions, token }: Props) {
             onClick={() => setTab("history")}
             type="button"
           >
-            History{history.length > 0 ? ` (${history.length})` : ""}
+            History{workouts.length > 0 ? ` (${workouts.length})` : ""}
           </button>
         </div>
 
         {tab === "plans" ? (
           <div>
-            {plans.length === 0 ? (
+            {workoutPlans.length === 0 ? (
               <div className="client-empty">
                 <div className="client-empty-icon">📋</div>
                 <div style={{ fontWeight: 600, marginBottom: 6 }}>No workout plans yet</div>
                 <div>Your trainer will assign plans here.</div>
               </div>
             ) : (
-              plans.map((s) => <PlanCard key={s.id} session={s} token={token} />)
+              workoutPlans.map((p) => <PlanCard key={p.id} plan={p} token={token} />)
             )}
-            <div style={{ height: 60 }} />
+            <div style={{ height: 100 }} />
           </div>
         ) : (
           <div>
-            {history.length === 0 ? (
+            {workouts.length === 0 ? (
               <div className="client-empty">
                 <div className="client-empty-icon">🏆</div>
-                <div style={{ fontWeight: 600, marginBottom: 6 }}>No completed sessions yet</div>
-                <div>Completed sessions will appear here.</div>
+                <div style={{ fontWeight: 600, marginBottom: 6 }}>No workouts logged yet</div>
+                <div>Tap + to log your first workout.</div>
               </div>
             ) : (
-              history.map((s) => <HistoryCard key={s.id} session={s} />)
+              workouts.map((w) => <HistoryCard key={w.id} workout={w} />)
             )}
             <div style={{ height: 60 }} />
           </div>
         )}
       </div>
+
+      <button
+        className="fab"
+        onClick={() => setShowChoosePlan(true)}
+        type="button"
+        title="Log Workout"
+      >
+        <PlusIcon />
+      </button>
+
+      {showChoosePlan && (
+        <ChoosePlanSheet
+          plans={workoutPlans}
+          token={token}
+          onClose={() => setShowChoosePlan(false)}
+        />
+      )}
     </div>
   );
 }

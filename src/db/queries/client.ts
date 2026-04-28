@@ -1,6 +1,6 @@
-import { and, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { coachingSessions, exercises, users } from "@/db/schema";
+import { exercises, users, workoutPlans, workouts } from "@/db/schema";
 
 export async function getClientData(traineeId: string) {
   const user = await db.query.users.findFirst({
@@ -12,8 +12,8 @@ export async function getClientData(traineeId: string) {
       pin: true,
     },
     with: {
-      coachingSessions: {
-        orderBy: (cs, { desc }) => [desc(cs.occurredAt)],
+      workoutPlans: {
+        orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
           exercises: {
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
@@ -25,9 +25,17 @@ export async function getClientData(traineeId: string) {
               },
             },
           },
-          videoLinks: {
+        },
+      },
+      workouts: {
+        orderBy: (w, { desc }) => [desc(w.createdAt)],
+        with: {
+          workoutPlan: { columns: { id: true, name: true, occurredAt: true } },
+          exerciseLinks: {
             with: {
-              video: { columns: { id: true, title: true, fileUrl: true } },
+              exercise: {
+                columns: { id: true, name: true, type: true, sets: true, reps: true, durationSeconds: true, weightLbs: true },
+              },
             },
           },
         },
@@ -42,13 +50,15 @@ export async function getClientData(traineeId: string) {
     name: user.name,
     email: user.email,
     hasPin: user.pin !== null,
-    coachingSessions: user.coachingSessions,
+    workoutPlans: user.workoutPlans,
+    workouts: user.workouts,
   };
 }
 
 export type ClientData = NonNullable<Awaited<ReturnType<typeof getClientData>>>;
-export type ClientSession = ClientData["coachingSessions"][number];
-export type ClientExercise = ClientSession["exercises"][number];
+export type ClientWorkoutPlan = ClientData["workoutPlans"][number];
+export type ClientPlanExercise = ClientWorkoutPlan["exercises"][number];
+export type ClientWorkout = ClientData["workouts"][number];
 
 export async function getExerciseForClient(
   exerciseId: string,
@@ -57,7 +67,7 @@ export async function getExerciseForClient(
   const exercise = await db.query.exercises.findFirst({
     where: eq(exercises.id, exerciseId),
     with: {
-      session: {
+      workoutPlan: {
         columns: { traineeId: true },
       },
       videoLinks: {
@@ -71,7 +81,7 @@ export async function getExerciseForClient(
   });
 
   if (!exercise) return null;
-  if (exercise.session.traineeId !== traineeId) return null;
+  if (exercise.workoutPlan.traineeId !== traineeId) return null;
 
   return exercise;
 }
@@ -79,3 +89,48 @@ export async function getExerciseForClient(
 export type ExerciseDetail = NonNullable<
   Awaited<ReturnType<typeof getExerciseForClient>>
 >;
+
+export async function getPlanForLog(
+  planId: string,
+  traineeId: string,
+) {
+  const plan = await db.query.workoutPlans.findFirst({
+    where: eq(workoutPlans.id, planId),
+    columns: {
+      id: true,
+      traineeId: true,
+      name: true,
+      occurredAt: true,
+      comment: true,
+    },
+    with: {
+      exercises: {
+        orderBy: (ex, { asc }) => [asc(ex.createdAt)],
+        columns: {
+          id: true,
+          name: true,
+          type: true,
+          sets: true,
+          reps: true,
+          durationSeconds: true,
+          weightLbs: true,
+          comment: true,
+        },
+        with: {
+          videoLinks: {
+            with: {
+              video: { columns: { id: true, title: true, fileUrl: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!plan) return null;
+  if (plan.traineeId !== traineeId) return null;
+
+  return plan;
+}
+
+export type PlanForLog = NonNullable<Awaited<ReturnType<typeof getPlanForLog>>>;

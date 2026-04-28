@@ -31,7 +31,8 @@ export default async function ClientPage({
   return (
     <WorkoutPlansView
       trainee={{ name: clientData.name, email: clientData.email }}
-      sessions={clientData.coachingSessions}
+      workoutPlans={clientData.workoutPlans}
+      workouts={clientData.workouts}
       token={token}
     />
   );

@@ -1,0 +1,1 @@
+ALTER TABLE "workout_plans" ADD COLUMN "name" text DEFAULT '' NOT NULL;

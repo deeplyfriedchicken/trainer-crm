@@ -65,9 +65,9 @@ export async function getVideoById(id: string) {
     where: eq(videos.id, id),
     with: {
       uploader: { columns: { id: true, name: true, email: true } },
-      sessionLinks: {
+      workoutPlanLinks: {
         with: {
-          session: {
+          workoutPlan: {
             columns: { id: true, traineeId: true, occurredAt: true },
           },
         },
@@ -75,7 +75,7 @@ export async function getVideoById(id: string) {
       exerciseLinks: {
         with: {
           exercise: {
-            columns: { id: true, sessionId: true, name: true },
+            columns: { id: true, workoutPlanId: true, name: true },
           },
         },
       },

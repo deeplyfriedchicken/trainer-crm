@@ -8,34 +8,15 @@ import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
 import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
+import { TraineeWorkoutsPanel } from "./_components/TraineeWorkoutsPanel";
 import "./page.css";
 
 const COLOR_MAP: Record<string, string> = {
-  A: "#FD6DBB",
-  B: "#34FDFE",
-  C: "#a78bfa",
-  D: "#4ade80",
-  E: "#fb923c",
-  F: "#FD6DBB",
-  G: "#34FDFE",
-  H: "#a78bfa",
-  I: "#4ade80",
-  J: "#FD6DBB",
-  K: "#34FDFE",
-  L: "#a78bfa",
-  M: "#4ade80",
-  N: "#fb923c",
-  O: "#FD6DBB",
-  P: "#34FDFE",
-  Q: "#a78bfa",
-  R: "#4ade80",
-  S: "#FD6DBB",
-  T: "#34FDFE",
-  U: "#a78bfa",
-  V: "#4ade80",
-  W: "#fb923c",
-  X: "#FD6DBB",
-  Y: "#34FDFE",
+  A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",
+  F: "#FD6DBB", G: "#34FDFE", H: "#a78bfa", I: "#4ade80", J: "#FD6DBB",
+  K: "#34FDFE", L: "#a78bfa", M: "#4ade80", N: "#fb923c", O: "#FD6DBB",
+  P: "#34FDFE", Q: "#a78bfa", R: "#4ade80", S: "#FD6DBB", T: "#34FDFE",
+  U: "#a78bfa", V: "#4ade80", W: "#fb923c", X: "#FD6DBB", Y: "#34FDFE",
   Z: "#a78bfa",
 };
 function colorFor(name: string) {
@@ -66,17 +47,19 @@ export default async function TraineePage({
     year: "numeric",
   });
 
-  const sessions = trainee.coachingSessions.map((s) => ({
-    id: s.id,
-    occurredAt: s.occurredAt,
-    energyRating: s.energyRating,
-    painRating: s.painRating,
-    comment: s.comment,
-    exercises: s.exercises.map((ex) => ({
+  const plans = trainee.workoutPlans.map((p) => ({
+    id: p.id,
+    name: p.name,
+    occurredAt: p.occurredAt,
+    comment: p.comment,
+    exercises: p.exercises.map((ex) => ({
       id: ex.id,
       name: ex.name,
+      type: ex.type,
       sets: ex.sets,
       reps: ex.reps,
+      durationSeconds: ex.durationSeconds,
+      weightLbs: ex.weightLbs,
       comment: ex.comment,
       videos: ex.videoLinks.map((vl) => ({
         id: vl.video.id,
@@ -101,8 +84,13 @@ export default async function TraineePage({
         statusColor="#4ade80"
         stats={[
           {
-            label: "Sessions",
-            value: String(trainee.coachingSessions.length),
+            label: "Plans",
+            value: String(trainee.workoutPlans.length),
+            color: accentColor,
+          },
+          {
+            label: "Workouts",
+            value: String(trainee.workouts.length),
             color: accentColor,
           },
           { label: "Trainer", value: trainerName },
@@ -113,7 +101,7 @@ export default async function TraineePage({
       <div className="crm-split-panel">
         <TraineeSessionsPanel
           traineeId={trainee.id}
-          sessions={sessions}
+          sessions={plans}
           accentColor={accentColor}
         />
         <TraineeChatPanel
@@ -127,6 +115,15 @@ export default async function TraineePage({
           }}
         />
       </div>
+
+      {trainee.workouts.length > 0 && (
+        <div style={{ marginTop: 32 }}>
+          <TraineeWorkoutsPanel
+            workouts={trainee.workouts}
+            accentColor={accentColor}
+          />
+        </div>
+      )}
     </div>
   );
 }

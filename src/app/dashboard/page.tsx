@@ -13,8 +13,6 @@ export default async function DashboardHome() {
     listVideos({ limit: 12, offset: 0, status: "ready" }),
   ]);
 
-  const totalSessions = trainees.reduce((sum, t) => sum + t.sessionCount, 0);
-
   const stats = [
     {
       num: trainees.length,
@@ -27,12 +25,6 @@ export default async function DashboardHome() {
       label: "Videos Uploaded",
       change: "↑ by your team",
       accent: "cyan",
-    },
-    {
-      num: totalSessions,
-      label: "Total Sessions",
-      change: "↑ across all trainees",
-      accent: "green",
     },
     {
       num: trainers.length,

@@ -9,16 +9,37 @@ import { Input } from "@/app/components/Input";
 import { PageHeader } from "@/app/components/PageHeader";
 import { type ColumnDef, Table } from "@/app/components/Table";
 import type { TraineeRow } from "@/db/queries/trainees";
+import { usePermissions } from "../_hooks/usePermissions";
 import { AddTraineeModal } from "./AddTraineeModal";
 
 type Trainee = TraineeRow;
 
 const COLOR_MAP: Record<string, string> = {
-  A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",
-  F: "#FD6DBB", G: "#34FDFE", H: "#a78bfa", I: "#4ade80", J: "#FD6DBB",
-  K: "#34FDFE", L: "#a78bfa", M: "#4ade80", N: "#fb923c", O: "#FD6DBB",
-  P: "#34FDFE", Q: "#a78bfa", R: "#4ade80", S: "#FD6DBB", T: "#34FDFE",
-  U: "#a78bfa", V: "#4ade80", W: "#fb923c", X: "#FD6DBB", Y: "#34FDFE",
+  A: "#FD6DBB",
+  B: "#34FDFE",
+  C: "#a78bfa",
+  D: "#4ade80",
+  E: "#fb923c",
+  F: "#FD6DBB",
+  G: "#34FDFE",
+  H: "#a78bfa",
+  I: "#4ade80",
+  J: "#FD6DBB",
+  K: "#34FDFE",
+  L: "#a78bfa",
+  M: "#4ade80",
+  N: "#fb923c",
+  O: "#FD6DBB",
+  P: "#34FDFE",
+  Q: "#a78bfa",
+  R: "#4ade80",
+  S: "#FD6DBB",
+  T: "#34FDFE",
+  U: "#a78bfa",
+  V: "#4ade80",
+  W: "#fb923c",
+  X: "#FD6DBB",
+  Y: "#34FDFE",
   Z: "#a78bfa",
 };
 
@@ -57,7 +78,8 @@ const COLUMNS: ColumnDef<Trainee>[] = [
               fontWeight: 700,
               color,
               flexShrink: 0,
-              fontFamily: "var(--font-crm-display), 'Barlow Condensed', sans-serif",
+              fontFamily:
+                "var(--font-crm-display), 'Barlow Condensed', sans-serif",
             }}
           >
             {row.name[0]?.toUpperCase() ?? "?"}
@@ -75,30 +97,6 @@ const COLUMNS: ColumnDef<Trainee>[] = [
     ),
   },
   {
-    key: "sessionCount",
-    label: "Sessions",
-    render: (row) => (
-      <span
-        style={{
-          color: "rgba(255,255,255,0.7)",
-          fontFamily: "var(--font-neon-mono), 'Space Mono', monospace",
-          fontSize: 12,
-        }}
-      >
-        {row.sessionCount}
-      </span>
-    ),
-  },
-  {
-    key: "lastSessionAt",
-    label: "Last Session",
-    render: (row) => (
-      <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>
-        {formatDate(row.lastSessionAt)}
-      </span>
-    ),
-  },
-  {
     key: "createdAt",
     label: "Joined",
     render: (row) => (
@@ -109,13 +107,8 @@ const COLUMNS: ColumnDef<Trainee>[] = [
   },
 ];
 
-export function TraineeTable({
-  trainees,
-  canAdd,
-}: {
-  trainees: Trainee[];
-  canAdd: boolean;
-}) {
+export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
+  const { canAddClient } = usePermissions();
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -140,7 +133,7 @@ export function TraineeTable({
               size="sm"
               w="200px"
             />
-            {canAdd && (
+            {canAddClient && (
               <Button
                 colorScheme="pink"
                 size="sm"
@@ -157,7 +150,7 @@ export function TraineeTable({
         }
       />
 
-      {canAdd && (
+      {canAddClient && (
         <AddTraineeModal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}

@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { Barlow_Condensed, Space_Grotesk, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import { getCurrentUser } from "@/lib/auth";
+import { CurrentUserProvider } from "@/providers/CurrentUserProvider";
 import { Sidebar } from "./_components/Sidebar";
 import { Topbar } from "./_components/Topbar";
 import "./crm.css";
@@ -40,7 +41,7 @@ export default async function DashboardLayout({
       <Sidebar user={user} />
       <main className="crm-main">
         <Topbar />
-        {children}
+        <CurrentUserProvider user={user}>{children}</CurrentUserProvider>
       </main>
     </div>
   );

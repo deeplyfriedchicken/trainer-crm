@@ -3,15 +3,15 @@
 import { Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuMenu } from "react-icons/lu";
-import { IconButton } from "../../components/IconButton";
+import { Button } from "@/app/components/Button";
 import { Input } from "../../components/Input";
-import { BellIcon, SearchIcon } from "./NavIcons";
-
-const CURRENT_USER = { initials: "JE" };
+import useHandleLogout from "../_hooks/useLogout";
+import { SearchIcon } from "./NavIcons";
 
 export function Topbar() {
+  const { logout } = useHandleLogout();
   const [query, setQuery] = useState("");
-  const [hasUnread] = useState(true);
+  const [_hasUnread] = useState(true);
 
   function openNav() {
     document.body.classList.add("crm-nav-open");
@@ -19,7 +19,12 @@ export function Topbar() {
 
   return (
     <Box as="header" className="crm-topbar">
-      <button className="crm-hamburger" onClick={openNav} aria-label="Open navigation">
+      <button
+        type="button"
+        className="crm-hamburger"
+        onClick={openNav}
+        aria-label="Open navigation"
+      >
         <LuMenu size={18} />
       </button>
       <div className="crm-topbar-title">
@@ -39,39 +44,7 @@ export function Topbar() {
         />
       </div>
 
-      <div className="crm-topbar-actions">
-        <Box position="relative">
-          <IconButton
-            aria-label="Notifications"
-            variant="outline"
-            colorScheme="pink"
-            bg="var(--neon-surface)"
-            borderColor="var(--neon-border)"
-            color="rgba(255,255,255,0.5)"
-            boxShadow="none"
-            _hover={{
-              borderColor: "rgba(253,109,187,0.33)",
-              color: "#fff",
-              boxShadow: "none",
-            }}
-          >
-            <BellIcon />
-          </IconButton>
-          {hasUnread && <div className="crm-notif-dot" />}
-        </Box>
-        <div
-          className="crm-profile-ring"
-          style={{ width: 36, height: 36 }}
-          aria-hidden
-        >
-          <div
-            className="crm-profile-ring-inner"
-            style={{ fontSize: "13px" }}
-          >
-            {CURRENT_USER.initials}
-          </div>
-        </div>
-      </div>
+      <Button onClick={logout}>Logout</Button>
     </Box>
   );
 }

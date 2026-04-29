@@ -55,4 +55,4 @@ const InputBase = forwardRef<HTMLInputElement, NeonInputProps>(function Input(
   );
 });
 
-export const Input = chakra(InputBase);
+export const Input = chakra(InputBase) as unknown as typeof InputBase;

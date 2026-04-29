@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getExerciseForClient } from "@/db/queries/client";
 import { getClientSession } from "@/lib/client-session";
 import { decryptUserId } from "@/lib/client-token";
+import { getPresignedGetUrl } from "@/lib/s3";
 
 function ArrowLeft() {
   return (
@@ -36,8 +37,21 @@ export default async function ExerciseDetailPage({
     redirect(`/client/${token}`);
   }
 
-  const exercise = await getExerciseForClient(exerciseId, traineeId);
-  if (!exercise) notFound();
+  const raw = await getExerciseForClient(exerciseId, traineeId);
+  if (!raw) notFound();
+
+  const exercise = {
+    ...raw,
+    videoLinks: await Promise.all(
+      raw.videoLinks.map(async (vl) => ({
+        ...vl,
+        video: {
+          ...vl.video,
+          fileUrl: await getPresignedGetUrl(vl.video.fileKey, 86400),
+        },
+      })),
+    ),
+  };
 
   const volume = exercise.sets * exercise.reps;
 

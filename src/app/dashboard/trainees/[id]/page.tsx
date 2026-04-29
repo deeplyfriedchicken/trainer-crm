@@ -3,6 +3,7 @@ import { getOrCreateChat } from "@/db/queries/chats";
 import { getTraineeById } from "@/db/queries/trainees";
 import { getCurrentUser } from "@/lib/auth";
 import { encryptUserId } from "@/lib/client-token";
+import { getPresignedGetUrl } from "@/lib/s3";
 import { BackLink } from "./_components/BackLink";
 import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
@@ -46,27 +47,33 @@ export default async function TraineePage({
     year: "numeric",
   });
 
-  const plans = trainee.workoutPlans.map((p) => ({
-    id: p.id,
-    name: p.name,
-    occurredAt: p.occurredAt,
-    comment: p.comment,
-    exercises: p.exercises.map((ex) => ({
-      id: ex.id,
-      name: ex.name,
-      type: ex.type,
-      sets: ex.sets,
-      reps: ex.reps,
-      durationSeconds: ex.durationSeconds,
-      weightLbs: ex.weightLbs,
-      comment: ex.comment,
-      videos: ex.videoLinks.map((vl) => ({
-        id: vl.video.id,
-        title: vl.video.title,
-        url: vl.video.fileUrl,
-      })),
+  const plans = await Promise.all(
+    trainee.workoutPlans.map(async (p) => ({
+      id: p.id,
+      name: p.name,
+      occurredAt: p.occurredAt,
+      comment: p.comment,
+      exercises: await Promise.all(
+        p.exercises.map(async (ex) => ({
+          id: ex.id,
+          name: ex.name,
+          type: ex.type,
+          sets: ex.sets,
+          reps: ex.reps,
+          durationSeconds: ex.durationSeconds,
+          weightLbs: ex.weightLbs,
+          comment: ex.comment,
+          videos: await Promise.all(
+            ex.videoLinks.map(async (vl) => ({
+              id: vl.video.id,
+              title: vl.video.title,
+              url: await getPresignedGetUrl(vl.video.fileKey, 3600),
+            })),
+          ),
+        })),
+      ),
     })),
-  }));
+  );
 
   return (
     <div className="crm-page" style={{ paddingBottom: 60 }}>

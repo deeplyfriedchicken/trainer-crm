@@ -40,7 +40,7 @@ export async function getTraineeById(id: string) {
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
             with: {
               videoLinks: {
-                with: { video: { columns: { id: true, title: true, fileUrl: true } } },
+                with: { video: { columns: { id: true, title: true, fileKey: true, fileUrl: true } } },
               },
             },
           },

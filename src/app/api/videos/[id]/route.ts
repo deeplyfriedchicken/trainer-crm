@@ -7,6 +7,7 @@ import {
   getProcessedKey,
   getProcessedUrl,
 } from "@/lib/mediaconvert";
+import { getPresignedGetUrl } from "@/lib/s3";
 
 export async function GET(
   _request: NextRequest,
@@ -19,7 +20,9 @@ export async function GET(
   if (!video) {
     return Response.json({ error: "Video not found" }, { status: 404 });
   }
-  return Response.json({ data: video });
+  return Response.json({
+    data: { ...video, fileUrl: await getPresignedGetUrl(video.fileKey, 3600) },
+  });
 }
 
 export async function PATCH(

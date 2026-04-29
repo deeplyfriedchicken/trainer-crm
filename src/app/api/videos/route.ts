@@ -3,6 +3,7 @@ import { listVideos } from "@/db/queries/videos";
 import { type VideoStatus, videoStatus } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { parsePagination } from "@/lib/pagination";
+import { getPresignedGetUrl } from "@/lib/s3";
 
 export async function GET(request: NextRequest) {
   // TODO(auth): apply role-based filtering once auth lands.
@@ -27,7 +28,13 @@ export async function GET(request: NextRequest) {
   }
 
   const search = params.get("q") ?? undefined;
-  const data = await listVideos({ limit, offset, uploaderId, status, search });
+  const videos = await listVideos({ limit, offset, uploaderId, status, search });
+  const data = await Promise.all(
+    videos.map(async (v) => ({
+      ...v,
+      fileUrl: await getPresignedGetUrl(v.fileKey, 3600),
+    })),
+  );
 
   return Response.json({
     data,

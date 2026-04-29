@@ -20,7 +20,7 @@ export async function getClientData(traineeId: string) {
             with: {
               videoLinks: {
                 with: {
-                  video: { columns: { id: true, title: true, fileUrl: true } },
+                  video: { columns: { id: true, title: true, fileKey: true, fileUrl: true } },
                 },
               },
             },
@@ -73,7 +73,7 @@ export async function getExerciseForClient(
       videoLinks: {
         with: {
           video: {
-            columns: { id: true, title: true, fileUrl: true, mimeType: true },
+            columns: { id: true, title: true, fileKey: true, fileUrl: true, mimeType: true },
           },
         },
       },
@@ -119,7 +119,7 @@ export async function getPlanForLog(
         with: {
           videoLinks: {
             with: {
-              video: { columns: { id: true, title: true, fileUrl: true } },
+              video: { columns: { id: true, title: true, fileKey: true, fileUrl: true } },
             },
           },
         },

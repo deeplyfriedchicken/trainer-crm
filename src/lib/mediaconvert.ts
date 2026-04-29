@@ -47,7 +47,9 @@ export async function submitTranscodeJob(videoId: string, inputKey: string) {
             {
               NameModifier: "720p",
               VideoDescription: {
-                Height: 720,
+                Width: 1280,
+                Height: 1280,
+                ScalingBehavior: "FIT",
                 CodecSettings: {
                   Codec: "H_264",
                   H264Settings: {

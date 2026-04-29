@@ -14,7 +14,7 @@ export const mediaConvert = new MediaConvertClient({
 });
 
 export function getProcessedKey(videoId: string) {
-  return `videos/${videoId}/720p.mp4`;
+  return `videos/${videoId}/${videoId}720p.mp4`;
 }
 
 export function getProcessedUrl(videoId: string) {

@@ -1,7 +1,8 @@
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { type NextRequest } from "next/server";
 import MessageValidator from "sns-validator";
 import { getVideoById, updateVideo } from "@/db/queries/videos";
+import { getProcessedKey } from "@/lib/mediaconvert";
 import { s3, S3_BUCKET } from "@/lib/s3";
 
 const validator = new MessageValidator();
@@ -76,11 +77,15 @@ export async function POST(request: NextRequest) {
     )?.[0];
     const durationMs = outputDetails?.durationInMs as number | undefined;
 
+    const head = await s3.send(
+      new HeadObjectCommand({ Bucket: S3_BUCKET, Key: getProcessedKey(videoId) }),
+    );
+
     await updateVideo(videoId, {
       status: "ready",
-      ...(durationMs != null && {
-        durationSeconds: Math.round(durationMs / 1000),
-      }),
+      mimeType: "video/mp4",
+      ...(head.ContentLength != null && { fileSizeBytes: head.ContentLength }),
+      ...(durationMs != null && { durationSeconds: Math.round(durationMs / 1000) }),
     });
 
     if (video.originalFileKey) {

@@ -12,6 +12,8 @@ export type UpdateVideoInput = {
   fileKey?: string;
   fileUrl?: string;
   durationSeconds?: number | null;
+  mimeType?: string;
+  fileSizeBytes?: number;
 };
 
 export async function updateVideo(id: string, input: UpdateVideoInput) {

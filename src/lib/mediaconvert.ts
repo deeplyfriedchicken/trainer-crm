@@ -32,6 +32,7 @@ export async function submitTranscodeJob(videoId: string, inputKey: string) {
           AudioSelectors: {
             "Audio Selector 1": { DefaultSelection: "DEFAULT" },
           },
+          VideoSelector: { Rotate: "AUTO" },
         },
       ],
       OutputGroups: [

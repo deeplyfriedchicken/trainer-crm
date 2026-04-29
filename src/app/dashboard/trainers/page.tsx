@@ -48,7 +48,6 @@ export default async function TrainersPage() {
               email={t.email}
               color={colorFor(t.name)}
               initial={t.name[0]?.toUpperCase() ?? "?"}
-              activeTraineeCount={t.activeTraineeCount}
               videoCount={t.videoCount}
             />
           ))}

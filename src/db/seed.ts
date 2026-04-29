@@ -2,7 +2,6 @@ import { sql } from "drizzle-orm";
 import { client, db } from "@/db";
 import {
   exercises,
-  trainerAssignments,
   userRoles,
   users,
   workoutExercises,
@@ -22,7 +21,6 @@ async function seed() {
         exercises,
         workout_plans,
         videos,
-        trainer_assignments,
         user_roles,
         users
       RESTART IDENTITY CASCADE
@@ -41,11 +39,6 @@ async function seed() {
       { userId: admin.id, role: "admin" },
       { userId: morgan.id, role: "trainee" },
       { userId: sam.id, role: "trainee" },
-    ]);
-
-    await tx.insert(trainerAssignments).values([
-      { trainerId: admin.id, traineeId: morgan.id },
-      { trainerId: admin.id, traineeId: sam.id },
     ]);
 
     const planDate1 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);

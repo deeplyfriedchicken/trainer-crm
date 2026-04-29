@@ -22,6 +22,20 @@
       "when": 1777395576565,
       "tag": "0002_add_name_to_workout_plans",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777414029076,
+      "tag": "0003_silly_phantom_reporter",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777416384108,
+      "tag": "0004_dizzy_secret_warriors",
+      "breakpoints": true
     }
   ]
 }

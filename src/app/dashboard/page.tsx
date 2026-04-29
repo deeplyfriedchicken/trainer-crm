@@ -13,8 +13,6 @@ export default async function DashboardHome() {
     listVideos({ limit: 12, offset: 0, status: "ready" }),
   ]);
 
-  console.log({ videos });
-
   const totalSessions = trainees.reduce((sum, t) => sum + t.sessionCount, 0);
 
   const stats = [

@@ -1,6 +1,6 @@
-import { and, asc, count, eq, inArray, isNull, sql } from "drizzle-orm";
+import { asc, count, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { trainerAssignments, userRoles, users, videos } from "@/db/schema";
+import { userRoles, users, videos } from "@/db/schema";
 
 export type ListTrainersOptions = {
   limit: number;
@@ -31,34 +31,19 @@ export async function listTrainers(options: ListTrainersOptions) {
 
   const ids = rows.map((r) => r.id);
 
-  const [traineeCounts, videoCounts] = await Promise.all([
-    db
-      .select({
-        trainerId: trainerAssignments.trainerId,
-        count: count(trainerAssignments.traineeId),
-      })
-      .from(trainerAssignments)
-      .where(
-        and(inArray(trainerAssignments.trainerId, ids), isNull(trainerAssignments.endedAt)),
-      )
-      .groupBy(trainerAssignments.trainerId),
+  const videoCounts = await db
+    .select({
+      uploaderId: videos.uploaderId,
+      count: count(videos.id),
+    })
+    .from(videos)
+    .where(inArray(videos.uploaderId, ids))
+    .groupBy(videos.uploaderId);
 
-    db
-      .select({
-        uploaderId: videos.uploaderId,
-        count: count(videos.id),
-      })
-      .from(videos)
-      .where(inArray(videos.uploaderId, ids))
-      .groupBy(videos.uploaderId),
-  ]);
-
-  const traineeCountMap = new Map(traineeCounts.map((r) => [r.trainerId, r.count]));
   const videoCountMap = new Map(videoCounts.map((r) => [r.uploaderId, r.count]));
 
   return rows.map((r) => ({
     ...r,
-    activeTraineeCount: traineeCountMap.get(r.id) ?? 0,
     videoCount: videoCountMap.get(r.id) ?? 0,
   }));
 }
@@ -66,16 +51,7 @@ export async function listTrainers(options: ListTrainersOptions) {
 export async function getTrainerById(id: string) {
   const user = await db.query.users.findFirst({
     where: eq(users.id, id),
-    with: {
-      roles: true,
-      trainerAssignments: {
-        with: {
-          trainee: {
-            columns: { id: true, name: true, email: true },
-          },
-        },
-      },
-    },
+    with: { roles: true },
   });
 
   if (!user) return null;
@@ -91,10 +67,5 @@ export async function getTrainerById(id: string) {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     roles: user.roles.map((r) => r.role),
-    trainerAssignments: user.trainerAssignments.map((ta) => ({
-      assignmentId: ta.id,
-      assignedAt: ta.assignedAt,
-      trainee: ta.trainee,
-    })),
   };
 }

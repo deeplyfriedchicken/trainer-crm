@@ -82,36 +82,11 @@ export const userRoles = pgTable(
   ],
 );
 
-/* ──────────────────── Trainer ↔ Trainee Assignments ──────────────────── */
-
-export const trainerAssignments = pgTable(
-  "trainer_assignments",
-  {
-    id: id(),
-    trainerId: text("trainer_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    traineeId: text("trainee_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    assignedAt: timestamp("assigned_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    endedAt: timestamp("ended_at", { withTimezone: true }),
-  },
-  (t) => [
-    index("trainer_assignments_trainer_idx").on(t.trainerId),
-    index("trainer_assignments_trainee_idx").on(t.traineeId),
-    uniqueIndex("trainer_assignments_active_pair_idx")
-      .on(t.trainerId, t.traineeId)
-      .where(sql`${t.endedAt} IS NULL`),
-  ],
-);
-
 /* ───────────────────────────── Videos ──────────────────────────── */
 
 export const videoStatus = pgEnum("video_status", [
   "uploading",
+  "processing",
   "ready",
   "failed",
 ]);
@@ -132,6 +107,7 @@ export const videos = pgTable(
     mimeType: text("mime_type").notNull(),
     durationSeconds: integer("duration_seconds"),
     status: videoStatus("status").notNull().default("uploading"),
+    originalFileKey: text("original_file_key"),
     ...timestamps,
   },
   (t) => [
@@ -402,12 +378,6 @@ export const videoTags = pgTable(
 
 export const usersRelations = relations(users, ({ many }) => ({
   roles: many(userRoles),
-  trainerAssignments: many(trainerAssignments, {
-    relationName: "trainer_assignments_trainer",
-  }),
-  traineeAssignments: many(trainerAssignments, {
-    relationName: "trainer_assignments_trainee",
-  }),
   uploadedVideos: many(videos, { relationName: "videos_uploader" }),
   workoutPlans: many(workoutPlans, { relationName: "workout_plans_trainee" }),
   workouts: many(workouts, { relationName: "workouts_trainee" }),
@@ -416,22 +386,6 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const userRolesRelations = relations(userRoles, ({ one }) => ({
   user: one(users, { fields: [userRoles.userId], references: [users.id] }),
 }));
-
-export const trainerAssignmentsRelations = relations(
-  trainerAssignments,
-  ({ one }) => ({
-    trainer: one(users, {
-      fields: [trainerAssignments.trainerId],
-      references: [users.id],
-      relationName: "trainer_assignments_trainer",
-    }),
-    trainee: one(users, {
-      fields: [trainerAssignments.traineeId],
-      references: [users.id],
-      relationName: "trainer_assignments_trainee",
-    }),
-  }),
-);
 
 export const videosRelations = relations(videos, ({ one, many }) => ({
   uploader: one(users, {
@@ -599,8 +553,6 @@ export const videoTagsRelations = relations(videoTags, ({ one }) => ({
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type UserRole = (typeof userRole.enumValues)[number];
-export type TrainerAssignment = typeof trainerAssignments.$inferSelect;
-export type NewTrainerAssignment = typeof trainerAssignments.$inferInsert;
 export type Video = typeof videos.$inferSelect;
 export type NewVideo = typeof videos.$inferInsert;
 export type VideoStatus = (typeof videoStatus.enumValues)[number];

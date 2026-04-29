@@ -99,15 +99,6 @@ const COLUMNS: ColumnDef<Trainee>[] = [
     ),
   },
   {
-    key: "trainerName",
-    label: "Trainer",
-    render: (row) => (
-      <span style={{ color: "rgba(255,255,255,0.5)" }}>
-        {row.trainerName ?? "—"}
-      </span>
-    ),
-  },
-  {
     key: "createdAt",
     label: "Joined",
     render: (row) => (

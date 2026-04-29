@@ -9,9 +9,8 @@ export async function GET(request: NextRequest) {
 
   const params = request.nextUrl.searchParams;
   const { limit, offset } = parsePagination(params);
-  const trainerId = params.get("trainerId") ?? undefined;
 
-  const data = await listTrainees({ limit, offset, trainerId });
+  const data = await listTrainees({ limit, offset });
 
   return Response.json({
     data,

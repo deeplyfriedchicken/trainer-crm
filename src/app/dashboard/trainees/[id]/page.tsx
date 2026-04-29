@@ -40,7 +40,6 @@ export default async function TraineePage({
   const chat = await getOrCreateChat(trainee.id, currentUser.id);
 
   const accentColor = colorFor(trainee.name);
-  const trainerName = trainee.activeTrainer?.trainer.name ?? "Unassigned";
   const clientToken = encryptUserId(trainee.id);
   const memberSince = trainee.createdAt.toLocaleDateString("en-US", {
     month: "short",
@@ -79,7 +78,7 @@ export default async function TraineePage({
       <ProfileHero
         name={trainee.name}
         badge="Trainee"
-        meta={`${trainee.email}${trainee.activeTrainer ? ` · Trainer: ${trainerName}` : ""}`}
+        meta={trainee.email}
         accentColor={accentColor}
         statusColor="#4ade80"
         stats={[
@@ -93,7 +92,6 @@ export default async function TraineePage({
             value: String(trainee.workouts.length),
             color: accentColor,
           },
-          { label: "Trainer", value: trainerName },
           { label: "Member since", value: memberSince },
         ]}
       />

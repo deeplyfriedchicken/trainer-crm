@@ -5,7 +5,6 @@ type TrainerCardProps = {
   email: string;
   color: string;
   initial: string;
-  activeTraineeCount: number;
   videoCount: number;
 };
 
@@ -14,7 +13,6 @@ export function TrainerCard({
   email,
   color,
   initial,
-  activeTraineeCount,
   videoCount,
 }: TrainerCardProps) {
   return (
@@ -81,7 +79,6 @@ export function TrainerCard({
       {/* Stats */}
       <Flex justify="center" gap="24px" mb="20px">
         {[
-          { label: "Clients", value: activeTraineeCount },
           { label: "Videos", value: videoCount },
         ].map(({ label, value }) => (
           <Box key={label} textAlign="center">

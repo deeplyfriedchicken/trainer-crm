@@ -7,7 +7,11 @@ export type VideoRow = Awaited<ReturnType<typeof listVideos>>[number];
 export type UpdateVideoInput = {
   title?: string;
   description?: string | null;
-  status?: "uploading" | "ready" | "failed";
+  status?: "uploading" | "processing" | "ready" | "failed";
+  originalFileKey?: string | null;
+  fileKey?: string;
+  fileUrl?: string;
+  durationSeconds?: number | null;
 };
 
 export async function updateVideo(id: string, input: UpdateVideoInput) {

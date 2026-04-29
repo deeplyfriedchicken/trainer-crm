@@ -325,7 +325,7 @@ export function UploadModal({
                 {fields.length} Video{fields.length > 1 ? "s" : ""} Uploaded!
               </div>
               <div className={styles.successSub}>
-                Your videos are now available in the library and can be assigned to trainees.
+                Videos are being processed and will appear in the library shortly.
               </div>
             </div>
             <div className={styles.successActions}>

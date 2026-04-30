@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
 import {
@@ -14,6 +15,7 @@ import { Button } from "@/app/components/Button";
 import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { PageHeader } from "@/app/components/PageHeader";
 import type { VideoRow as VideoRowType } from "@/db/queries/videos";
+import { UploadModal } from "./UploadModal";
 import styles from "./VideoGallery.module.css";
 
 type Tag = VideoRowType["videoTags"][number]["tag"];
@@ -82,13 +84,7 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / 1e3).toFixed(0)} KB`;
 }
 
-function VideoThumbnail({
-  src,
-  onAspectRatio,
-}: {
-  src: string;
-  onAspectRatio?: (ratio: string) => void;
-}) {
+function VideoThumbnail({ src }: { src: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   return (
     <video
@@ -99,26 +95,20 @@ function VideoThumbnail({
       preload="metadata"
       onLoadedMetadata={() => {
         const v = ref.current;
-        if (v) {
-          v.currentTime = Math.min(1, v.duration * 0.1);
-          if (v.videoWidth && v.videoHeight) {
-            onAspectRatio?.(`${v.videoWidth} / ${v.videoHeight}`);
-          }
-        }
+        if (v) v.currentTime = Math.min(1, v.duration * 0.1);
       }}
       style={{
         position: "absolute",
         inset: 0,
         width: "100%",
         height: "100%",
-        objectFit: "cover",
+        objectFit: "contain",
       }}
     />
   );
 }
 
 function VideoCard({ v, onSelect }: { v: VideoRowType; onSelect: () => void }) {
-  const [aspectRatio, setAspectRatio] = useState("16 / 9");
   const primaryTag = v.videoTags[0]?.tag ?? null;
   const color = primaryTag ? tagColor(primaryTag.name) : "#34FDFE";
   const uploaderCol = uploaderColor(v.uploader.name);
@@ -126,8 +116,8 @@ function VideoCard({ v, onSelect }: { v: VideoRowType; onSelect: () => void }) {
 
   return (
     <button type="button" className={styles.videoCard} onClick={onSelect}>
-      <div className={styles.videoThumb} style={{ aspectRatio }}>
-        <VideoThumbnail src={v.fileUrl} onAspectRatio={setAspectRatio} />
+      <div className={styles.videoThumb}>
+        <VideoThumbnail src={v.fileUrl} />
         <div className={styles.videoThumbPattern} />
         <div
           style={{
@@ -215,14 +205,14 @@ export function VideoGallery({
   videos,
   title = "Latest Videos",
   subtitle = "Recently uploaded by your team",
-  onUpload,
   ...rest
 }: {
   videos: VideoRowType[];
   title?: string;
   subtitle?: string;
-  onUpload?: () => void;
 }) {
+  const router = useRouter();
+  const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [activeTag, setActiveTag] = useState<string>("All");
   const [selectedVideo, setSelectedVideo] = useState<VideoRowType | null>(null);
 
@@ -247,185 +237,203 @@ export function VideoGallery({
         );
 
   return (
-    <div {...rest}>
-      <PageHeader
-        title={title}
-        subtitle={subtitle}
-        action={
-          onUpload && (
+    <>
+      <div {...rest}>
+        <PageHeader
+          title={title}
+          subtitle={subtitle}
+          action={
             <Button
               variant="outline"
               colorScheme="cyan"
               size="sm"
-              onClick={onUpload}
+              onClick={() => setIsUploadOpen(true)}
             >
               <LuUpload size={13} />
               Upload Video
             </Button>
-          )
-        }
-      />
+          }
+        />
 
-      {allTags.length > 0 && (
-        <div className={styles.tagFilters}>
-          <button
-            type="button"
-            className={`${styles.tagPill}${activeTag === "All" ? ` ${styles.active}` : ""}`}
-            onClick={() => setActiveTag("All")}
-          >
-            All
-          </button>
-          {allTags.map((tag) => (
+        {allTags.length > 0 && (
+          <div className={styles.tagFilters}>
             <button
-              key={tag.id}
               type="button"
-              className={`${styles.tagPill}${activeTag === tag.name ? ` ${styles.active}` : ""}`}
-              onClick={() => setActiveTag(tag.name)}
+              className={`${styles.tagPill}${activeTag === "All" ? ` ${styles.active}` : ""}`}
+              onClick={() => setActiveTag("All")}
             >
-              {tag.name}
+              All
             </button>
-          ))}
-        </div>
-      )}
-
-      {shown.length === 0 ? (
-        <div className="crm-table-empty">No videos yet.</div>
-      ) : (
-        <div className={styles.videoGrid}>
-          {shown.map((v) => (
-            <VideoCard key={v.id} v={v} onSelect={() => setSelectedVideo(v)} />
-          ))}
-        </div>
-      )}
-
-      {selectedVideo &&
-        (() => {
-          const v = selectedVideo;
-          const uploaderCol = uploaderColor(v.uploader.name);
-          const duration = formatDuration(v.durationSeconds);
-          return (
-            <Dialog
-              isOpen
-              onClose={() => setSelectedVideo(null)}
-              maxWidth={900}
-            >
-              <video
-                key={v.id}
-                src={v.fileUrl}
-                controls
-                autoPlay
-                style={{
-                  width: "100%",
-                  display: "block",
-                  maxHeight: "52vh",
-                  background: "#000",
-                }}
+            {allTags.map((tag) => (
+              <button
+                key={tag.id}
+                type="button"
+                className={`${styles.tagPill}${activeTag === tag.name ? ` ${styles.active}` : ""}`}
+                onClick={() => setActiveTag(tag.name)}
               >
-                <track
-                  kind="captions"
-                  srcLang="en"
-                  label="English"
-                  src="data:text/vtt;charset=utf-8,WEBVTT"
-                  default
-                />
-              </video>
-              <DialogBody>
-                <div style={{ marginBottom: 14 }}>
-                  <div
-                    style={{
-                      fontSize: 20,
-                      fontWeight: 700,
-                      color: "#fff",
-                      lineHeight: 1.3,
-                      marginBottom: 6,
-                    }}
-                  >
-                    {v.title}
-                  </div>
-                  {v.videoTags.length > 0 && (
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      {v.videoTags.map(({ tag }: { tag: Tag }) => {
-                        const c = tagColor(tag.name);
-                        return (
-                          <span
-                            key={tag.id}
-                            style={{
-                              background: `${c}22`,
-                              color: c,
-                              border: `1px solid ${c}44`,
-                              borderRadius: 20,
-                              padding: "2px 10px",
-                              fontSize: 11,
-                              fontWeight: 700,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                            }}
-                          >
-                            {tag.name}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        )}
 
-                {v.description && (
-                  <p
-                    style={{
-                      fontSize: 13,
-                      color: "rgba(255,255,255,0.5)",
-                      lineHeight: 1.6,
-                      marginBottom: 18,
-                    }}
-                  >
-                    {v.description}
-                  </p>
-                )}
+        {shown.length === 0 ? (
+          <div className="crm-table-empty">No videos yet.</div>
+        ) : (
+          <div className={styles.videoGrid}>
+            {shown.map((v) => (
+              <VideoCard
+                key={v.id}
+                v={v}
+                onSelect={() => setSelectedVideo(v)}
+              />
+            ))}
+          </div>
+        )}
 
-                <div
+        {selectedVideo &&
+          (() => {
+            const v = selectedVideo;
+            const uploaderCol = uploaderColor(v.uploader.name);
+            const duration = formatDuration(v.durationSeconds);
+            return (
+              <Dialog
+                isOpen
+                onClose={() => setSelectedVideo(null)}
+                maxWidth={900}
+              >
+                <video
+                  key={v.id}
+                  src={v.fileUrl}
+                  controls
+                  autoPlay
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "10px 24px",
+                    width: "100%",
+                    display: "block",
+                    maxHeight: "52vh",
+                    background: "#000",
                   }}
                 >
-                  <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
+                  <track
+                    kind="captions"
+                    srcLang="en"
+                    label="English"
+                    src="data:text/vtt;charset=utf-8,WEBVTT"
+                    default
+                  />
+                </video>
+                <DialogBody>
+                  <div style={{ marginBottom: 14 }}>
                     <div
-                      style={{ display: "flex", alignItems: "center", gap: 7 }}
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 700,
+                        color: "#fff",
+                        lineHeight: 1.3,
+                        marginBottom: 6,
+                      }}
                     >
+                      {v.title}
+                    </div>
+                    {v.videoTags.length > 0 && (
                       <div
-                        className={styles.miniAvatar}
+                        style={{ display: "flex", gap: 6, flexWrap: "wrap" }}
+                      >
+                        {v.videoTags.map(({ tag }: { tag: Tag }) => {
+                          const c = tagColor(tag.name);
+                          return (
+                            <span
+                              key={tag.id}
+                              style={{
+                                background: `${c}22`,
+                                color: c,
+                                border: `1px solid ${c}44`,
+                                borderRadius: 20,
+                                padding: "2px 10px",
+                                fontSize: 11,
+                                fontWeight: 700,
+                                textTransform: "uppercase",
+                                letterSpacing: "0.05em",
+                              }}
+                            >
+                              {tag.name}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {v.description && (
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: "rgba(255,255,255,0.5)",
+                        lineHeight: 1.6,
+                        marginBottom: 18,
+                      }}
+                    >
+                      {v.description}
+                    </p>
+                  )}
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "10px 24px",
+                    }}
+                  >
+                    <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
+                      <div
                         style={{
-                          background: `${uploaderCol}22`,
-                          borderColor: `${uploaderCol}55`,
-                          color: uploaderCol,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 7,
                         }}
                       >
-                        {v.uploader.name[0]?.toUpperCase()}
+                        <div
+                          className={styles.miniAvatar}
+                          style={{
+                            background: `${uploaderCol}22`,
+                            borderColor: `${uploaderCol}55`,
+                            color: uploaderCol,
+                          }}
+                        >
+                          {v.uploader.name[0]?.toUpperCase()}
+                        </div>
+                        {v.uploader.name}
                       </div>
-                      {v.uploader.name}
-                    </div>
-                  </MetaRow>
-                  <MetaRow icon={<LuCalendar size={13} />} label="Uploaded">
-                    {formatDate(v.createdAt)}
-                  </MetaRow>
-                  {duration && (
-                    <MetaRow icon={<LuClock size={13} />} label="Duration">
-                      {duration}
                     </MetaRow>
-                  )}
-                  <MetaRow icon={<LuHardDrive size={13} />} label="File size">
-                    {formatFileSize(v.fileSizeBytes)}
-                  </MetaRow>
-                  <MetaRow icon={<LuFileVideo size={13} />} label="File">
-                    {v.fileName}
-                  </MetaRow>
-                </div>
-              </DialogBody>
-            </Dialog>
-          );
-        })()}
-    </div>
+                    <MetaRow icon={<LuCalendar size={13} />} label="Uploaded">
+                      {formatDate(v.createdAt)}
+                    </MetaRow>
+                    {duration && (
+                      <MetaRow icon={<LuClock size={13} />} label="Duration">
+                        {duration}
+                      </MetaRow>
+                    )}
+                    <MetaRow icon={<LuHardDrive size={13} />} label="File size">
+                      {formatFileSize(v.fileSizeBytes)}
+                    </MetaRow>
+                    <MetaRow icon={<LuFileVideo size={13} />} label="File">
+                      {v.fileName}
+                    </MetaRow>
+                  </div>
+                </DialogBody>
+              </Dialog>
+            );
+          })()}
+      </div>
+      <UploadModal
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        onSuccess={() => {
+          setIsUploadOpen(false);
+          router.refresh();
+        }}
+      />
+    </>
   );
 }
 

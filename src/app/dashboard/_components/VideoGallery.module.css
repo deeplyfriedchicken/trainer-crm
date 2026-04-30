@@ -1,8 +1,15 @@
 /* ─── Video grid ─── */
 .videoGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+@supports (display: grid-lanes) {
+  .videoGrid {
+    display: grid-lanes; /* or grid-template-rows: masonry */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
 }
 
 /* ─── Video card ─── */
@@ -30,7 +37,7 @@
 .videoThumb {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: var(--neon-surface-2);
+  background: #000;
   position: relative;
   display: flex;
   align-items: center;

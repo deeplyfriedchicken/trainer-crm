@@ -1,9 +1,9 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { LuFilm, LuUpload } from "react-icons/lu";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
 import styles from "./UploadModal.module.css";
@@ -129,7 +129,9 @@ export function UploadModal({
 }) {
   const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
   const [phase, setPhase] = useState<Phase>("form");
-  const [perFileProgress, setPerFileProgress] = useState<Record<number, number>>({});
+  const [perFileProgress, setPerFileProgress] = useState<
+    Record<number, number>
+  >({});
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -147,7 +149,10 @@ export function UploadModal({
     defaultValues: { entries: [] },
   });
 
-  const { fields, append, remove } = useFieldArray({ control, name: "entries" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "entries",
+  });
 
   // Fetch available tags when modal opens
   useEffect(() => {
@@ -243,14 +248,19 @@ export function UploadModal({
           const xhr = new XMLHttpRequest();
           xhr.upload.addEventListener("progress", (e) => {
             if (e.lengthComputable) {
-              setPerFileProgress((prev) => ({ ...prev, [i]: Math.round((e.loaded / e.total) * 100) }));
+              setPerFileProgress((prev) => ({
+                ...prev,
+                [i]: Math.round((e.loaded / e.total) * 100),
+              }));
             }
           });
           xhr.addEventListener("load", () => {
             if (xhr.status >= 200 && xhr.status < 300) resolve();
             else reject(new Error(`S3 upload failed: ${xhr.status}`));
           });
-          xhr.addEventListener("error", () => reject(new Error("S3 upload network error")));
+          xhr.addEventListener("error", () =>
+            reject(new Error("S3 upload network error")),
+          );
           xhr.open("PUT", uploadUrl);
           xhr.setRequestHeader("Content-Type", file.type);
           xhr.send(file);
@@ -313,10 +323,21 @@ export function UploadModal({
 
       {/* Success */}
       {phase === "success" && (
-        <div className={styles.body} style={{ justifyContent: "center", alignItems: "center" }}>
+        <div
+          className={styles.body}
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
           <div className={styles.success}>
             <div className={styles.successIcon}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#4ade80"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
                 <path d="M20 6L9 17l-5-5" />
               </svg>
             </div>
@@ -325,7 +346,8 @@ export function UploadModal({
                 {fields.length} Video{fields.length > 1 ? "s" : ""} Uploaded!
               </div>
               <div className={styles.successSub}>
-                Videos are being processed and will appear in the library shortly.
+                Videos are being processed and will appear in the library
+                shortly.
               </div>
             </div>
             <div className={styles.successActions}>
@@ -333,9 +355,15 @@ export function UploadModal({
                 type="button"
                 onClick={handleSuccess}
                 style={{
-                  padding: "9px 22px", borderRadius: 10, background: "#4ade80",
-                  border: "none", color: "#001a0a", fontFamily: "var(--font-neon-body)",
-                  fontSize: 13, fontWeight: 700, cursor: "pointer",
+                  padding: "9px 22px",
+                  borderRadius: 10,
+                  background: "#4ade80",
+                  border: "none",
+                  color: "#001a0a",
+                  fontFamily: "var(--font-neon-body)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: "pointer",
                   boxShadow: "0 0 16px rgba(74,222,128,0.4)",
                 }}
               >
@@ -345,9 +373,15 @@ export function UploadModal({
                 type="button"
                 onClick={handleUploadMore}
                 style={{
-                  padding: "9px 22px", borderRadius: 10, background: "transparent",
-                  border: "1px solid rgba(52,253,254,0.4)", color: "var(--neon-cyan)",
-                  fontFamily: "var(--font-neon-body)", fontSize: 13, fontWeight: 700, cursor: "pointer",
+                  padding: "9px 22px",
+                  borderRadius: 10,
+                  background: "transparent",
+                  border: "1px solid rgba(52,253,254,0.4)",
+                  color: "var(--neon-cyan)",
+                  fontFamily: "var(--font-neon-body)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: "pointer",
                 }}
               >
                 Upload More
@@ -374,7 +408,10 @@ export function UploadModal({
                       {entry?.title || f.name}
                     </div>
                     <div className={styles.progressTrack}>
-                      <div className={styles.progressBar} style={{ width: `${pct}%` }} />
+                      <div
+                        className={styles.progressBar}
+                        style={{ width: `${pct}%` }}
+                      />
                     </div>
                   </div>
                   <div className={styles.uploadPercent}>{pct}%</div>
@@ -389,7 +426,12 @@ export function UploadModal({
       {phase === "form" && (
         <form
           onSubmit={handleSubmit(startActualUpload)}
-          style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            minHeight: 0,
+          }}
         >
           <div className={styles.body}>
             {/* Drop zone */}
@@ -414,25 +456,39 @@ export function UploadModal({
                 color={dragging ? "var(--neon-cyan)" : "rgba(52,253,254,0.5)"}
                 style={{ margin: "0 auto 10px" }}
               />
-              <div className={`${styles.dropLabel}${dragging ? ` ${styles.dropLabelActive}` : ""}`}>
+              <div
+                className={`${styles.dropLabel}${dragging ? ` ${styles.dropLabelActive}` : ""}`}
+              >
                 {dragging ? "Drop to add videos" : "Drag & drop videos here"}
               </div>
               <div className={styles.dropSub}>
-                or{" "}
-                <span className={styles.dropBrowseLink}>browse files</span>
-                {" "}· MP4, MOV, AVI supported
+                or <span className={styles.dropBrowseLink}>browse files</span> ·
+                MP4, MOV, AVI supported
               </div>
             </div>
 
             {/* Error banner */}
             {hasErrors && (
               <div className={styles.errorBanner}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
-                  <circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" />
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#f87171"
+                  strokeWidth="2"
+                  style={{ flexShrink: 0, marginTop: 1 }}
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v4M12 16h.01" />
                 </svg>
                 <div>
-                  <div className={styles.errorBannerTitle}>Please fix the errors below before uploading.</div>
-                  <div className={styles.errorBannerSub}>Every video needs a title and at least one tag.</div>
+                  <div className={styles.errorBannerTitle}>
+                    Please fix the errors below before uploading.
+                  </div>
+                  <div className={styles.errorBannerSub}>
+                    Every video needs a title and at least one tag.
+                  </div>
                 </div>
               </div>
             )}
@@ -454,7 +510,9 @@ export function UploadModal({
                       className={`${styles.fileCard}${hasCardError ? ` ${styles.fileCardError}` : ""}`}
                     >
                       <div className={styles.fileCardHeader}>
-                        <div className={styles.fileIcon}><LuFilm size={18} /></div>
+                        <div className={styles.fileIcon}>
+                          <LuFilm size={18} />
+                        </div>
                         <div className={styles.fileInfo}>
                           <div className={styles.fileName}>
                             {droppedFiles[idx]?.name ?? ""}
@@ -476,8 +534,16 @@ export function UploadModal({
                       <div className={styles.fieldGrid}>
                         {/* Title */}
                         <div>
-                          <label className={`${styles.fieldLabel}${titleError ? ` ${styles.fieldLabelError}` : ""}`}>
-                            Title{titleError && <span className={styles.fieldError}> — {titleError}</span>}
+                          <label
+                            className={`${styles.fieldLabel}${titleError ? ` ${styles.fieldLabelError}` : ""}`}
+                          >
+                            Title
+                            {titleError && (
+                              <span className={styles.fieldError}>
+                                {" "}
+                                — {titleError}
+                              </span>
+                            )}
                           </label>
                           <input
                             {...register(`entries.${idx}.title`)}
@@ -488,13 +554,25 @@ export function UploadModal({
 
                         {/* Tags */}
                         <div>
-                          <label className={`${styles.fieldLabel}${tagError ? ` ${styles.fieldLabelError}` : ""}`}>
-                            Tags{tagError && <span className={styles.fieldError}> — {tagError}</span>}
+                          <label
+                            className={`${styles.fieldLabel}${tagError ? ` ${styles.fieldLabelError}` : ""}`}
+                          >
+                            Tags
+                            {tagError && (
+                              <span className={styles.fieldError}>
+                                {" "}
+                                — {tagError}
+                              </span>
+                            )}
                           </label>
                           <TagPicker
                             allTags={allTags}
                             selectedIds={selectedTagIds}
-                            onChange={(ids) => setValue(`entries.${idx}.tagIds`, ids, { shouldValidate: true })}
+                            onChange={(ids) =>
+                              setValue(`entries.${idx}.tagIds`, ids, {
+                                shouldValidate: true,
+                              })
+                            }
                             hasError={!!tagError}
                           />
                         </div>
@@ -502,12 +580,26 @@ export function UploadModal({
 
                       {/* Description */}
                       <div>
-                        <label className={`${styles.fieldLabel}${descError ? ` ${styles.fieldLabelError}` : ""}`}>
+                        <label
+                          className={`${styles.fieldLabel}${descError ? ` ${styles.fieldLabelError}` : ""}`}
+                        >
                           Description{" "}
-                          <span style={{ fontWeight: 400, textTransform: "none", color: "rgba(255,255,255,0.25)", letterSpacing: 0 }}>
+                          <span
+                            style={{
+                              fontWeight: 400,
+                              textTransform: "none",
+                              color: "rgba(255,255,255,0.25)",
+                              letterSpacing: 0,
+                            }}
+                          >
                             (optional, min 10 chars if provided)
                           </span>
-                          {descError && <span className={styles.fieldError}> — {descError}</span>}
+                          {descError && (
+                            <span className={styles.fieldError}>
+                              {" "}
+                              — {descError}
+                            </span>
+                          )}
                         </label>
                         <textarea
                           {...register(`entries.${idx}.description`)}
@@ -526,7 +618,15 @@ export function UploadModal({
                   className={styles.addMoreBtn}
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
                     <path d="M12 5v14M5 12h14" />
                   </svg>
                   Add more videos
@@ -537,16 +637,23 @@ export function UploadModal({
 
           <div className={styles.footer}>
             <div className={styles.footerCount}>
-              {fields.length ? `${fields.length} file${fields.length > 1 ? "s" : ""} queued` : "No files selected"}
+              {fields.length
+                ? `${fields.length} file${fields.length > 1 ? "s" : ""} queued`
+                : "No files selected"}
             </div>
             <div className={styles.footerActions}>
               <button
                 type="button"
                 onClick={handleClose}
                 style={{
-                  padding: "8px 18px", borderRadius: 10, background: "transparent",
-                  border: "none", color: "rgba(255,255,255,0.5)",
-                  fontFamily: "var(--font-neon-body)", fontSize: 13, cursor: "pointer",
+                  padding: "8px 18px",
+                  borderRadius: 10,
+                  background: "transparent",
+                  border: "none",
+                  color: "rgba(255,255,255,0.5)",
+                  fontFamily: "var(--font-neon-body)",
+                  fontSize: 13,
+                  cursor: "pointer",
                 }}
               >
                 Cancel
@@ -555,17 +662,29 @@ export function UploadModal({
                 type="submit"
                 disabled={isUploading || fields.length === 0}
                 style={{
-                  display: "inline-flex", alignItems: "center", gap: 7,
-                  padding: "9px 22px", borderRadius: 10,
-                  background: "var(--neon-cyan)", border: "none",
-                  color: "#001a1a", fontFamily: "var(--font-neon-body)",
-                  fontSize: 13, fontWeight: 700, cursor: fields.length ? "pointer" : "not-allowed",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 7,
+                  padding: "9px 22px",
+                  borderRadius: 10,
+                  background: "var(--neon-cyan)",
+                  border: "none",
+                  color: "#001a1a",
+                  fontFamily: "var(--font-neon-body)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: fields.length ? "pointer" : "not-allowed",
                   opacity: fields.length ? 1 : 0.4,
-                  boxShadow: fields.length ? "0 0 14px rgba(52,253,254,0.4)" : "none",
+                  boxShadow: fields.length
+                    ? "0 0 14px rgba(52,253,254,0.4)"
+                    : "none",
                 }}
               >
                 <LuUpload size={14} />
-                Upload {fields.length > 0 ? `${fields.length} Video${fields.length > 1 ? "s" : ""}` : "Videos"}
+                Upload{" "}
+                {fields.length > 0
+                  ? `${fields.length} Video${fields.length > 1 ? "s" : ""}`
+                  : "Videos"}
               </button>
             </div>
           </div>

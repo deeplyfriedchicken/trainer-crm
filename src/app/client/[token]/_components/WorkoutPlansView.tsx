@@ -7,7 +7,16 @@ import type { ClientData } from "@/db/queries/client";
 
 function ChevronDown() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M4 6l4 4 4-4" />
     </svg>
   );
@@ -15,7 +24,16 @@ function ChevronDown() {
 
 function ArrowRight() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M5 11l4-4-4-4" />
     </svg>
   );
@@ -23,7 +41,16 @@ function ArrowRight() {
 
 function VideoIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="1" y="2.5" width="9" height="9" rx="1.5" />
       <path d="M10 5.5l3-2v7l-3-2" />
     </svg>
@@ -32,7 +59,15 @@ function VideoIcon() {
 
 function PlusIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+    >
       <path d="M12 5v14M5 12h14" />
     </svg>
   );
@@ -42,7 +77,11 @@ type Plan = ClientData["workoutPlans"][number];
 type Workout = ClientData["workouts"][number];
 
 function fmtDate(d: Date | string) {
-  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function fmtDuration(secs: number): string {
@@ -63,7 +102,8 @@ function PlanCard({ plan, token }: { plan: Plan; token: string }) {
         <div style={{ flex: 1 }}>
           <div className="plan-name">{plan.name}</div>
           <div className="plan-meta">
-            {fmtDate(plan.occurredAt)} · {plan.exercises.length} exercise{plan.exercises.length !== 1 ? "s" : ""}
+            {fmtDate(plan.occurredAt)} · {plan.exercises.length} exercise
+            {plan.exercises.length !== 1 ? "s" : ""}
           </div>
         </div>
         <div className={`plan-chevron${open ? " open" : ""}`}>
@@ -126,7 +166,9 @@ function HistoryCard({ workout }: { workout: Workout }) {
             <div className="history-date">{fmtDate(workout.createdAt)}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="history-badge">{fmtDuration(workout.durationSeconds)}</span>
+            <span className="history-badge">
+              {fmtDuration(workout.durationSeconds)}
+            </span>
             <span
               style={{
                 color: "var(--text-3)",
@@ -146,10 +188,14 @@ function HistoryCard({ workout }: { workout: Workout }) {
             )}
             <div className="scales-row">
               {workout.painRating != null && (
-                <span className="scale-badge scale-pain">Pain {workout.painRating}/10</span>
+                <span className="scale-badge scale-pain">
+                  Pain {workout.painRating}/10
+                </span>
               )}
               {workout.energyRating != null && (
-                <span className="scale-badge scale-energy">Energy {workout.energyRating}/10</span>
+                <span className="scale-badge scale-energy">
+                  Energy {workout.energyRating}/10
+                </span>
               )}
             </div>
           </div>
@@ -166,18 +212,27 @@ function HistoryCard({ workout }: { workout: Workout }) {
                   setsData.map((s, i) => {
                     const isDur = s.durationSeconds != null;
                     return (
-                      <div key={i} className={`history-ex-set-row${!s.completed ? " skipped" : ""}`}>
-                        <span className="history-ex-set-label">SET {i + 1}</span>
+                      <div
+                        key={i}
+                        className={`history-ex-set-row${!s.completed ? " skipped" : ""}`}
+                      >
+                        <span className="history-ex-set-label">
+                          SET {i + 1}
+                        </span>
                         <span className="history-ex-set-val">
                           {isDur ? s.durationSeconds : s.reps}
-                          <span className="history-ex-set-unit">{isDur ? "SEC" : "REPS"}</span>
+                          <span className="history-ex-set-unit">
+                            {isDur ? "SEC" : "REPS"}
+                          </span>
                         </span>
                         <span className="history-ex-set-weight">
                           {s.weightLbs ? `${s.weightLbs} lbs` : "—"}
                         </span>
-                        {s.completed
-                          ? <span className="history-ex-set-check">✓</span>
-                          : <span className="history-ex-set-skip">✕</span>}
+                        {s.completed ? (
+                          <span className="history-ex-set-check">✓</span>
+                        ) : (
+                          <span className="history-ex-set-skip">✕</span>
+                        )}
                       </div>
                     );
                   })
@@ -185,10 +240,16 @@ function HistoryCard({ workout }: { workout: Workout }) {
                   <div className="history-ex-set-row">
                     <span className="history-ex-set-label">PLAN</span>
                     <span className="history-ex-set-val">
-                      {exercise.type === "duration" ? exercise.durationSeconds : exercise.reps}
-                      <span className="history-ex-set-unit">{exercise.type === "duration" ? "SEC" : "REPS"}</span>
+                      {exercise.type === "duration"
+                        ? exercise.durationSeconds
+                        : exercise.reps}
+                      <span className="history-ex-set-unit">
+                        {exercise.type === "duration" ? "SEC" : "REPS"}
+                      </span>
                     </span>
-                    <span className="history-ex-set-weight">{exercise.sets} sets</span>
+                    <span className="history-ex-set-weight">
+                      {exercise.sets} sets
+                    </span>
                     <span />
                   </div>
                 )}
@@ -218,7 +279,13 @@ function ChoosePlanSheet({
         <div className="sheet-handle" />
         <div className="sheet-title">Choose a Workout Plan</div>
         {plans.length === 0 ? (
-          <div style={{ padding: "20px 16px", color: "var(--text-3)", fontSize: 14 }}>
+          <div
+            style={{
+              padding: "20px 16px",
+              color: "var(--text-3)",
+              fontSize: 14,
+            }}
+          >
             No plans available. Your trainer will assign plans here.
           </div>
         ) : (
@@ -226,15 +293,23 @@ function ChoosePlanSheet({
             <div
               key={p.id}
               className="sheet-plan-row"
-              onClick={() => { onClose(); router.push(`/client/${token}/log/${p.id}`); }}
+              onClick={() => {
+                onClose();
+                router.push(`/client/${token}/log/${p.id}`);
+              }}
             >
               <div className="sheet-plan-dot" />
               <div style={{ flex: 1 }}>
                 <div className="sheet-plan-name">{p.name}</div>
-                <div style={{ fontSize: 11, color: "var(--text-3)", marginTop: 2 }}>{fmtDate(p.occurredAt)}</div>
+                <div
+                  style={{ fontSize: 11, color: "var(--text-3)", marginTop: 2 }}
+                >
+                  {fmtDate(p.occurredAt)}
+                </div>
               </div>
               <span className="sheet-plan-count">
-                {p.exercises.length} exercise{p.exercises.length !== 1 ? "s" : ""}
+                {p.exercises.length} exercise
+                {p.exercises.length !== 1 ? "s" : ""}
               </span>
               <span style={{ color: "var(--text-3)", marginLeft: 8 }}>
                 <ArrowRight />
@@ -255,7 +330,12 @@ interface Props {
   token: string;
 }
 
-export function WorkoutPlansView({ trainee, workoutPlans, workouts, token }: Props) {
+export function WorkoutPlansView({
+  trainee,
+  workoutPlans,
+  workouts,
+  token,
+}: Props) {
   const [tab, setTab] = useState<"plans" | "history">("plans");
   const [showChoosePlan, setShowChoosePlan] = useState(false);
 
@@ -271,7 +351,11 @@ export function WorkoutPlansView({ trainee, workoutPlans, workouts, token }: Pro
       <div className="client-topbar">
         <div className="client-topbar-inner">
           <div className="client-topbar-title">{trainee.name}</div>
-          <span style={{ fontSize: 12, color: "var(--text-3)", fontWeight: 500 }}>Trainee</span>
+          <span
+            style={{ fontSize: 12, color: "var(--text-3)", fontWeight: 500 }}
+          >
+            Trainee
+          </span>
         </div>
       </div>
 
@@ -284,7 +368,8 @@ export function WorkoutPlansView({ trainee, workoutPlans, workouts, token }: Pro
             <div className="client-info">
               <div className="client-name">{trainee.name}</div>
               <div className="client-meta">
-                {workoutPlans.length} plan{workoutPlans.length !== 1 ? "s" : ""} · {workouts.length} completed
+                {workoutPlans.length} plan{workoutPlans.length !== 1 ? "s" : ""}{" "}
+                · {workouts.length} completed
               </div>
             </div>
           </div>
@@ -312,11 +397,15 @@ export function WorkoutPlansView({ trainee, workoutPlans, workouts, token }: Pro
             {workoutPlans.length === 0 ? (
               <div className="client-empty">
                 <div className="client-empty-icon">📋</div>
-                <div style={{ fontWeight: 600, marginBottom: 6 }}>No workout plans yet</div>
+                <div style={{ fontWeight: 600, marginBottom: 6 }}>
+                  No workout plans yet
+                </div>
                 <div>Your trainer will assign plans here.</div>
               </div>
             ) : (
-              workoutPlans.map((p) => <PlanCard key={p.id} plan={p} token={token} />)
+              workoutPlans.map((p) => (
+                <PlanCard key={p.id} plan={p} token={token} />
+              ))
             )}
             <div style={{ height: 100 }} />
           </div>
@@ -325,7 +414,9 @@ export function WorkoutPlansView({ trainee, workoutPlans, workouts, token }: Pro
             {workouts.length === 0 ? (
               <div className="client-empty">
                 <div className="client-empty-icon">🏆</div>
-                <div style={{ fontWeight: 600, marginBottom: 6 }}>No workouts logged yet</div>
+                <div style={{ fontWeight: 600, marginBottom: 6 }}>
+                  No workouts logged yet
+                </div>
                 <div>Tap + to log your first workout.</div>
               </div>
             ) : (

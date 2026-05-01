@@ -1,6 +1,7 @@
 import { asc, count, eq, max } from "drizzle-orm";
+import { createId } from "@paralleldrive/cuid2";
 import { db } from "@/db";
-import { users, workoutPlans } from "@/db/schema";
+import { userRoles, users, workoutPlans } from "@/db/schema";
 
 export type TraineeRow = Awaited<ReturnType<typeof listTrainees>>[number];
 
@@ -73,4 +74,28 @@ export async function getTraineeById(id: string) {
     workoutPlans: user.workoutPlans,
     workouts: user.workouts,
   };
+}
+
+export async function createTrainee({ name, email }: { name: string; email: string }) {
+  return db.transaction(async (tx) => {
+    const [user] = await tx
+      .insert(users)
+      .values({ id: createId(), name, email })
+      .returning();
+    await tx.insert(userRoles).values({ userId: user.id, role: "trainee" });
+    return user;
+  });
+}
+
+export async function updateTrainee(id: string, { name, email }: { name?: string; email?: string }) {
+  const [user] = await db
+    .update(users)
+    .set({ ...(name !== undefined && { name }), ...(email !== undefined && { email }) })
+    .where(eq(users.id, id))
+    .returning();
+  return user ?? null;
+}
+
+export async function deleteTrainee(id: string) {
+  await db.delete(users).where(eq(users.id, id));
 }

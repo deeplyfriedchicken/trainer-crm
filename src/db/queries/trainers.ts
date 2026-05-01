@@ -1,6 +1,8 @@
 import { asc, count, eq, inArray, sql } from "drizzle-orm";
+import { createId } from "@paralleldrive/cuid2";
 import { db } from "@/db";
 import { userRoles, users, videos } from "@/db/schema";
+import type { UserRole } from "@/db/schema";
 
 export type ListTrainersOptions = {
   limit: number;
@@ -68,4 +70,68 @@ export async function getTrainerById(id: string) {
     updatedAt: user.updatedAt,
     roles: user.roles.map((r) => r.role),
   };
+}
+
+export async function createTrainer({
+  name,
+  email,
+  role,
+}: {
+  name: string;
+  email: string;
+  role: Extract<UserRole, "trainer" | "trainer_manager">;
+}) {
+  return db.transaction(async (tx) => {
+    const [user] = await tx
+      .insert(users)
+      .values({ id: createId(), name, email })
+      .returning();
+    await tx.insert(userRoles).values({ userId: user.id, role });
+    return { ...user, roles: [role] };
+  });
+}
+
+export async function updateTrainer(
+  id: string,
+  {
+    name,
+    email,
+    role,
+  }: {
+    name?: string;
+    email?: string;
+    role?: Extract<UserRole, "trainer" | "trainer_manager">;
+  },
+) {
+  return db.transaction(async (tx) => {
+    const [user] = await tx
+      .update(users)
+      .set({ ...(name !== undefined && { name }), ...(email !== undefined && { email }) })
+      .where(eq(users.id, id))
+      .returning();
+
+    if (!user) return null;
+
+    if (role !== undefined) {
+      await tx
+        .delete(userRoles)
+        .where(
+          sql`${userRoles.userId} = ${id} AND ${userRoles.role} IN ('trainer', 'trainer_manager')`,
+        );
+      await tx.insert(userRoles).values({ userId: id, role });
+    }
+
+    const updatedUser = await tx.query.users.findFirst({
+      where: eq(users.id, id),
+      with: { roles: true },
+    });
+
+    return updatedUser
+      ? { ...updatedUser, roles: updatedUser.roles.map((r) => r.role) }
+      : null;
+  });
+}
+
+export async function deleteTrainer(id: string) {
+  await db.delete(users).where(eq(users.id, id));
 }

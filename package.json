@@ -16,7 +16,9 @@
     "db:seed": "tsx --env-file=.env src/db/seed.ts",
     "db:extract": "tsx --env-file=.env.prod src/db/extract.ts",
     "db:seed:backup": "tsx --env-file=.env src/db/seed.backup.ts",
-    "db:reset": "tsx --env-file=.env src/db/reset.ts && drizzle-kit migrate && tsx --env-file=.env src/db/seed.ts"
+    "db:reset": "tsx --env-file=.env src/db/reset.ts && drizzle-kit migrate && tsx --env-file=.env src/db/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@aws-sdk/client-mediaconvert": "3.1038.0",
@@ -50,6 +52,7 @@
     "@types/sns-validator": "0.3.3",
     "drizzle-kit": "0.31.10",
     "tailwindcss": "4",
-    "typescript": "5"
+    "typescript": "5",
+    "vitest": "^4.1.5"
   }
 }

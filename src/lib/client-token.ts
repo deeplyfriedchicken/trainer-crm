@@ -12,12 +12,15 @@ function getKey(): Buffer {
   return buf;
 }
 
-export function encryptUserId(userId: string): string {
+const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+export function encryptUserId(userId: string, ttlMs = TOKEN_TTL_MS): string {
   const key = getKey();
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const payload = `${userId}:${Date.now() + ttlMs}`;
   const encrypted = Buffer.concat([
-    cipher.update(userId, "utf8"),
+    cipher.update(payload, "utf8"),
     cipher.final(),
   ]);
   const tag = cipher.getAuthTag();
@@ -34,7 +37,13 @@ export function decryptUserId(token: string): string | null {
     const encrypted = combined.subarray(28);
     const decipher = createDecipheriv("aes-256-gcm", key, iv);
     decipher.setAuthTag(tag);
-    return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
+    const payload = Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
+    const sep = payload.lastIndexOf(":");
+    if (sep === -1) return null;
+    const userId = payload.slice(0, sep);
+    const expiresAt = Number(payload.slice(sep + 1));
+    if (!expiresAt || Date.now() > expiresAt) return null;
+    return userId;
   } catch {
     return null;
   }

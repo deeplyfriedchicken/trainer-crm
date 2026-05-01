@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { randomBytes } from "node:crypto";
 
-export async function GET() {
-  const state = randomBytes(16).toString("hex");
+export async function GET(req: NextRequest) {
+  const mobile = req.nextUrl.searchParams.get("mobile") === "1";
+  const nonce = randomBytes(16).toString("hex");
+  const state = JSON.stringify({ nonce, mobile });
 
   const cookieStore = await cookies();
   cookieStore.set("oauth_state", state, {

@@ -4,11 +4,16 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { createSession } from "@/lib/session";
+import { encryptUserId } from "@/lib/client-token";
 
 const CRM_ROLES = new Set(["admin", "trainer_manager", "trainer"] as const);
 
 function loginError(req: NextRequest, code: string) {
   return NextResponse.redirect(new URL(`/login?error=${code}`, req.nextUrl));
+}
+
+function mobileError(code: string) {
+  return NextResponse.redirect(`trainer-crm://auth?error=${code}`);
 }
 
 export async function GET(req: NextRequest) {
@@ -21,8 +26,31 @@ export async function GET(req: NextRequest) {
   const storedState = cookieStore.get("oauth_state")?.value;
   cookieStore.delete("oauth_state");
 
-  if (!code || !state || state !== storedState) {
+  if (!code || !state || !storedState) {
     return loginError(req, "invalid_state");
+  }
+
+  // Parse state — supports both JSON (new) and plain hex (legacy)
+  let nonce = storedState;
+  let mobile = false;
+  try {
+    const parsed = JSON.parse(storedState) as { nonce: string; mobile?: boolean };
+    nonce = parsed.nonce;
+    mobile = parsed.mobile ?? false;
+  } catch {
+    // legacy plain-hex state — treat as nonce directly
+  }
+
+  let incomingNonce = state;
+  try {
+    const parsed = JSON.parse(state) as { nonce: string };
+    incomingNonce = parsed.nonce;
+  } catch {
+    // legacy
+  }
+
+  if (incomingNonce !== nonce) {
+    return mobile ? mobileError("invalid_state") : loginError(req, "invalid_state");
   }
 
   // Exchange code for tokens
@@ -38,7 +66,9 @@ export async function GET(req: NextRequest) {
     }),
   });
 
-  if (!tokenRes.ok) return loginError(req, "token_exchange");
+  if (!tokenRes.ok) {
+    return mobile ? mobileError("token_exchange") : loginError(req, "token_exchange");
+  }
 
   const { access_token } = await tokenRes.json();
 
@@ -48,7 +78,9 @@ export async function GET(req: NextRequest) {
     { headers: { Authorization: `Bearer ${access_token}` } },
   );
 
-  if (!profileRes.ok) return loginError(req, "profile");
+  if (!profileRes.ok) {
+    return mobile ? mobileError("profile") : loginError(req, "profile");
+  }
 
   const { email } = (await profileRes.json()) as { email: string };
 
@@ -58,10 +90,19 @@ export async function GET(req: NextRequest) {
     with: { roles: true },
   });
 
-  if (!user) return loginError(req, "not_found");
+  if (!user) {
+    return mobile ? mobileError("not_found") : loginError(req, "not_found");
+  }
 
   const hasCRMRole = user.roles.some((r) => CRM_ROLES.has(r.role as never));
-  if (!hasCRMRole) return loginError(req, "unauthorized");
+  if (!hasCRMRole) {
+    return mobile ? mobileError("unauthorized") : loginError(req, "unauthorized");
+  }
+
+  if (mobile) {
+    const token = encryptUserId(user.id);
+    return NextResponse.redirect(`trainer-crm://auth?token=${token}`);
+  }
 
   await createSession(user.id);
   return NextResponse.redirect(new URL("/dashboard", req.nextUrl));

@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { setVideoTags } from "@/db/queries/tags";
 import { getVideoById, updateVideo } from "@/db/queries/videos";
-import { getCurrentUser } from "@/lib/auth";
+import { getApiUser } from "@/lib/api-auth";
 import {
   submitTranscodeJob,
   getProcessedKey,
@@ -10,10 +10,11 @@ import {
 import { getPresignedGetUrl } from "@/lib/s3";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   ctx: RouteContext<"/api/videos/[id]">,
 ) {
-  await getCurrentUser();
+  const user = await getApiUser(request);
+  if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
 
   const video = await getVideoById(id);
@@ -29,7 +30,8 @@ export async function PATCH(
   request: NextRequest,
   ctx: RouteContext<"/api/videos/[id]">,
 ) {
-  await getCurrentUser();
+  const user = await getApiUser(request);
+  if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
 
   const video = await getVideoById(id);

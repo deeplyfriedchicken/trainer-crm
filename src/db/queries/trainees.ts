@@ -44,6 +44,19 @@ export async function getTraineeById(id: string) {
       workoutPlans: {
         orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
+          videoLinks: {
+            with: {
+              video: {
+                columns: {
+                  id: true,
+                  title: true,
+                  fileKey: true,
+                  fileUrl: true,
+                  durationSeconds: true,
+                },
+              },
+            },
+          },
           exercises: {
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
             with: {
@@ -55,6 +68,7 @@ export async function getTraineeById(id: string) {
                       title: true,
                       fileKey: true,
                       fileUrl: true,
+                      durationSeconds: true,
                     },
                   },
                 },
@@ -67,6 +81,19 @@ export async function getTraineeById(id: string) {
         orderBy: (w, { desc }) => [desc(w.createdAt)],
         with: {
           workoutPlan: { columns: { id: true, name: true, occurredAt: true } },
+          videoLinks: {
+            with: {
+              video: {
+                columns: {
+                  id: true,
+                  title: true,
+                  fileKey: true,
+                  fileUrl: true,
+                  durationSeconds: true,
+                },
+              },
+            },
+          },
           exerciseLinks: {
             with: {
               exercise: {

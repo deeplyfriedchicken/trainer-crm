@@ -1,13 +1,14 @@
 import type { NextRequest } from "next/server";
 import { listVideos } from "@/db/queries/videos";
 import { type VideoStatus, videoStatus } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { getApiUser } from "@/lib/api-auth";
 import { parsePagination } from "@/lib/pagination";
 import { getPresignedGetUrl } from "@/lib/s3";
 
 export async function GET(request: NextRequest) {
   // TODO(auth): apply role-based filtering once auth lands.
-  await getCurrentUser();
+  const user = await getApiUser(request);
+  if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const params = request.nextUrl.searchParams;
   const { limit, offset } = parsePagination(params);

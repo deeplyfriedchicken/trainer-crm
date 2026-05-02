@@ -36,6 +36,13 @@
       "when": 1777416384108,
       "tag": "0004_dizzy_secret_warriors",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1777687723938,
+      "tag": "0005_sleepy_ghost_rider",
+      "breakpoints": true
     }
   ]
 }

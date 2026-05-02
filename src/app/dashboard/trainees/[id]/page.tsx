@@ -9,6 +9,7 @@ import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
 import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
+import { TraineeVideosPanel } from "./_components/TraineeVideosPanel";
 import { TraineeWorkoutsPanel } from "./_components/TraineeWorkoutsPanel";
 import "./page.css";
 
@@ -46,6 +47,32 @@ export default async function TraineePage({
     month: "short",
     year: "numeric",
   });
+
+  // Collect unique videos across plan-level, exercise-level, and workout-level links
+  const videoMap = new Map<string, { id: string; title: string; fileKey: string; durationSeconds?: number | null }>();
+  for (const plan of trainee.workoutPlans) {
+    for (const vl of plan.videoLinks) {
+      if (!videoMap.has(vl.video.id)) videoMap.set(vl.video.id, vl.video);
+    }
+    for (const ex of plan.exercises) {
+      for (const vl of ex.videoLinks) {
+        if (!videoMap.has(vl.video.id)) videoMap.set(vl.video.id, vl.video);
+      }
+    }
+  }
+  for (const w of trainee.workouts) {
+    for (const vl of w.videoLinks) {
+      if (!videoMap.has(vl.video.id)) videoMap.set(vl.video.id, vl.video);
+    }
+  }
+  const clientVideos = await Promise.all(
+    Array.from(videoMap.values()).map(async (v) => ({
+      id: v.id,
+      title: v.title,
+      url: await getPresignedGetUrl(v.fileKey, 3600),
+      durationSeconds: v.durationSeconds,
+    })),
+  );
 
   const plans = await Promise.all(
     trainee.workoutPlans.map(async (p) => ({
@@ -120,6 +147,12 @@ export default async function TraineePage({
           }}
         />
       </div>
+
+      {clientVideos.length > 0 && (
+        <div style={{ marginTop: 28 }}>
+          <TraineeVideosPanel videos={clientVideos} accentColor={accentColor} />
+        </div>
+      )}
 
       {trainee.workouts.length > 0 && (
         <div style={{ marginTop: 32 }}>

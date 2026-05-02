@@ -4,11 +4,12 @@ import { createId } from "@paralleldrive/cuid2";
 import type { NextRequest } from "next/server";
 import { db } from "@/db";
 import { videos } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { getApiUser } from "@/lib/api-auth";
 import { S3_BASE_URL, S3_BUCKET, s3 } from "@/lib/s3";
 
 export async function POST(request: NextRequest) {
-  const user = await getCurrentUser();
+  const user = await getApiUser(request);
+  if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
   const { fileName, mimeType, fileSizeBytes } = body as {

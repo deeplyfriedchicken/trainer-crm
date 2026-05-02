@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const { limit, offset } = parsePagination(params);
   const uploaderId = params.get("uploaderId") ?? undefined;
+  const traineeId = params.get("traineeId") ?? undefined;
 
   const statusParam = params.get("status");
   let status: VideoStatus | undefined;
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
   }
 
   const search = params.get("q") ?? undefined;
-  const videos = await listVideos({ limit, offset, uploaderId, status, search });
+  const videos = await listVideos({ limit, offset, uploaderId, traineeId, status, search });
   const data = await Promise.all(
     videos.map(async (v) => ({
       ...v,

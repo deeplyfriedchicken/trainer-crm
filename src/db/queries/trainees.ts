@@ -1,7 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
-import { and, asc, count, eq, isNull, max } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNull, max } from "drizzle-orm";
 import { db } from "@/db";
-import { userRoles, users, workoutPlans } from "@/db/schema";
+import { userRoles, users, videos, workoutPlans } from "@/db/schema";
 
 export type TraineeRow = Awaited<ReturnType<typeof listTrainees>>[number];
 
@@ -116,12 +116,25 @@ export async function getTraineeById(id: string) {
 
   if (!user) return null;
 
+  const directVideos = await db
+    .select({
+      id: videos.id,
+      title: videos.title,
+      fileKey: videos.fileKey,
+      fileUrl: videos.fileUrl,
+      durationSeconds: videos.durationSeconds,
+    })
+    .from(videos)
+    .where(eq(videos.traineeId, id))
+    .orderBy(desc(videos.createdAt));
+
   return {
     id: user.id,
     email: user.email,
     name: user.name,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+    directVideos,
     workoutPlans: user.workoutPlans,
     workouts: user.workouts,
   };

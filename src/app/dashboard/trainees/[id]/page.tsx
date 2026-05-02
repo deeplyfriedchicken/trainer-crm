@@ -14,11 +14,31 @@ import { TraineeWorkoutsPanel } from "./_components/TraineeWorkoutsPanel";
 import "./page.css";
 
 const COLOR_MAP: Record<string, string> = {
-  A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",
-  F: "#FD6DBB", G: "#34FDFE", H: "#a78bfa", I: "#4ade80", J: "#FD6DBB",
-  K: "#34FDFE", L: "#a78bfa", M: "#4ade80", N: "#fb923c", O: "#FD6DBB",
-  P: "#34FDFE", Q: "#a78bfa", R: "#4ade80", S: "#FD6DBB", T: "#34FDFE",
-  U: "#a78bfa", V: "#4ade80", W: "#fb923c", X: "#FD6DBB", Y: "#34FDFE",
+  A: "#FD6DBB",
+  B: "#34FDFE",
+  C: "#a78bfa",
+  D: "#4ade80",
+  E: "#fb923c",
+  F: "#FD6DBB",
+  G: "#34FDFE",
+  H: "#a78bfa",
+  I: "#4ade80",
+  J: "#FD6DBB",
+  K: "#34FDFE",
+  L: "#a78bfa",
+  M: "#4ade80",
+  N: "#fb923c",
+  O: "#FD6DBB",
+  P: "#34FDFE",
+  Q: "#a78bfa",
+  R: "#4ade80",
+  S: "#FD6DBB",
+  T: "#34FDFE",
+  U: "#a78bfa",
+  V: "#4ade80",
+  W: "#fb923c",
+  X: "#FD6DBB",
+  Y: "#34FDFE",
   Z: "#a78bfa",
 };
 function colorFor(name: string) {
@@ -48,22 +68,18 @@ export default async function TraineePage({
     year: "numeric",
   });
 
-  // Collect unique videos across plan-level, exercise-level, and workout-level links
-  const videoMap = new Map<string, { id: string; title: string; fileKey: string; durationSeconds?: number | null }>();
-  for (const plan of trainee.workoutPlans) {
-    for (const vl of plan.videoLinks) {
-      if (!videoMap.has(vl.video.id)) videoMap.set(vl.video.id, vl.video);
+  // Collect unique videos: direct trainee videos + plan/exercise/workout join-table links
+  const videoMap = new Map<
+    string,
+    {
+      id: string;
+      title: string;
+      fileKey: string;
+      durationSeconds?: number | null;
     }
-    for (const ex of plan.exercises) {
-      for (const vl of ex.videoLinks) {
-        if (!videoMap.has(vl.video.id)) videoMap.set(vl.video.id, vl.video);
-      }
-    }
-  }
-  for (const w of trainee.workouts) {
-    for (const vl of w.videoLinks) {
-      if (!videoMap.has(vl.video.id)) videoMap.set(vl.video.id, vl.video);
-    }
+  >();
+  for (const v of trainee.directVideos) {
+    videoMap.set(v.id, v);
   }
   const clientVideos = await Promise.all(
     Array.from(videoMap.values()).map(async (v) => ({
@@ -104,7 +120,14 @@ export default async function TraineePage({
 
   return (
     <div className="crm-page" style={{ paddingBottom: 60 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 16,
+        }}
+      >
         <BackLink href="/dashboard">Back to Dashboard</BackLink>
         <ClientPortalLink encryptedToken={clientToken} />
       </div>

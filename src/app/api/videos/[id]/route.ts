@@ -47,9 +47,10 @@ export async function PATCH(
   }
 
   const body = await request.json();
-  const { title, description, tagIds } = body as {
+  const { title, description, traineeId, tagIds } = body as {
     title?: string;
     description?: string;
+    traineeId?: string | null;
     tagIds?: string[];
   };
 
@@ -62,6 +63,7 @@ export async function PATCH(
     const updated = await updateVideo(id, {
       ...(title !== undefined && { title }),
       ...(description !== undefined && { description }),
+      ...(traineeId !== undefined && { traineeId }),
       status: "ready",
     });
     return Response.json({ data: updated });
@@ -71,6 +73,7 @@ export async function PATCH(
   const updated = await updateVideo(id, {
     ...(title !== undefined && { title }),
     ...(description !== undefined && { description }),
+    ...(traineeId !== undefined && { traineeId }),
     status: "processing",
     originalFileKey: video.fileKey,
     // Pre-set the processed key/url so the unique index won't conflict on completion

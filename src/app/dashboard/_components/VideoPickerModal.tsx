@@ -62,11 +62,13 @@ export function VideoPickerModal({
   onClose,
   onSelect,
   alreadyLinkedIds = [],
+  traineeId,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (video: PickedVideo) => void;
   alreadyLinkedIds?: string[];
+  traineeId?: string;
 }) {
   // ── Library state ─────────────────────────────────────────────────────
   const [view, setView] = useState<"library" | "upload">("library");
@@ -109,6 +111,7 @@ export function VideoPickerModal({
       status: "ready",
     });
     if (committedQuery) params.set("q", committedQuery);
+    if (traineeId) params.set("traineeId", traineeId);
 
     fetch(`/api/videos?${params}`)
       .then((r) => r.json())
@@ -119,7 +122,7 @@ export function VideoPickerModal({
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [isOpen, view, committedQuery, offset, refreshKey]);
+  }, [isOpen, view, committedQuery, offset, refreshKey, traineeId]);
 
   // Reset all state when the modal closes.
   useEffect(() => {
@@ -191,6 +194,7 @@ export function VideoPickerModal({
             fileName: file.name,
             mimeType: file.type,
             fileSizeBytes: file.size,
+            ...(traineeId && { traineeId }),
           }),
         });
         const { videoId, uploadUrl } = await presignRes.json();

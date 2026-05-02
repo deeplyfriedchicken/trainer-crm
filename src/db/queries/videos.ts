@@ -7,6 +7,7 @@ export type VideoRow = Awaited<ReturnType<typeof listVideos>>[number];
 export type UpdateVideoInput = {
   title?: string;
   description?: string | null;
+  traineeId?: string | null;
   status?: "uploading" | "processing" | "ready" | "failed";
   originalFileKey?: string | null;
   fileKey?: string;
@@ -29,6 +30,7 @@ export type ListVideosOptions = {
   limit: number;
   offset: number;
   uploaderId?: string;
+  traineeId?: string;
   status?: VideoStatus;
   /** Matches video title OR any associated tag name (case-insensitive). */
   search?: string;
@@ -45,6 +47,7 @@ export async function listVideos(options: ListVideosOptions) {
 
   const filters = [
     options.uploaderId ? eq(videos.uploaderId, options.uploaderId) : undefined,
+    options.traineeId ? eq(videos.traineeId, options.traineeId) : undefined,
     options.status ? eq(videos.status, options.status) : undefined,
     options.search
       ? or(

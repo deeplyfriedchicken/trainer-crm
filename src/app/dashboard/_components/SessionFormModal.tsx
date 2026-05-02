@@ -557,6 +557,7 @@ export function SessionFormModal({
           (pickerIdx !== null ? exVideos[pickerIdx] : null)?.map((v) => v.id) ??
           []
         }
+        traineeId={traineeId}
       />
     </>
   );

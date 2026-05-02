@@ -98,6 +98,9 @@ export const videos = pgTable(
     uploaderId: text("uploader_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
+    traineeId: text("trainee_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
     title: text("title").notNull(),
     description: text("description"),
     fileKey: text("file_key").notNull(),
@@ -379,6 +382,7 @@ export const videoTags = pgTable(
 export const usersRelations = relations(users, ({ many }) => ({
   roles: many(userRoles),
   uploadedVideos: many(videos, { relationName: "videos_uploader" }),
+  directVideos: many(videos, { relationName: "videos_trainee" }),
   workoutPlans: many(workoutPlans, { relationName: "workout_plans_trainee" }),
   workouts: many(workouts, { relationName: "workouts_trainee" }),
 }));
@@ -392,6 +396,11 @@ export const videosRelations = relations(videos, ({ one, many }) => ({
     fields: [videos.uploaderId],
     references: [users.id],
     relationName: "videos_uploader",
+  }),
+  trainee: one(users, {
+    fields: [videos.traineeId],
+    references: [users.id],
+    relationName: "videos_trainee",
   }),
   exerciseLinks: many(exerciseVideos),
   workoutPlanLinks: many(workoutPlanVideos),

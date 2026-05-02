@@ -2,6 +2,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   type AnyPgColumn,
+  bigint,
   check,
   index,
   integer,
@@ -13,8 +14,6 @@ import {
   text,
   timestamp,
   uniqueIndex,
-  bigint,
-  boolean,
 } from "drizzle-orm/pg-core";
 
 const id = () =>
@@ -51,6 +50,7 @@ export const users = pgTable(
     name: text("name").notNull(),
     pin: text("pin"),
     pinUpdatedAt: timestamp("pin_updated_at", { withTimezone: true }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
   },
   (t) => [uniqueIndex("users_email_idx").on(t.email)],
@@ -399,37 +399,43 @@ export const videosRelations = relations(videos, ({ one, many }) => ({
   videoTags: many(videoTags),
 }));
 
-export const workoutPlansRelations = relations(workoutPlans, ({ one, many }) => ({
-  trainee: one(users, {
-    fields: [workoutPlans.traineeId],
-    references: [users.id],
-    relationName: "workout_plans_trainee",
+export const workoutPlansRelations = relations(
+  workoutPlans,
+  ({ one, many }) => ({
+    trainee: one(users, {
+      fields: [workoutPlans.traineeId],
+      references: [users.id],
+      relationName: "workout_plans_trainee",
+    }),
+    creator: one(users, {
+      fields: [workoutPlans.createdBy],
+      references: [users.id],
+      relationName: "workout_plans_creator",
+    }),
+    updater: one(users, {
+      fields: [workoutPlans.updatedBy],
+      references: [users.id],
+      relationName: "workout_plans_updater",
+    }),
+    exercises: many(exercises),
+    videoLinks: many(workoutPlanVideos),
+    workouts: many(workouts),
   }),
-  creator: one(users, {
-    fields: [workoutPlans.createdBy],
-    references: [users.id],
-    relationName: "workout_plans_creator",
-  }),
-  updater: one(users, {
-    fields: [workoutPlans.updatedBy],
-    references: [users.id],
-    relationName: "workout_plans_updater",
-  }),
-  exercises: many(exercises),
-  videoLinks: many(workoutPlanVideos),
-  workouts: many(workouts),
-}));
+);
 
-export const workoutPlanVideosRelations = relations(workoutPlanVideos, ({ one }) => ({
-  workoutPlan: one(workoutPlans, {
-    fields: [workoutPlanVideos.workoutPlanId],
-    references: [workoutPlans.id],
+export const workoutPlanVideosRelations = relations(
+  workoutPlanVideos,
+  ({ one }) => ({
+    workoutPlan: one(workoutPlans, {
+      fields: [workoutPlanVideos.workoutPlanId],
+      references: [workoutPlans.id],
+    }),
+    video: one(videos, {
+      fields: [workoutPlanVideos.videoId],
+      references: [videos.id],
+    }),
   }),
-  video: one(videos, {
-    fields: [workoutPlanVideos.videoId],
-    references: [videos.id],
-  }),
-}));
+);
 
 export const exercisesRelations = relations(exercises, ({ one, many }) => ({
   workoutPlan: one(workoutPlans, {
@@ -485,16 +491,19 @@ export const workoutsRelations = relations(workouts, ({ one, many }) => ({
   videoLinks: many(workoutVideos),
 }));
 
-export const workoutExercisesRelations = relations(workoutExercises, ({ one }) => ({
-  workout: one(workouts, {
-    fields: [workoutExercises.workoutId],
-    references: [workouts.id],
+export const workoutExercisesRelations = relations(
+  workoutExercises,
+  ({ one }) => ({
+    workout: one(workouts, {
+      fields: [workoutExercises.workoutId],
+      references: [workouts.id],
+    }),
+    exercise: one(exercises, {
+      fields: [workoutExercises.exerciseId],
+      references: [exercises.id],
+    }),
   }),
-  exercise: one(exercises, {
-    fields: [workoutExercises.exerciseId],
-    references: [exercises.id],
-  }),
-}));
+);
 
 export const workoutVideosRelations = relations(workoutVideos, ({ one }) => ({
   workout: one(workouts, {

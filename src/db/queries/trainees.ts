@@ -1,5 +1,5 @@
-import { asc, count, eq, max } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
+import { and, asc, count, eq, isNull, max } from "drizzle-orm";
 import { db } from "@/db";
 import { userRoles, users, workoutPlans } from "@/db/schema";
 
@@ -23,7 +23,14 @@ export async function listTrainees(options: ListTraineesOptions) {
     })
     .from(users)
     .leftJoin(workoutPlans, eq(workoutPlans.traineeId, users.id))
-    .groupBy(users.id, users.email, users.name, users.createdAt, users.updatedAt)
+    .where(isNull(users.deletedAt))
+    .groupBy(
+      users.id,
+      users.email,
+      users.name,
+      users.createdAt,
+      users.updatedAt,
+    )
     .orderBy(asc(users.name))
     .limit(options.limit)
     .offset(options.offset);
@@ -31,7 +38,7 @@ export async function listTrainees(options: ListTraineesOptions) {
 
 export async function getTraineeById(id: string) {
   const user = await db.query.users.findFirst({
-    where: eq(users.id, id),
+    where: and(eq(users.id, id), isNull(users.deletedAt)),
     with: {
       roles: true,
       workoutPlans: {
@@ -41,7 +48,16 @@ export async function getTraineeById(id: string) {
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
             with: {
               videoLinks: {
-                with: { video: { columns: { id: true, title: true, fileKey: true, fileUrl: true } } },
+                with: {
+                  video: {
+                    columns: {
+                      id: true,
+                      title: true,
+                      fileKey: true,
+                      fileUrl: true,
+                    },
+                  },
+                },
               },
             },
           },
@@ -54,7 +70,15 @@ export async function getTraineeById(id: string) {
           exerciseLinks: {
             with: {
               exercise: {
-                columns: { id: true, name: true, type: true, sets: true, reps: true, durationSeconds: true, weightLbs: true },
+                columns: {
+                  id: true,
+                  name: true,
+                  type: true,
+                  sets: true,
+                  reps: true,
+                  durationSeconds: true,
+                  weightLbs: true,
+                },
               },
             },
           },
@@ -76,7 +100,13 @@ export async function getTraineeById(id: string) {
   };
 }
 
-export async function createTrainee({ name, email }: { name: string; email: string }) {
+export async function createTrainee({
+  name,
+  email,
+}: {
+  name: string;
+  email: string;
+}) {
   return db.transaction(async (tx) => {
     const [user] = await tx
       .insert(users)
@@ -87,15 +117,21 @@ export async function createTrainee({ name, email }: { name: string; email: stri
   });
 }
 
-export async function updateTrainee(id: string, { name, email }: { name?: string; email?: string }) {
+export async function updateTrainee(
+  id: string,
+  { name, email }: { name?: string; email?: string },
+) {
   const [user] = await db
     .update(users)
-    .set({ ...(name !== undefined && { name }), ...(email !== undefined && { email }) })
+    .set({
+      ...(name !== undefined && { name }),
+      ...(email !== undefined && { email }),
+    })
     .where(eq(users.id, id))
     .returning();
   return user ?? null;
 }
 
 export async function deleteTrainee(id: string) {
-  await db.delete(users).where(eq(users.id, id));
+  await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, id));
 }

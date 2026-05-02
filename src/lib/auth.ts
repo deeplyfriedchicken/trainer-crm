@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { type UserRole, users } from "@/db/schema";
 import { getSession } from "@/lib/session";
@@ -18,7 +18,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser> => {
   if (!session) redirect("/login");
 
   const user = await db.query.users.findFirst({
-    where: eq(users.id, session.userId),
+    where: and(eq(users.id, session.userId), isNull(users.deletedAt)),
     with: { roles: true },
   });
 

@@ -1,8 +1,8 @@
-import { asc, count, eq, inArray, sql } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
+import { and, asc, count, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { userRoles, users, videos } from "@/db/schema";
 import type { UserRole } from "@/db/schema";
+import { userRoles, users, videos } from "@/db/schema";
 
 export type ListTrainersOptions = {
   limit: number;
@@ -24,7 +24,7 @@ export async function listTrainers(options: ListTrainersOptions) {
       updatedAt: users.updatedAt,
     })
     .from(users)
-    .where(inArray(users.id, trainerIds))
+    .where(and(inArray(users.id, trainerIds), isNull(users.deletedAt)))
     .orderBy(asc(users.name))
     .limit(options.limit)
     .offset(options.offset);
@@ -42,7 +42,9 @@ export async function listTrainers(options: ListTrainersOptions) {
     .where(inArray(videos.uploaderId, ids))
     .groupBy(videos.uploaderId);
 
-  const videoCountMap = new Map(videoCounts.map((r) => [r.uploaderId, r.count]));
+  const videoCountMap = new Map(
+    videoCounts.map((r) => [r.uploaderId, r.count]),
+  );
 
   return rows.map((r) => ({
     ...r,
@@ -52,7 +54,7 @@ export async function listTrainers(options: ListTrainersOptions) {
 
 export async function getTrainerById(id: string) {
   const user = await db.query.users.findFirst({
-    where: eq(users.id, id),
+    where: and(eq(users.id, id), isNull(users.deletedAt)),
     with: { roles: true },
   });
 
@@ -106,7 +108,10 @@ export async function updateTrainer(
   return db.transaction(async (tx) => {
     const [user] = await tx
       .update(users)
-      .set({ ...(name !== undefined && { name }), ...(email !== undefined && { email }) })
+      .set({
+        ...(name !== undefined && { name }),
+        ...(email !== undefined && { email }),
+      })
       .where(eq(users.id, id))
       .returning();
 
@@ -133,5 +138,5 @@ export async function updateTrainer(
 }
 
 export async function deleteTrainer(id: string) {
-  await db.delete(users).where(eq(users.id, id));
+  await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, id));
 }

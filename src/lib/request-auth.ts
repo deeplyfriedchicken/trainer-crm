@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import type { CurrentUser } from "@/lib/auth";
@@ -7,7 +7,7 @@ import { getSession } from "@/lib/session";
 
 async function userFromId(userId: string): Promise<CurrentUser | null> {
   const user = await db.query.users.findFirst({
-    where: eq(users.id, userId),
+    where: and(eq(users.id, userId), isNull(users.deletedAt)),
     with: { roles: true },
   });
   if (!user) return null;

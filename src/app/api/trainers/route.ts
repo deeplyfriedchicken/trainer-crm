@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
-import { listTrainers, createTrainer } from "@/db/queries/trainers";
-import { getRequestUser } from "@/lib/request-auth";
+import { createTrainer, listTrainers } from "@/db/queries/trainers";
 import { parsePagination } from "@/lib/pagination";
+import { getRequestUser } from "@/lib/request-auth";
 
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
@@ -22,13 +22,19 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = (await request.json()) as { name?: string; email?: string; role?: string };
+  const body = (await request.json()) as {
+    name?: string;
+    email?: string;
+    role?: string;
+  };
   if (!body.name?.trim() || !body.email?.trim()) {
-    return Response.json({ error: "name and email are required" }, { status: 400 });
+    return Response.json(
+      { error: "name and email are required" },
+      { status: 400 },
+    );
   }
 
-  const role =
-    body.role === "trainer_manager" ? "trainer_manager" : "trainer";
+  const role = body.role === "trainer_manager" ? "trainer_manager" : "trainer";
 
   const trainer = await createTrainer({
     name: body.name.trim(),

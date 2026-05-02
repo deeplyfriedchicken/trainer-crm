@@ -123,6 +123,7 @@ export async function getTraineeById(id: string) {
       fileKey: videos.fileKey,
       fileUrl: videos.fileUrl,
       durationSeconds: videos.durationSeconds,
+      createdAt: videos.createdAt,
     })
     .from(videos)
     .where(eq(videos.traineeId, id))

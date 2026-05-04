@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import styles from "./Dialog.module.css";
 
 /** Scrollable content area for use inside Dialog when you don't need custom layout. */
@@ -36,30 +37,23 @@ export function Dialog({
   useEffect(() => {
     if (!isOpen) return;
 
-    // Lock body and every scrollable ancestor of the dialog panel so the
-    // backdrop cannot be scrolled out of view in layouts that use an inner
-    // scroll container (e.g. .crm-main with overflow-y: auto).
+    // Lock all scrollable containers in the page so the backdrop stays put.
+    // The dialog renders into a portal (document.body), so we can't walk up
+    // from panelRef — instead query every scrollable element directly.
     const locked: { el: HTMLElement; prev: string }[] = [];
-    let node: Element | null = panelRef.current?.parentElement ?? null;
-    while (node && node !== document.documentElement) {
-      if (node instanceof HTMLElement) {
-        const oy = getComputedStyle(node).overflowY;
-        if (oy === "auto" || oy === "scroll") {
-          locked.push({ el: node, prev: node.style.overflowY });
-          node.style.overflowY = "hidden";
-        }
+    document.querySelectorAll<HTMLElement>("*").forEach((el) => {
+      const oy = getComputedStyle(el).overflowY;
+      if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight) {
+        locked.push({ el, prev: el.style.overflowY });
+        el.style.overflowY = "hidden";
       }
-      node = node.parentElement;
-    }
-    const prevBody = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    });
 
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
     document.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prevBody;
       for (const { el, prev } of locked) el.style.overflowY = prev;
       document.removeEventListener("keydown", onKey);
     };
@@ -67,7 +61,7 @@ export function Dialog({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className={styles.overlay}>
       <div className={styles.backdrop} onClick={onClose} />
       <div
@@ -93,6 +87,7 @@ export function Dialog({
         )}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

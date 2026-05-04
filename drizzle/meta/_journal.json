@@ -50,6 +50,13 @@
       "when": 1777690458644,
       "tag": "0006_previous_shinko_yamashiro",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1777879061826,
+      "tag": "0007_add_deleted_at_to_videos",
+      "breakpoints": true
     }
   ]
 }

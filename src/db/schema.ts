@@ -111,6 +111,7 @@ export const videos = pgTable(
     durationSeconds: integer("duration_seconds"),
     status: videoStatus("status").notNull().default("uploading"),
     originalFileKey: text("original_file_key"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
   },
   (t) => [

@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
 import { db } from "@/db";
 import { tags, type VideoStatus, videos, videoTags } from "@/db/schema";
 
@@ -26,6 +26,15 @@ export async function updateVideo(id: string, input: UpdateVideoInput) {
   return updated;
 }
 
+export async function softDeleteVideo(id: string) {
+  const [updated] = await db
+    .update(videos)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(videos.id, id), isNull(videos.deletedAt)))
+    .returning();
+  return updated;
+}
+
 export type ListVideosOptions = {
   limit: number;
   offset: number;
@@ -34,6 +43,8 @@ export type ListVideosOptions = {
   status?: VideoStatus;
   /** Matches video title OR any associated tag name (case-insensitive). */
   search?: string;
+  /** When true, include soft-deleted videos. Defaults to false. */
+  includeDeleted?: boolean;
 };
 
 export async function listVideos(options: ListVideosOptions) {
@@ -46,6 +57,7 @@ export async function listVideos(options: ListVideosOptions) {
     : null;
 
   const filters = [
+    options.includeDeleted ? undefined : isNull(videos.deletedAt),
     options.uploaderId ? eq(videos.uploaderId, options.uploaderId) : undefined,
     options.traineeId ? eq(videos.traineeId, options.traineeId) : undefined,
     options.status ? eq(videos.status, options.status) : undefined,

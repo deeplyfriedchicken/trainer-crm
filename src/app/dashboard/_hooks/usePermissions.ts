@@ -12,9 +12,12 @@ export const usePermissions = () => {
     (["admin", "trainer_manager"] as const).includes(r as never),
   );
 
+  const canDeleteVideo = currentUser.roles.includes("admin");
+
   return {
     canAddClient,
     canAddTrainer,
     canAddTrainerAdmin,
+    canDeleteVideo,
   };
 };

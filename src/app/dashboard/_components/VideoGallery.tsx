@@ -1,19 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import { FaPlay } from "react-icons/fa6";
 import {
   LuCalendar,
   LuClock,
   LuFileVideo,
   LuHardDrive,
+  LuTrash2,
   LuUpload,
   LuUser,
 } from "react-icons/lu";
 import { Button } from "@/app/components/Button";
 import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { PageHeader } from "@/app/components/PageHeader";
+import { deleteVideo } from "@/app/dashboard/videos/actions";
+import { usePermissions } from "@/app/dashboard/_hooks/usePermissions";
 import type { VideoRow as VideoRowType } from "@/db/queries/videos";
 import { UploadModal } from "./UploadModal";
 import styles from "./VideoGallery.module.css";
@@ -109,13 +112,19 @@ function VideoThumbnail({ src }: { src: string }) {
 }
 
 function VideoCard({ v, onSelect }: { v: VideoRowType; onSelect: () => void }) {
+  const isDeleted = v.deletedAt !== null;
   const primaryTag = v.videoTags[0]?.tag ?? null;
   const color = primaryTag ? tagColor(primaryTag.name) : "#34FDFE";
   const uploaderCol = uploaderColor(v.uploader.name);
   const duration = formatDuration(v.durationSeconds);
 
   return (
-    <button type="button" className={styles.videoCard} onClick={onSelect}>
+    <button
+      type="button"
+      className={styles.videoCard}
+      onClick={onSelect}
+      style={isDeleted ? { opacity: 0.45, filter: "grayscale(0.6)" } : undefined}
+    >
       <div className={styles.videoThumb}>
         <VideoThumbnail src={v.fileUrl} />
         <div className={styles.videoThumbPattern} />
@@ -194,7 +203,12 @@ function VideoCard({ v, onSelect }: { v: VideoRowType; onSelect: () => void }) {
             </div>
             {v.uploader.name}
           </div>
-          <div className={styles.videoDate}>{formatDate(v.createdAt)}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            {isDeleted && (
+              <LuTrash2 size={12} color="rgba(248,113,113,0.7)" />
+            )}
+            <div className={styles.videoDate}>{formatDate(v.createdAt)}</div>
+          </div>
         </div>
       </div>
     </button>
@@ -212,9 +226,12 @@ export function VideoGallery({
   subtitle?: string;
 }) {
   const router = useRouter();
+  const { canDeleteVideo } = usePermissions();
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [activeTag, setActiveTag] = useState<string>("All");
   const [selectedVideo, setSelectedVideo] = useState<VideoRowType | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<VideoRowType | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   // Collect unique tags across all videos
   const allTags: Tag[] = [];
@@ -302,26 +319,41 @@ export function VideoGallery({
                 onClose={() => setSelectedVideo(null)}
                 maxWidth={900}
               >
-                <video
-                  key={v.id}
-                  src={v.fileUrl}
-                  controls
-                  autoPlay
-                  style={{
-                    width: "100%",
-                    display: "block",
-                    maxHeight: "52vh",
-                    background: "#000",
-                  }}
-                >
-                  <track
-                    kind="captions"
-                    srcLang="en"
-                    label="English"
-                    src="data:text/vtt;charset=utf-8,WEBVTT"
-                    default
-                  />
-                </video>
+                <div style={{ position: "relative" }}>
+                  <video
+                    key={v.id}
+                    src={v.fileUrl}
+                    controls
+                    autoPlay
+                    style={{
+                      width: "100%",
+                      display: "block",
+                      maxHeight: "52vh",
+                      background: "#000",
+                    }}
+                  >
+                    <track
+                      kind="captions"
+                      srcLang="en"
+                      label="English"
+                      src="data:text/vtt;charset=utf-8,WEBVTT"
+                      default
+                    />
+                  </video>
+                  {canDeleteVideo && !v.deletedAt && (
+                    <button
+                      type="button"
+                      className={styles.videoDeleteBtn}
+                      onClick={() => {
+                        setSelectedVideo(null);
+                        setDeleteTarget(v);
+                      }}
+                      aria-label="Delete video"
+                    >
+                      <LuTrash2 size={15} />
+                    </button>
+                  )}
+                </div>
                 <DialogBody>
                   <div style={{ marginBottom: 14 }}>
                     <div
@@ -433,6 +465,51 @@ export function VideoGallery({
           router.refresh();
         }}
       />
+
+      <Dialog
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete Video"
+        maxWidth={440}
+      >
+        <DialogBody>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", marginBottom: 20, lineHeight: 1.6 }}>
+            Are you sure you want to delete{" "}
+            <span style={{ color: "#fff", fontWeight: 600 }}>
+              {deleteTarget?.title}
+            </span>
+            ? This action cannot be undone.
+          </p>
+          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+            <Button
+              variant="ghost"
+              colorScheme="cyan"
+              size="sm"
+              onClick={() => setDeleteTarget(null)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="solid"
+              colorScheme="pink"
+              size="sm"
+              loading={isPending}
+              onClick={() => {
+                if (!deleteTarget) return;
+                startTransition(async () => {
+                  await deleteVideo(deleteTarget.id);
+                  setDeleteTarget(null);
+                  router.refresh();
+                });
+              }}
+            >
+              <LuTrash2 size={13} />
+              Delete
+            </Button>
+          </div>
+        </DialogBody>
+      </Dialog>
     </>
   );
 }

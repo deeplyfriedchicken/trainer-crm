@@ -46,9 +46,22 @@ export async function listTrainers(options: ListTrainersOptions) {
     videoCounts.map((r) => [r.uploaderId, r.count]),
   );
 
+  const roleRows = await db
+    .select({ userId: userRoles.userId, role: userRoles.role })
+    .from(userRoles)
+    .where(inArray(userRoles.userId, ids));
+
+  const rolesMap = new Map<string, string[]>();
+  for (const r of roleRows) {
+    const existing = rolesMap.get(r.userId) ?? [];
+    existing.push(r.role);
+    rolesMap.set(r.userId, existing);
+  }
+
   return rows.map((r) => ({
     ...r,
     videoCount: videoCountMap.get(r.id) ?? 0,
+    roles: rolesMap.get(r.id) ?? [],
   }));
 }
 

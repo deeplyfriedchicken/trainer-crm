@@ -300,7 +300,6 @@
    MOBILE  ≤ 768px
 ══════════════════════════════════════════ */
 @media (max-width: 768px) {
-
   /* ── Hamburger ── */
   .crm-hamburger {
     display: flex;
@@ -373,5 +372,4 @@
   .crm-trainee-table td:not(:first-child):not(:last-child) {
     display: none;
   }
-
 }

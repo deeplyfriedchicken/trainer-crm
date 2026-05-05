@@ -19,7 +19,9 @@ async function fetchUser(userId: string): Promise<CurrentUser | null> {
   };
 }
 
-export async function getApiUser(request: Request): Promise<CurrentUser | null> {
+export async function getApiUser(
+  request: Request,
+): Promise<CurrentUser | null> {
   const auth = request.headers.get("Authorization");
   if (auth?.startsWith("Bearer ")) {
     const userId = decryptUserId(auth.slice(7));

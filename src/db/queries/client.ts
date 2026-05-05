@@ -20,7 +20,14 @@ export async function getClientData(traineeId: string) {
             with: {
               videoLinks: {
                 with: {
-                  video: { columns: { id: true, title: true, fileKey: true, fileUrl: true } },
+                  video: {
+                    columns: {
+                      id: true,
+                      title: true,
+                      fileKey: true,
+                      fileUrl: true,
+                    },
+                  },
                 },
               },
             },
@@ -34,7 +41,15 @@ export async function getClientData(traineeId: string) {
           exerciseLinks: {
             with: {
               exercise: {
-                columns: { id: true, name: true, type: true, sets: true, reps: true, durationSeconds: true, weightLbs: true },
+                columns: {
+                  id: true,
+                  name: true,
+                  type: true,
+                  sets: true,
+                  reps: true,
+                  durationSeconds: true,
+                  weightLbs: true,
+                },
               },
             },
           },
@@ -73,7 +88,13 @@ export async function getExerciseForClient(
       videoLinks: {
         with: {
           video: {
-            columns: { id: true, title: true, fileKey: true, fileUrl: true, mimeType: true },
+            columns: {
+              id: true,
+              title: true,
+              fileKey: true,
+              fileUrl: true,
+              mimeType: true,
+            },
           },
         },
       },
@@ -90,10 +111,7 @@ export type ExerciseDetail = NonNullable<
   Awaited<ReturnType<typeof getExerciseForClient>>
 >;
 
-export async function getPlanForLog(
-  planId: string,
-  traineeId: string,
-) {
+export async function getPlanForLog(planId: string, traineeId: string) {
   const plan = await db.query.workoutPlans.findFirst({
     where: eq(workoutPlans.id, planId),
     columns: {
@@ -119,7 +137,14 @@ export async function getPlanForLog(
         with: {
           videoLinks: {
             with: {
-              video: { columns: { id: true, title: true, fileKey: true, fileUrl: true } },
+              video: {
+                columns: {
+                  id: true,
+                  title: true,
+                  fileKey: true,
+                  fileUrl: true,
+                },
+              },
             },
           },
         },

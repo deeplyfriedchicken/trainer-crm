@@ -13,27 +13,27 @@ import {
   CardHeader,
   CardTitle,
 } from "../Card";
+import { type ChatMessage, ChatPanel } from "../ChatPanel";
 import { Checkbox } from "../Checkbox";
+import { Dialog, DialogBody } from "../Dialog";
 import { Field } from "../Field";
 import { IconButton } from "../IconButton";
 import { Input } from "../Input";
+import { PageHeader } from "../PageHeader";
 import { Progress } from "../Progress";
 import { ProgressCircle } from "../ProgressCircle";
 import { Radio } from "../Radio";
 import { Select } from "../Select";
 import { Separator } from "../Separator";
+import { type SessionEntry, SessionsPanel } from "../SessionsPanel";
 import { Skeleton } from "../Skeleton";
 import { Spinner } from "../Spinner";
 import { Stat } from "../Stat";
 import { Switch } from "../Switch";
+import { type ColumnDef, Table } from "../Table";
 import { Tag } from "../Tag";
 import { Textarea } from "../Textarea";
 import { toaster } from "../Toast";
-import { type ColumnDef, Table } from "../Table";
-import { ChatPanel, type ChatMessage } from "../ChatPanel";
-import { Dialog, DialogBody } from "../Dialog";
-import { SessionsPanel, type SessionEntry } from "../SessionsPanel";
-import { PageHeader } from "../PageHeader";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
 function Row({ children }: { children: React.ReactNode }) {
@@ -720,21 +720,39 @@ export function SessionsPanelSection() {
 const SHOWCASE_MESSAGES: ChatMessage[] = [
   {
     id: "m1",
-    content: { text: "Hey Jordan, great session yesterday! How are you feeling?" },
+    content: {
+      text: "Hey Jordan, great session yesterday! How are you feeling?",
+    },
     createdAt: new Date("2026-04-22T09:14:00"),
-    sender: { id: "trainer-1", name: "Jordan Ellis", email: "jordan@example.com" },
+    sender: {
+      id: "trainer-1",
+      name: "Jordan Ellis",
+      email: "jordan@example.com",
+    },
   },
   {
     id: "m2",
-    content: { text: "Legs are a bit sore but in a good way! Really felt those RDLs." },
+    content: {
+      text: "Legs are a bit sore but in a good way! Really felt those RDLs.",
+    },
     createdAt: new Date("2026-04-22T09:31:00"),
-    sender: { id: "client-1", name: "Marcus Webb", email: "marcus@example.com" },
+    sender: {
+      id: "client-1",
+      name: "Marcus Webb",
+      email: "marcus@example.com",
+    },
   },
   {
     id: "m3",
-    content: { text: "That's the sweet spot. Aim for 150g protein today — I've added a recovery video to your library." },
+    content: {
+      text: "That's the sweet spot. Aim for 150g protein today — I've added a recovery video to your library.",
+    },
     createdAt: new Date("2026-04-22T09:33:00"),
-    sender: { id: "trainer-1", name: "Jordan Ellis", email: "jordan@example.com" },
+    sender: {
+      id: "trainer-1",
+      name: "Jordan Ellis",
+      email: "jordan@example.com",
+    },
   },
 ];
 
@@ -746,7 +764,11 @@ function ShowcaseChatPanel() {
       id: crypto.randomUUID(),
       content: { text },
       createdAt: new Date(),
-      sender: { id: "trainer-1", name: "Jordan Ellis", email: "jordan@example.com" },
+      sender: {
+        id: "trainer-1",
+        name: "Jordan Ellis",
+        email: "jordan@example.com",
+      },
     };
     setMessages((prev) => [...prev, msg]);
     return msg;
@@ -756,7 +778,11 @@ function ShowcaseChatPanel() {
     <ChatPanel
       initialMessages={messages}
       currentUserId="trainer-1"
-      participant={{ id: "client-1", name: "Marcus Webb", email: "marcus@example.com" }}
+      participant={{
+        id: "client-1",
+        name: "Marcus Webb",
+        email: "marcus@example.com",
+      }}
       onSend={handleSend}
     />
   );
@@ -774,9 +800,34 @@ export function ChatPanelSection() {
       <SectionTitle>Chat Panel</SectionTitle>
       <SubSection title="Message thread with live input">
         <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
-          Pass <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">onSend</Box> as an async function that persists the message and returns the saved{" "}
-          <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">ChatMessage</Box>.
-          Messages from <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">currentUserId</Box> appear on the left; others on the right.
+          Pass{" "}
+          <Box
+            as="code"
+            fontFamily="var(--font-neon-mono), monospace"
+            color="var(--neon-cyan)"
+            fontSize="12px"
+          >
+            onSend
+          </Box>{" "}
+          as an async function that persists the message and returns the saved{" "}
+          <Box
+            as="code"
+            fontFamily="var(--font-neon-mono), monospace"
+            color="var(--neon-cyan)"
+            fontSize="12px"
+          >
+            ChatMessage
+          </Box>
+          . Messages from{" "}
+          <Box
+            as="code"
+            fontFamily="var(--font-neon-mono), monospace"
+            color="var(--neon-cyan)"
+            fontSize="12px"
+          >
+            currentUserId
+          </Box>{" "}
+          appear on the left; others on the right.
         </Box>
         <Box maxW="520px">
           <ShowcaseChatPanel />
@@ -793,15 +844,29 @@ function ShowcaseDialog() {
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open Dialog</Button>
-      <Dialog isOpen={open} onClose={() => setOpen(false)} title="Example Dialog" maxWidth={480}>
+      <Dialog
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Example Dialog"
+        maxWidth={480}
+      >
         <DialogBody>
           <Box display="flex" flexDirection="column" gap="16px">
-            <Box fontSize="14px" color="var(--neon-text-muted)" lineHeight="1.6">
+            <Box
+              fontSize="14px"
+              color="var(--neon-text-muted)"
+              lineHeight="1.6"
+            >
               This is a reusable dialog shell. Drop any content inside — forms,
-              confirmations, detail panels. Esc or clicking the backdrop closes it.
+              confirmations, detail panels. Esc or clicking the backdrop closes
+              it.
             </Box>
             <Box display="flex" gap="10px" justifyContent="flex-end">
-              <Button variant="ghost" colorScheme="pink" onClick={() => setOpen(false)}>
+              <Button
+                variant="ghost"
+                colorScheme="pink"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button onClick={() => setOpen(false)}>Confirm</Button>
@@ -827,7 +892,10 @@ export function PageHeaderSection() {
         <PageHeader title="Dashboard" />
       </SubSection>
       <SubSection title="Title + subtitle">
-        <PageHeader title="Clients" subtitle="24 total · click any row to view profile" />
+        <PageHeader
+          title="Clients"
+          subtitle="24 total · click any row to view profile"
+        />
       </SubSection>
       <SubSection title="Title + subtitle + action">
         <PageHeader
@@ -857,9 +925,25 @@ export function DialogSection() {
       <SubSection title="Modal overlay">
         <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
           Generic modal shell. Pass{" "}
-          <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">title</Box> for the built-in header row, or omit it and render your own header inside{" "}
-          <Box as="code" fontFamily="var(--font-neon-mono), monospace" color="var(--neon-cyan)" fontSize="12px">children</Box>.
-          Backdrop click and Esc both close.
+          <Box
+            as="code"
+            fontFamily="var(--font-neon-mono), monospace"
+            color="var(--neon-cyan)"
+            fontSize="12px"
+          >
+            title
+          </Box>{" "}
+          for the built-in header row, or omit it and render your own header
+          inside{" "}
+          <Box
+            as="code"
+            fontFamily="var(--font-neon-mono), monospace"
+            color="var(--neon-cyan)"
+            fontSize="12px"
+          >
+            children
+          </Box>
+          . Backdrop click and Esc both close.
         </Box>
         <ShowcaseDialog />
       </SubSection>

@@ -20,7 +20,13 @@ function fmtDuration(secs: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-export function FeedbackModal({ token, planId, exerciseLogs, duration, onCancel }: Props) {
+export function FeedbackModal({
+  token,
+  planId,
+  exerciseLogs,
+  duration,
+  onCancel,
+}: Props) {
   const [pain, setPain] = useState<number | null>(null);
   const [energy, setEnergy] = useState<number | null>(null);
   const [comment, setComment] = useState("");
@@ -103,7 +109,13 @@ export function FeedbackModal({ token, planId, exerciseLogs, duration, onCancel 
           </div>
 
           {error && (
-            <div style={{ color: "var(--red)", fontSize: 13, fontFamily: "var(--font-mono)" }}>
+            <div
+              style={{
+                color: "var(--red)",
+                fontSize: 13,
+                fontFamily: "var(--font-mono)",
+              }}
+            >
               {error}
             </div>
           )}

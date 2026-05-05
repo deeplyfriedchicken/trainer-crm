@@ -1,6 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  DELETE,
+  GET as GET_BY_ID,
+  PATCH,
+} from "@/app/api/workout-plans/[id]/route";
 import { GET, POST } from "@/app/api/workout-plans/route";
-import { GET as GET_BY_ID, PATCH, DELETE } from "@/app/api/workout-plans/[id]/route";
 
 const {
   mockGetRequestUser,
@@ -78,7 +82,9 @@ const mockPlan = {
   traineeId: "trainee_1",
   occurredAt: new Date(),
   comment: null,
-  exercises: [{ id: "ex_1", name: "Bench Press", type: "reps", sets: 3, reps: 10 }],
+  exercises: [
+    { id: "ex_1", name: "Bench Press", type: "reps", sets: 3, reps: 10 },
+  ],
 };
 
 const mockExerciseInput = {
@@ -287,9 +293,11 @@ describe("DELETE /api/workout-plans/[id]", () => {
 
   it("returns 204 on successful deletion", async () => {
     mockGetRequestUser.mockResolvedValue(trainerUser);
-    mockTransaction.mockImplementation(async (fn: (tx: unknown) => Promise<void>) => {
-      await fn({ delete: vi.fn().mockReturnValue({ where: vi.fn() }) });
-    });
+    mockTransaction.mockImplementation(
+      async (fn: (tx: unknown) => Promise<void>) => {
+        await fn({ delete: vi.fn().mockReturnValue({ where: vi.fn() }) });
+      },
+    );
     const req = nextRequest();
     const res = await DELETE(req as never, dynamicCtx("plan_1"));
     expect(res.status).toBe(204);

@@ -15,7 +15,8 @@ function formatDuration(s: number): string {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   const sec = s % 60;
-  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  if (h > 0)
+    return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   return `${m}:${String(sec).padStart(2, "0")}`;
 }
 
@@ -32,7 +33,13 @@ function VideoThumb({ src }: { src: string }) {
         const v = ref.current;
         if (v) v.currentTime = Math.min(1, v.duration * 0.1);
       }}
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: "contain",
+      }}
     />
   );
 }
@@ -46,7 +53,10 @@ function VideoCard({
   accentColor: string;
   onSelect: () => void;
 }) {
-  const duration = video.durationSeconds != null ? formatDuration(video.durationSeconds) : null;
+  const duration =
+    video.durationSeconds != null
+      ? formatDuration(video.durationSeconds)
+      : null;
   return (
     <button
       type="button"
@@ -77,13 +87,22 @@ function VideoCard({
         el.style.boxShadow = "";
       }}
     >
-      <div style={{ width: "100%", aspectRatio: "16/9", background: "#000", position: "relative", overflow: "hidden" }}>
+      <div
+        style={{
+          width: "100%",
+          aspectRatio: "16/9",
+          background: "#000",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
         <VideoThumb src={video.url} />
         <div
           style={{
             position: "absolute",
             inset: 0,
-            background: "repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 14px)",
+            background:
+              "repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 14px)",
           }}
         />
         <div
@@ -132,7 +151,17 @@ function VideoCard({
         )}
       </div>
       <div style={{ padding: "10px 12px" }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#fff",
+            lineHeight: 1.4,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           {video.title}
         </div>
       </div>
@@ -170,7 +199,9 @@ export function TraineeVideosPanel({
             justifyContent: "space-between",
           }}
         >
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Videos</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
+            Videos
+          </div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
             {videos.length} {videos.length === 1 ? "video" : "videos"}
           </div>
@@ -196,15 +227,31 @@ export function TraineeVideosPanel({
       </div>
 
       {selected && (
-        <Dialog isOpen onClose={() => setSelected(null)} title={selected.title} maxWidth={900}>
+        <Dialog
+          isOpen
+          onClose={() => setSelected(null)}
+          title={selected.title}
+          maxWidth={900}
+        >
           <video
             key={selected.id}
             src={selected.url}
             controls
             autoPlay
-            style={{ width: "100%", display: "block", maxHeight: "60vh", background: "#000" }}
+            style={{
+              width: "100%",
+              display: "block",
+              maxHeight: "60vh",
+              background: "#000",
+            }}
           >
-            <track kind="captions" srcLang="en" label="English" src="data:text/vtt;charset=utf-8,WEBVTT" default />
+            <track
+              kind="captions"
+              srcLang="en"
+              label="English"
+              src="data:text/vtt;charset=utf-8,WEBVTT"
+              default
+            />
           </video>
         </Dialog>
       )}

@@ -2,8 +2,8 @@
 
 import {
   Separator as ChakraSeparator,
-  type SeparatorProps,
   chakra,
+  type SeparatorProps,
 } from "@chakra-ui/react";
 
 export interface NeonSeparatorProps extends SeparatorProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Dialog.module.css";
 
@@ -43,7 +43,10 @@ export function Dialog({
     const locked: { el: HTMLElement; prev: string }[] = [];
     document.querySelectorAll<HTMLElement>("*").forEach((el) => {
       const oy = getComputedStyle(el).overflowY;
-      if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight) {
+      if (
+        (oy === "auto" || oy === "scroll") &&
+        el.scrollHeight > el.clientHeight
+      ) {
         locked.push({ el, prev: el.style.overflowY });
         el.style.overflowY = "hidden";
       }
@@ -74,7 +77,9 @@ export function Dialog({
       >
         {title && (
           <div className={styles.header}>
-            <div id="dialog-title" className={styles.title}>{title}</div>
+            <div id="dialog-title" className={styles.title}>
+              {title}
+            </div>
             <button
               type="button"
               className={styles.closeBtn}

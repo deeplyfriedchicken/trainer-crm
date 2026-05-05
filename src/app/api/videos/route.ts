@@ -30,7 +30,14 @@ export async function GET(request: NextRequest) {
   }
 
   const search = params.get("q") ?? undefined;
-  const videos = await listVideos({ limit, offset, uploaderId, traineeId, status, search });
+  const videos = await listVideos({
+    limit,
+    offset,
+    uploaderId,
+    traineeId,
+    status,
+    search,
+  });
   const data = await Promise.all(
     videos.map(async (v) => ({
       ...v,

@@ -101,7 +101,13 @@ function Swatch({ name, hex }: { name: string; hex: string }) {
 
 export function ColorPalette() {
   return (
-    <Box as="section" id="colors" px="60px" py="56px" borderBottom="1px solid var(--neon-border)">
+    <Box
+      as="section"
+      id="colors"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
       <SectionTitle>Color System</SectionTitle>
 
       <SubSection title="Primary Palette">
@@ -145,7 +151,11 @@ export function ColorPalette() {
             </Box>
             <Box as="tbody">
               {tokens.map((t) => (
-                <Box as="tr" key={t.token} borderBottom="1px solid rgba(255,255,255,0.03)">
+                <Box
+                  as="tr"
+                  key={t.token}
+                  borderBottom="1px solid rgba(255,255,255,0.03)"
+                >
                   <Box
                     as="td"
                     p="12px 16px"
@@ -175,10 +185,20 @@ export function ColorPalette() {
                       </Box>
                     </Box>
                   </Box>
-                  <Box as="td" p="12px 16px" color="rgba(255,255,255,0.7)" fontSize="13px">
+                  <Box
+                    as="td"
+                    p="12px 16px"
+                    color="rgba(255,255,255,0.7)"
+                    fontSize="13px"
+                  >
                     {t.role}
                   </Box>
-                  <Box as="td" p="12px 16px" color="var(--neon-text-muted)" fontSize="13px">
+                  <Box
+                    as="td"
+                    p="12px 16px"
+                    color="var(--neon-text-muted)"
+                    fontSize="13px"
+                  >
                     {t.use}
                   </Box>
                 </Box>

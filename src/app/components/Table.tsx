@@ -42,7 +42,7 @@ export function Table<T>({
   onRowClick,
   className,
 }: TableProps<T>) {
-  const [sortKey, setSortKey] = useState<keyof T & string | null>(
+  const [sortKey, setSortKey] = useState<(keyof T & string) | null>(
     defaultSortKey ?? null,
   );
   const [asc, setAsc] = useState(true);
@@ -73,7 +73,11 @@ export function Table<T>({
                 onClick={() => toggleSort(col.key)}
               >
                 <span
-                  style={{ display: "inline-flex", alignItems: "center", gap: 5 }}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
                 >
                   {col.label}
                   <SortIndicator active={sortKey === col.key} asc={asc} />
@@ -91,18 +95,14 @@ export function Table<T>({
             >
               {columns.map((col) => (
                 <td key={col.key} className={styles.td}>
-                  {col.render
-                    ? col.render(row)
-                    : String(row[col.key] ?? "")}
+                  {col.render ? col.render(row) : String(row[col.key] ?? "")}
                 </td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
-      {sorted.length === 0 && (
-        <div className={styles.empty}>{emptyText}</div>
-      )}
+      {sorted.length === 0 && <div className={styles.empty}>{emptyText}</div>}
     </div>
   );
 }

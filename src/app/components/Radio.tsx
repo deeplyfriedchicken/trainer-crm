@@ -1,6 +1,6 @@
 "use client";
 
-import { RadioGroup, chakra } from "@chakra-ui/react";
+import { chakra, RadioGroup } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import type { NeonColorScheme } from "./Button";
 

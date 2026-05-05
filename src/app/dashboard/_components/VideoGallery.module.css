@@ -204,7 +204,10 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
   z-index: 2;
 }
 .videoDeleteBtn:hover {

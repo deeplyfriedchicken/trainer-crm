@@ -1,14 +1,11 @@
-import {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-} from "node:crypto";
+import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 
 function getKey(): Buffer {
   const hex = process.env.CLIENT_TOKEN_SECRET;
   if (!hex) throw new Error("CLIENT_TOKEN_SECRET env var is not set");
   const buf = Buffer.from(hex, "hex");
-  if (buf.length !== 32) throw new Error("CLIENT_TOKEN_SECRET must be 64 hex chars (32 bytes)");
+  if (buf.length !== 32)
+    throw new Error("CLIENT_TOKEN_SECRET must be 64 hex chars (32 bytes)");
   return buf;
 }
 
@@ -37,7 +34,10 @@ export function decryptUserId(token: string): string | null {
     const encrypted = combined.subarray(28);
     const decipher = createDecipheriv("aes-256-gcm", key, iv);
     decipher.setAuthTag(tag);
-    const payload = Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
+    const payload = Buffer.concat([
+      decipher.update(encrypted),
+      decipher.final(),
+    ]).toString("utf8");
     const sep = payload.lastIndexOf(":");
     if (sep === -1) return null;
     const userId = payload.slice(0, sep);

@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { type SessionEntry, SessionsPanel } from "@/app/components/SessionsPanel";
+import {
+  type SessionEntry,
+  SessionsPanel,
+} from "@/app/components/SessionsPanel";
 import { SessionFormModal } from "@/app/dashboard/_components/SessionFormModal";
 
 export function TraineeSessionsPanel({

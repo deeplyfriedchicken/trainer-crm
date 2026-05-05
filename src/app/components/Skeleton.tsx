@@ -1,6 +1,10 @@
 "use client";
 
-import { Skeleton as ChakraSkeleton, type SkeletonProps, chakra } from "@chakra-ui/react";
+import {
+  Skeleton as ChakraSkeleton,
+  chakra,
+  type SkeletonProps,
+} from "@chakra-ui/react";
 import { forwardRef } from "react";
 
 export type NeonSkeletonProps = SkeletonProps;

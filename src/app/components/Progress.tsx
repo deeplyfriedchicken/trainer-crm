@@ -5,7 +5,10 @@ import type { NeonColorScheme } from "./Button";
 
 // Omit defaultValue/defaultChecked — HTMLAttributes types conflict with ProgressRootProps
 export interface NeonProgressProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, "defaultValue" | "defaultChecked"> {
+  extends Omit<
+    React.HTMLAttributes<HTMLElement>,
+    "defaultValue" | "defaultChecked"
+  > {
   value?: number | null;
   max?: number;
   colorScheme?: NeonColorScheme;

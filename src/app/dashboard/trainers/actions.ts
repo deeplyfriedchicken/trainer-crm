@@ -1,7 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { userRoles, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
@@ -19,10 +19,7 @@ export async function createTrainer(data: {
   if (!canAdd) throw new Error("Unauthorized");
 
   // Only admins can create trainer_managers
-  if (
-    data.role === "trainer_manager" &&
-    !currentUser.roles.includes("admin")
-  ) {
+  if (data.role === "trainer_manager" && !currentUser.roles.includes("admin")) {
     throw new Error("Unauthorized");
   }
 

@@ -1,8 +1,11 @@
-import type { NextRequest } from "next/server";
 import { eq } from "drizzle-orm";
+import type { NextRequest } from "next/server";
 import { db } from "@/db";
+import {
+  type ExerciseInput,
+  updateWorkoutPlan,
+} from "@/db/queries/workout-plans";
 import { exercises, workoutPlans } from "@/db/schema";
-import { updateWorkoutPlan, type ExerciseInput } from "@/db/queries/workout-plans";
 import { getRequestUser } from "@/lib/request-auth";
 
 export async function GET(
@@ -50,12 +53,15 @@ export async function PATCH(
   const existing = await db.query.workoutPlans.findFirst({
     where: eq(workoutPlans.id, id),
   });
-  if (!existing) return Response.json({ error: "Plan not found" }, { status: 404 });
+  if (!existing)
+    return Response.json({ error: "Plan not found" }, { status: 404 });
 
   const plan = await updateWorkoutPlan({
     planId: id,
     name: body.name.trim(),
-    occurredAt: body.occurredAt ? new Date(body.occurredAt) : existing.occurredAt,
+    occurredAt: body.occurredAt
+      ? new Date(body.occurredAt)
+      : existing.occurredAt,
     comment: body.comment,
     updatedBy: user.id,
     exerciseInputs: body.exercises ?? [],

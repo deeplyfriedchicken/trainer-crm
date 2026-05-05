@@ -1,7 +1,7 @@
 import "server-only";
-import { cache } from "react";
-import { redirect } from "next/navigation";
 import { and, eq, isNull } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import { cache } from "react";
 import { db } from "@/db";
 import { type UserRole, users } from "@/db/schema";
 import { getSession } from "@/lib/session";

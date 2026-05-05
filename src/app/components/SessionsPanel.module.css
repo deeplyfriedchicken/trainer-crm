@@ -38,15 +38,24 @@
   cursor: pointer;
   transition: opacity 0.15s;
 }
-.newBtn:hover { opacity: 0.8; }
+.newBtn:hover {
+  opacity: 0.8;
+}
 
 .list {
   overflow-y: auto;
   max-height: 520px;
 }
-.list::-webkit-scrollbar { width: 4px; }
-.list::-webkit-scrollbar-track { background: transparent; }
-.list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+.list::-webkit-scrollbar {
+  width: 4px;
+}
+.list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
 .empty {
   padding: 40px;
@@ -55,7 +64,9 @@
   font-size: 14px;
 }
 
-.row { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
 
 /* Row header is a div acting as a button so a real <button> (edit)
    can live inside without illegal nesting. */
@@ -72,7 +83,9 @@
   text-align: left;
   user-select: none;
 }
-.rowHeader:hover { background: rgba(255, 255, 255, 0.03); }
+.rowHeader:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
 
 .editBtn {
   width: 26px;
@@ -98,13 +111,17 @@
   overflow: hidden;
   transition: max-height 0.3s ease;
 }
-.rowBodyInner { padding: 0 20px 16px; }
+.rowBodyInner {
+  padding: 0 20px 16px;
+}
 
 .chevron {
   flex-shrink: 0;
   transition: transform 0.25s;
 }
-.chevronOpen { transform: rotate(180deg); }
+.chevronOpen {
+  transform: rotate(180deg);
+}
 
 .note {
   background: rgba(255, 255, 255, 0.04);
@@ -136,7 +153,11 @@
   color: rgba(255, 255, 255, 0.3);
   margin: 12px 0 8px;
 }
-.exerciseList { display: flex; flex-direction: column; gap: 5px; }
+.exerciseList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
 .exerciseRow {
   display: flex;
@@ -170,7 +191,7 @@
 .playCount {
   font-size: 10px;
   font-weight: 700;
-  color: #34FDFE;
+  color: #34fdfe;
   font-family: var(--font-neon-mono), "Space Mono", monospace;
 }
 
@@ -201,9 +222,16 @@
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
-.slideArrow:disabled { opacity: 0.25; cursor: default; }
+.slideArrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
 
-.slideDots { display: flex; gap: 6px; align-items: center; }
+.slideDots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
 
 .slideDot {
   width: 7px;
@@ -228,7 +256,12 @@
   text-align: right;
 }
 
-.starGroup { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.starGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
 .starLabel {
   font-size: 9px;
   font-weight: 700;
@@ -236,7 +269,17 @@
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.3);
 }
-.stars { display: flex; gap: 2px; }
-.starValue { font-size: 10px; color: rgba(255, 255, 255, 0.4); }
+.stars {
+  display: flex;
+  gap: 2px;
+}
+.starValue {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
 
-.divider { width: 1px; height: 32px; background: rgba(255, 255, 255, 0.07); }
+.divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.07);
+}

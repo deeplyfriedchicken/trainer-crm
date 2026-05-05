@@ -47,8 +47,16 @@
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 600px 400px at 20% 10%, rgba(253, 109, 187, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 350px at 80% 90%, rgba(52, 253, 254, 0.06) 0%, transparent 70%);
+    radial-gradient(
+      ellipse 600px 400px at 20% 10%,
+      rgba(253, 109, 187, 0.06) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 500px 350px at 80% 90%,
+      rgba(52, 253, 254, 0.06) 0%,
+      transparent 70%
+    );
   pointer-events: none;
   z-index: 0;
 }
@@ -86,17 +94,34 @@
 
 /* Keyframes from the reference shell */
 @keyframes neon-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes neon-progress-slide {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(350%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
 }
 @keyframes neon-pulse-glow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 @keyframes neon-scale-in {
-  from { opacity: 0; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

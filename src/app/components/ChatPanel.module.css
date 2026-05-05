@@ -41,9 +41,16 @@
   min-height: 0;
   max-height: 420px;
 }
-.messages::-webkit-scrollbar { width: 4px; }
-.messages::-webkit-scrollbar-track { background: transparent; }
-.messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+.messages::-webkit-scrollbar {
+  width: 4px;
+}
+.messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+.messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
 .emptyState {
   text-align: center;
@@ -78,8 +85,12 @@
   outline: none;
   transition: border-color 0.2s;
 }
-.input:focus { border-color: rgba(253, 109, 187, 0.4); }
-.input::placeholder { color: var(--neon-text-dim); }
+.input:focus {
+  border-color: rgba(253, 109, 187, 0.4);
+}
+.input::placeholder {
+  color: var(--neon-text-dim);
+}
 
 .sendBtn {
   width: 38px;
@@ -93,7 +104,14 @@
   justify-content: center;
   box-shadow: 0 0 14px rgba(253, 109, 187, 0.5);
   flex-shrink: 0;
-  transition: box-shadow 0.2s, opacity 0.15s;
+  transition:
+    box-shadow 0.2s,
+    opacity 0.15s;
 }
-.sendBtn:hover:not(:disabled) { box-shadow: 0 0 22px rgba(253, 109, 187, 0.7); }
-.sendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.sendBtn:hover:not(:disabled) {
+  box-shadow: 0 0 22px rgba(253, 109, 187, 0.7);
+}
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

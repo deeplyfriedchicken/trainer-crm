@@ -15,8 +15,8 @@ import {
 import { Button } from "@/app/components/Button";
 import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { PageHeader } from "@/app/components/PageHeader";
-import { deleteVideo } from "@/app/dashboard/videos/actions";
 import { usePermissions } from "@/app/dashboard/_hooks/usePermissions";
+import { deleteVideo } from "@/app/dashboard/videos/actions";
 import type { VideoRow as VideoRowType } from "@/db/queries/videos";
 import { UploadModal } from "./UploadModal";
 import styles from "./VideoGallery.module.css";
@@ -123,7 +123,9 @@ function VideoCard({ v, onSelect }: { v: VideoRowType; onSelect: () => void }) {
       type="button"
       className={styles.videoCard}
       onClick={onSelect}
-      style={isDeleted ? { opacity: 0.45, filter: "grayscale(0.6)" } : undefined}
+      style={
+        isDeleted ? { opacity: 0.45, filter: "grayscale(0.6)" } : undefined
+      }
     >
       <div className={styles.videoThumb}>
         <VideoThumbnail src={v.fileUrl} />
@@ -204,9 +206,7 @@ function VideoCard({ v, onSelect }: { v: VideoRowType; onSelect: () => void }) {
             {v.uploader.name}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            {isDeleted && (
-              <LuTrash2 size={12} color="rgba(248,113,113,0.7)" />
-            )}
+            {isDeleted && <LuTrash2 size={12} color="rgba(248,113,113,0.7)" />}
             <div className={styles.videoDate}>{formatDate(v.createdAt)}</div>
           </div>
         </div>
@@ -473,7 +473,14 @@ export function VideoGallery({
         maxWidth={440}
       >
         <DialogBody>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", marginBottom: 20, lineHeight: 1.6 }}>
+          <p
+            style={{
+              fontSize: 14,
+              color: "rgba(255,255,255,0.65)",
+              marginBottom: 20,
+              lineHeight: 1.6,
+            }}
+          >
             Are you sure you want to delete{" "}
             <span style={{ color: "#fff", fontWeight: 600 }}>
               {deleteTarget?.title}

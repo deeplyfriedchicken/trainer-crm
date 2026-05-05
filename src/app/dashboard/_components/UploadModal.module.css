@@ -7,9 +7,16 @@
   flex-direction: column;
   gap: 20px;
 }
-.body::-webkit-scrollbar { width: 4px; }
-.body::-webkit-scrollbar-track { background: transparent; }
-.body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+.body::-webkit-scrollbar {
+  width: 4px;
+}
+.body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
 /* ── Drop zone ── */
 .dropZone {
@@ -36,10 +43,18 @@
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 4px;
 }
-.dropLabelActive { color: var(--neon-cyan); }
+.dropLabelActive {
+  color: var(--neon-cyan);
+}
 
-.dropSub { font-size: 12px; color: rgba(255, 255, 255, 0.3); }
-.dropBrowseLink { color: var(--neon-cyan); text-decoration: underline; }
+.dropSub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+}
+.dropBrowseLink {
+  color: var(--neon-cyan);
+  text-decoration: underline;
+}
 
 /* ── Error banner ── */
 .errorBanner {
@@ -57,10 +72,17 @@
   color: #f87171;
   margin-bottom: 2px;
 }
-.errorBannerSub { font-size: 12px; color: rgba(248, 113, 113, 0.7); }
+.errorBannerSub {
+  font-size: 12px;
+  color: rgba(248, 113, 113, 0.7);
+}
 
 /* ── File cards ── */
-.fileList { display: flex; flex-direction: column; gap: 14px; }
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 .fileCard {
   background: rgba(255, 255, 255, 0.03);
@@ -69,7 +91,9 @@
   padding: 18px;
   transition: border-color 0.2s;
 }
-.fileCardError { border-color: rgba(248, 113, 113, 0.4); }
+.fileCardError {
+  border-color: rgba(248, 113, 113, 0.4);
+}
 
 .fileCardHeader {
   display: flex;
@@ -89,7 +113,10 @@
   flex-shrink: 0;
   color: var(--neon-cyan);
 }
-.fileInfo { flex: 1; min-width: 0; }
+.fileInfo {
+  flex: 1;
+  min-width: 0;
+}
 .fileName {
   font-size: 13px;
   font-weight: 600;
@@ -98,7 +125,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.fileIndex { font-size: 11px; color: rgba(255, 255, 255, 0.25); margin-top: 2px; }
+.fileIndex {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.25);
+  margin-top: 2px;
+}
 
 .removeBtn {
   width: 26px;
@@ -115,7 +146,9 @@
   flex-shrink: 0;
   transition: background 0.15s;
 }
-.removeBtn:hover { background: rgba(248, 113, 113, 0.2); }
+.removeBtn:hover {
+  background: rgba(248, 113, 113, 0.2);
+}
 
 /* ── Field grid (title + tags side by side) ── */
 .fieldGrid {
@@ -135,8 +168,14 @@
   margin-bottom: 6px;
   color: rgba(255, 255, 255, 0.45);
 }
-.fieldLabelError { color: #f87171; }
-.fieldError { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.fieldLabelError {
+  color: #f87171;
+}
+.fieldError {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
 
 /* ── Input / Textarea ── */
 .input,
@@ -153,13 +192,26 @@
   transition: border-color 0.2s;
 }
 .input:focus,
-.textarea:focus { border-color: rgba(52, 253, 254, 0.5); }
-.inputError { background: rgba(248, 113, 113, 0.06); border-color: rgba(248, 113, 113, 0.5); }
-.inputError:focus { border-color: #f87171; }
-.textarea { resize: vertical; }
+.textarea:focus {
+  border-color: rgba(52, 253, 254, 0.5);
+}
+.inputError {
+  background: rgba(248, 113, 113, 0.06);
+  border-color: rgba(248, 113, 113, 0.5);
+}
+.inputError:focus {
+  border-color: #f87171;
+}
+.textarea {
+  resize: vertical;
+}
 
 /* ── Tag pills ── */
-.tagPills { display: flex; flex-wrap: wrap; gap: 5px; }
+.tagPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
 
 .tagPill {
   padding: 4px 10px;
@@ -179,7 +231,10 @@
   color: var(--neon-cyan);
   box-shadow: 0 0 8px rgba(52, 253, 254, 0.25);
 }
-.tagPillError { border-color: rgba(248, 113, 113, 0.4); color: rgba(248, 113, 113, 0.8); }
+.tagPillError {
+  border-color: rgba(248, 113, 113, 0.4);
+  color: rgba(248, 113, 113, 0.8);
+}
 
 /* ── New tag input ── */
 .newTagInput {
@@ -195,8 +250,13 @@
   width: 100px;
   transition: all 0.15s;
 }
-.newTagInput:focus { border-color: rgba(52, 253, 254, 0.6); color: var(--neon-cyan); }
-.newTagInput::placeholder { color: rgba(52, 253, 254, 0.4); }
+.newTagInput:focus {
+  border-color: rgba(52, 253, 254, 0.6);
+  color: var(--neon-cyan);
+}
+.newTagInput::placeholder {
+  color: rgba(52, 253, 254, 0.4);
+}
 
 /* ── Add more button ── */
 .addMoreBtn {
@@ -215,7 +275,10 @@
   font-weight: 600;
   transition: all 0.2s;
 }
-.addMoreBtn:hover { border-color: rgba(52, 253, 254, 0.5); color: var(--neon-cyan); }
+.addMoreBtn:hover {
+  border-color: rgba(52, 253, 254, 0.5);
+  color: var(--neon-cyan);
+}
 
 /* ── Footer ── */
 .footer {
@@ -227,11 +290,22 @@
   flex-shrink: 0;
   background: rgba(0, 0, 0, 0.2);
 }
-.footerCount { font-size: 12px; color: rgba(255, 255, 255, 0.3); }
-.footerActions { display: flex; gap: 10px; }
+.footerCount {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+}
+.footerActions {
+  display: flex;
+  gap: 10px;
+}
 
 /* ── Uploading phase ── */
-.uploadingList { display: flex; flex-direction: column; gap: 12px; padding: 16px 0; }
+.uploadingList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+}
 .uploadingRow {
   display: flex;
   align-items: center;
@@ -298,8 +372,15 @@
   color: #fff;
   margin-bottom: 6px;
 }
-.successSub { font-size: 13px; color: rgba(255, 255, 255, 0.45); }
-.successActions { display: flex; gap: 10px; margin-top: 8px; }
+.successSub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+}
+.successActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
 
 /* ── Custom header (no Dialog title prop) ── */
 .customHeader {
@@ -317,7 +398,11 @@
   color: #fff;
   letter-spacing: -0.01em;
 }
-.customHeaderSub { font-size: 12px; color: rgba(255, 255, 255, 0.35); margin-top: 3px; }
+.customHeaderSub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 3px;
+}
 .customCloseBtn {
   width: 32px;
   height: 32px;
@@ -332,4 +417,6 @@
   justify-content: center;
   transition: background 0.15s;
 }
-.customCloseBtn:hover { background: rgba(255, 255, 255, 0.12); }
+.customCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}

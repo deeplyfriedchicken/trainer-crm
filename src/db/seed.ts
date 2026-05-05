@@ -216,7 +216,10 @@ async function seed() {
 
     await tx.insert(workoutExercises).values([
       {
-        workoutId: morganWorkout.id, exerciseId: mP1Ex1.id, createdBy: morgan.id, updatedBy: morgan.id,
+        workoutId: morganWorkout.id,
+        exerciseId: mP1Ex1.id,
+        createdBy: morgan.id,
+        updatedBy: morgan.id,
         setsData: [
           { reps: 6, weightLbs: 185, completed: true },
           { reps: 6, weightLbs: 185, completed: true },
@@ -225,7 +228,10 @@ async function seed() {
         ],
       },
       {
-        workoutId: morganWorkout.id, exerciseId: mP1Ex2.id, createdBy: morgan.id, updatedBy: morgan.id,
+        workoutId: morganWorkout.id,
+        exerciseId: mP1Ex2.id,
+        createdBy: morgan.id,
+        updatedBy: morgan.id,
         setsData: [
           { reps: 10, weightLbs: 135, completed: true },
           { reps: 10, weightLbs: 135, completed: true },
@@ -233,7 +239,10 @@ async function seed() {
         ],
       },
       {
-        workoutId: morganWorkout.id, exerciseId: mP1Ex3.id, createdBy: morgan.id, updatedBy: morgan.id,
+        workoutId: morganWorkout.id,
+        exerciseId: mP1Ex3.id,
+        createdBy: morgan.id,
+        updatedBy: morgan.id,
         setsData: [
           { reps: 8, weightLbs: 115, completed: true },
           { reps: 8, weightLbs: 115, completed: true },
@@ -241,7 +250,10 @@ async function seed() {
         ],
       },
       {
-        workoutId: morganWorkout.id, exerciseId: mP1Ex4.id, createdBy: morgan.id, updatedBy: morgan.id,
+        workoutId: morganWorkout.id,
+        exerciseId: mP1Ex4.id,
+        createdBy: morgan.id,
+        updatedBy: morgan.id,
         setsData: [
           { durationSeconds: 60, completed: true },
           { durationSeconds: 60, completed: true },
@@ -266,7 +278,10 @@ async function seed() {
 
     await tx.insert(workoutExercises).values([
       {
-        workoutId: samWorkout.id, exerciseId: sP1Ex1.id, createdBy: sam.id, updatedBy: sam.id,
+        workoutId: samWorkout.id,
+        exerciseId: sP1Ex1.id,
+        createdBy: sam.id,
+        updatedBy: sam.id,
         setsData: [
           { reps: 5, weightLbs: 155, completed: true },
           { reps: 5, weightLbs: 155, completed: true },
@@ -275,7 +290,10 @@ async function seed() {
         ],
       },
       {
-        workoutId: samWorkout.id, exerciseId: sP1Ex2.id, createdBy: sam.id, updatedBy: sam.id,
+        workoutId: samWorkout.id,
+        exerciseId: sP1Ex2.id,
+        createdBy: sam.id,
+        updatedBy: sam.id,
         setsData: [
           { reps: 8, weightLbs: 95, completed: true },
           { reps: 8, weightLbs: 95, completed: true },
@@ -283,7 +301,10 @@ async function seed() {
         ],
       },
       {
-        workoutId: samWorkout.id, exerciseId: sP1Ex3.id, createdBy: sam.id, updatedBy: sam.id,
+        workoutId: samWorkout.id,
+        exerciseId: sP1Ex3.id,
+        createdBy: sam.id,
+        updatedBy: sam.id,
         setsData: [
           { durationSeconds: 30, weightLbs: 10, completed: true },
           { durationSeconds: 30, weightLbs: 10, completed: true },

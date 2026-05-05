@@ -104,7 +104,9 @@
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
 }
 
 .googleBtn:hover {

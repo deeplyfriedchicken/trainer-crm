@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
-import { listTrainees, createTrainee } from "@/db/queries/trainees";
-import { getRequestUser } from "@/lib/request-auth";
+import { createTrainee, listTrainees } from "@/db/queries/trainees";
 import { parsePagination } from "@/lib/pagination";
+import { getRequestUser } from "@/lib/request-auth";
 
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
@@ -24,9 +24,15 @@ export async function POST(request: NextRequest) {
 
   const body = (await request.json()) as { name?: string; email?: string };
   if (!body.name?.trim() || !body.email?.trim()) {
-    return Response.json({ error: "name and email are required" }, { status: 400 });
+    return Response.json(
+      { error: "name and email are required" },
+      { status: 400 },
+    );
   }
 
-  const trainee = await createTrainee({ name: body.name.trim(), email: body.email.trim() });
+  const trainee = await createTrainee({
+    name: body.name.trim(),
+    email: body.email.trim(),
+  });
   return Response.json({ data: trainee }, { status: 201 });
 }

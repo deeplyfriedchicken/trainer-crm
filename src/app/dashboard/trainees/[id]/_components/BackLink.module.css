@@ -13,4 +13,6 @@
   text-decoration: none;
   transition: color 0.15s;
 }
-.link:hover { color: #fff; }
+.link:hover {
+  color: #fff;
+}

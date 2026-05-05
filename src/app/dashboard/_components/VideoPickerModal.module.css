@@ -42,15 +42,22 @@
   transition: all 0.15s;
   white-space: nowrap;
 }
-.tabBtn:hover:not(:disabled) { color: rgba(255, 255, 255, 0.7); }
-.tabBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.tabBtn:hover:not(:disabled) {
+  color: rgba(255, 255, 255, 0.7);
+}
+.tabBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 .tabBtnActive {
   background: rgba(52, 253, 254, 0.12);
   color: var(--neon-cyan, #34fdfe);
   border: 1px solid rgba(52, 253, 254, 0.25);
 }
-.tabBtnActive:hover:not(:disabled) { color: var(--neon-cyan, #34fdfe); }
+.tabBtnActive:hover:not(:disabled) {
+  color: var(--neon-cyan, #34fdfe);
+}
 
 .pickerCloseBtn {
   width: 32px;
@@ -68,8 +75,14 @@
   flex-shrink: 0;
   line-height: 1;
 }
-.pickerCloseBtn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); color: rgba(255, 255, 255, 0.8); }
-.pickerCloseBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pickerCloseBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
+}
+.pickerCloseBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 /* ── Upload view wrapper ── */
 .uploadView {
@@ -88,9 +101,16 @@
   flex-direction: column;
   gap: 14px;
 }
-.uploadBody::-webkit-scrollbar { width: 4px; }
-.uploadBody::-webkit-scrollbar-track { background: transparent; }
-.uploadBody::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+.uploadBody::-webkit-scrollbar {
+  width: 4px;
+}
+.uploadBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+.uploadBody::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
 /* ── Drop zone ── */
 .dropZone {
@@ -105,12 +125,17 @@
   transition: all 0.2s;
   background: rgba(52, 253, 254, 0.02);
 }
-.dropZone:hover { border-color: rgba(52, 253, 254, 0.45); background: rgba(52, 253, 254, 0.04); }
+.dropZone:hover {
+  border-color: rgba(52, 253, 254, 0.45);
+  background: rgba(52, 253, 254, 0.04);
+}
 .dropZoneDragging {
   border-color: var(--neon-cyan, #34fdfe);
   background: rgba(52, 253, 254, 0.07);
 }
-.dropZoneCompact { padding: 18px 20px; }
+.dropZoneCompact {
+  padding: 18px 20px;
+}
 
 .dropLabel {
   font-size: 14px;
@@ -118,7 +143,9 @@
   color: rgba(255, 255, 255, 0.65);
   margin-bottom: 4px;
 }
-.dropLabelActive { color: var(--neon-cyan, #34fdfe); }
+.dropLabelActive {
+  color: var(--neon-cyan, #34fdfe);
+}
 
 .dropSub {
   font-size: 12px;
@@ -189,10 +216,19 @@
   box-sizing: border-box;
   transition: border-color 0.2s;
 }
-.titleInput:focus { border-color: rgba(52, 253, 254, 0.5); }
-.titleInput::placeholder { color: rgba(255, 255, 255, 0.2); }
-.titleInputError { border-color: rgba(248, 113, 113, 0.5); background: rgba(248, 113, 113, 0.05); }
-.titleInputError:focus { border-color: #f87171; }
+.titleInput:focus {
+  border-color: rgba(52, 253, 254, 0.5);
+}
+.titleInput::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+.titleInputError {
+  border-color: rgba(248, 113, 113, 0.5);
+  background: rgba(248, 113, 113, 0.05);
+}
+.titleInputError:focus {
+  border-color: #f87171;
+}
 
 .titleError {
   font-size: 10px;
@@ -214,7 +250,10 @@
   flex-shrink: 0;
   transition: all 0.15s;
 }
-.removeUploadBtn:hover { background: rgba(248, 113, 113, 0.18); color: #f87171; }
+.removeUploadBtn:hover {
+  background: rgba(248, 113, 113, 0.18);
+  color: #f87171;
+}
 
 /* ── Upload footer ── */
 .uploadFooter {
@@ -246,7 +285,9 @@
   cursor: pointer;
   transition: color 0.15s;
 }
-.cancelUploadBtn:hover { color: rgba(255, 255, 255, 0.75); }
+.cancelUploadBtn:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
 
 .startUploadBtn {
   display: inline-flex;
@@ -264,8 +305,14 @@
   transition: opacity 0.15s;
   box-shadow: 0 0 14px rgba(52, 253, 254, 0.35);
 }
-.startUploadBtn:hover:not(:disabled) { opacity: 0.88; }
-.startUploadBtn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+.startUploadBtn:hover:not(:disabled) {
+  opacity: 0.88;
+}
+.startUploadBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
 /* ── Uploading progress list ── */
 .uploadingList {
@@ -368,7 +415,10 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.backToLibBtn:hover { background: rgba(52, 253, 254, 0.14); border-color: rgba(52, 253, 254, 0.6); }
+.backToLibBtn:hover {
+  background: rgba(52, 253, 254, 0.14);
+  border-color: rgba(52, 253, 254, 0.6);
+}
 
 /* ──────────────────────────────────────────────────────────────── */
 /* Library view                                                      */
@@ -395,8 +445,12 @@
   outline: none;
   transition: border-color 0.2s;
 }
-.searchInput:focus { border-color: rgba(52, 253, 254, 0.5); }
-.searchInput::placeholder { color: rgba(255, 255, 255, 0.25); }
+.searchInput:focus {
+  border-color: rgba(52, 253, 254, 0.5);
+}
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
 
 .body {
   flex: 1;
@@ -404,9 +458,16 @@
   min-height: 0;
   padding: 16px 20px;
 }
-.body::-webkit-scrollbar { width: 4px; }
-.body::-webkit-scrollbar-track { background: transparent; }
-.body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+.body::-webkit-scrollbar {
+  width: 4px;
+}
+.body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
 .grid {
   display: grid;
@@ -455,7 +516,9 @@
   opacity: 0;
   transition: opacity 0.15s;
 }
-.card:hover .playOverlay { opacity: 1; }
+.card:hover .playOverlay {
+  opacity: 1;
+}
 
 .playCircle {
   width: 32px;
@@ -518,8 +581,14 @@
   margin-top: 14px;
   transition: all 0.15s;
 }
-.loadMore:hover:not(:disabled) { border-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.7); }
-.loadMore:disabled { opacity: 0.4; cursor: not-allowed; }
+.loadMore:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+}
+.loadMore:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 .empty {
   padding: 40px 0;

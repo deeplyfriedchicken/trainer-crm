@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DELETE, GET as GET_BY_ID, PATCH } from "@/app/api/trainees/[id]/route";
 import { GET, POST } from "@/app/api/trainees/route";
-import { GET as GET_BY_ID, PATCH, DELETE } from "@/app/api/trainees/[id]/route";
 
 const {
   mockGetRequestUser,
@@ -95,7 +95,9 @@ describe("GET /api/trainees", () => {
   it("returns 200 with paginated trainee list", async () => {
     mockGetRequestUser.mockResolvedValue(adminUser);
     mockListTrainees.mockResolvedValue([mockTrainee]);
-    const req = nextRequest({ url: "http://localhost:3000/api/trainees?limit=10&offset=0" });
+    const req = nextRequest({
+      url: "http://localhost:3000/api/trainees?limit=10&offset=0",
+    });
     const res = await GET(req as never);
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -109,7 +111,9 @@ describe("GET /api/trainees", () => {
   it("calls listTrainees with parsed pagination params", async () => {
     mockGetRequestUser.mockResolvedValue(adminUser);
     mockListTrainees.mockResolvedValue([]);
-    const req = nextRequest({ url: "http://localhost:3000/api/trainees?limit=25&offset=50" });
+    const req = nextRequest({
+      url: "http://localhost:3000/api/trainees?limit=25&offset=50",
+    });
     await GET(req as never);
     expect(mockListTrainees).toHaveBeenCalledWith({ limit: 25, offset: 50 });
   });
@@ -122,14 +126,20 @@ describe("POST /api/trainees", () => {
 
   it("returns 401 when unauthenticated", async () => {
     mockGetRequestUser.mockResolvedValue(null);
-    const req = nextRequest({ method: "POST", body: { name: "T", email: "t@t.com" } });
+    const req = nextRequest({
+      method: "POST",
+      body: { name: "T", email: "t@t.com" },
+    });
     const res = await POST(req as never);
     expect(res.status).toBe(401);
   });
 
   it("returns 403 when user lacks admin/trainer_manager role", async () => {
     mockGetRequestUser.mockResolvedValue(trainerUser);
-    const req = nextRequest({ method: "POST", body: { name: "T", email: "t@t.com" } });
+    const req = nextRequest({
+      method: "POST",
+      body: { name: "T", email: "t@t.com" },
+    });
     const res = await POST(req as never);
     expect(res.status).toBe(403);
   });
@@ -151,20 +161,29 @@ describe("POST /api/trainees", () => {
   it("returns 201 with created trainee for admin", async () => {
     mockGetRequestUser.mockResolvedValue(adminUser);
     mockCreateTrainee.mockResolvedValue(mockTrainee);
-    const req = nextRequest({ method: "POST", body: { name: "John Doe", email: "john@example.com" } });
+    const req = nextRequest({
+      method: "POST",
+      body: { name: "John Doe", email: "john@example.com" },
+    });
     const res = await POST(req as never);
     expect(res.status).toBe(201);
     const body = await res.json();
     expect(body.data.id).toBe("trainee_1");
     expect(body.data.name).toBe("Test Trainee");
     expect(body.data.email).toBe("trainee@example.com");
-    expect(mockCreateTrainee).toHaveBeenCalledWith({ name: "John Doe", email: "john@example.com" });
+    expect(mockCreateTrainee).toHaveBeenCalledWith({
+      name: "John Doe",
+      email: "john@example.com",
+    });
   });
 
   it("returns 201 with created trainee for trainer_manager", async () => {
     mockGetRequestUser.mockResolvedValue(trainerManager);
     mockCreateTrainee.mockResolvedValue(mockTrainee);
-    const req = nextRequest({ method: "POST", body: { name: "Jane", email: "jane@example.com" } });
+    const req = nextRequest({
+      method: "POST",
+      body: { name: "Jane", email: "jane@example.com" },
+    });
     const res = await POST(req as never);
     expect(res.status).toBe(201);
   });
@@ -226,7 +245,10 @@ describe("PATCH /api/trainees/[id]", () => {
     mockGetRequestUser.mockResolvedValue(trainerUser);
     const updated = { ...mockTrainee, name: "Updated Name" };
     mockUpdateTrainee.mockResolvedValue(updated);
-    const req = nextRequest({ method: "PATCH", body: { name: "Updated Name" } });
+    const req = nextRequest({
+      method: "PATCH",
+      body: { name: "Updated Name" },
+    });
     const res = await PATCH(req as never, dynamicCtx("trainee_1"));
     expect(res.status).toBe(200);
     const body = await res.json();

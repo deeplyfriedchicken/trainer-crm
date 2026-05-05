@@ -50,11 +50,21 @@ function today(): string {
 }
 
 function defaultName(): string {
-  return new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return new Date().toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function buildDefaults(session?: SessionEntry | null): FormValues {
-  if (!session) return { name: defaultName(), occurredAt: today(), comment: "", exercises: [] };
+  if (!session)
+    return {
+      name: defaultName(),
+      occurredAt: today(),
+      comment: "",
+      exercises: [],
+    };
   return {
     name: session.name ?? defaultName(),
     occurredAt: toDateInput(session.occurredAt),
@@ -168,9 +178,9 @@ function ExerciseCard({
             type="number"
             min={1}
             {...register(`exercises.${idx}.sets`, {
-                  setValueAs: (v) =>
-                    v === "" || v == null ? undefined : parseInt(v, 10),
-                })}
+              setValueAs: (v) =>
+                v === "" || v == null ? undefined : parseInt(v, 10),
+            })}
             className={`${styles.input}${exErrors?.sets ? ` ${styles.inputError}` : ""}`}
           />
         </div>
@@ -182,9 +192,9 @@ function ExerciseCard({
                 type="number"
                 min={1}
                 {...register(`exercises.${idx}.reps`, {
-                    setValueAs: (v) =>
-                      v === "" || v == null ? undefined : parseInt(v, 10),
-                  })}
+                  setValueAs: (v) =>
+                    v === "" || v == null ? undefined : parseInt(v, 10),
+                })}
                 className={`${styles.input}${exErrors?.reps ? ` ${styles.inputError}` : ""}`}
               />
             </>
@@ -195,9 +205,9 @@ function ExerciseCard({
                 type="number"
                 min={1}
                 {...register(`exercises.${idx}.durationSeconds`, {
-                    setValueAs: (v) =>
-                      v === "" || v == null ? undefined : parseInt(v, 10),
-                  })}
+                  setValueAs: (v) =>
+                    v === "" || v == null ? undefined : parseInt(v, 10),
+                })}
                 className={`${styles.input}${exErrors?.durationSeconds ? ` ${styles.inputError}` : ""}`}
               />
             </>
@@ -214,9 +224,9 @@ function ExerciseCard({
           step={2.5}
           placeholder="e.g. 135"
           {...register(`exercises.${idx}.weightLbs`, {
-                  setValueAs: (v) =>
-                    v === "" || v == null ? undefined : parseFloat(v),
-                })}
+            setValueAs: (v) =>
+              v === "" || v == null ? undefined : parseFloat(v),
+          })}
           className={styles.input}
           style={{ maxWidth: 140 }}
         />
@@ -446,7 +456,10 @@ export function SessionFormModal({
                   >
                     Plan Name
                     {errors.name && (
-                      <span className={styles.fieldError}> — {errors.name.message}</span>
+                      <span className={styles.fieldError}>
+                        {" "}
+                        — {errors.name.message}
+                      </span>
                     )}
                   </label>
                   <input
@@ -461,7 +474,10 @@ export function SessionFormModal({
                   >
                     Date
                     {errors.occurredAt && (
-                      <span className={styles.fieldError}> — {errors.occurredAt.message}</span>
+                      <span className={styles.fieldError}>
+                        {" "}
+                        — {errors.occurredAt.message}
+                      </span>
                     )}
                   </label>
                   <input

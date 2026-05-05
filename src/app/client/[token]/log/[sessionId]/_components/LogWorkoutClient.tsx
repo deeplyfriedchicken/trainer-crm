@@ -21,7 +21,16 @@ function fmtDuration(secs: number): string {
 
 function ArrowLeft() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M11 14L6 9l5-5" />
     </svg>
   );
@@ -29,7 +38,16 @@ function ArrowLeft() {
 
 function CheckIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#070712" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="#070712"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M2.5 7l3.5 3.5 5.5-6" />
     </svg>
   );
@@ -37,7 +55,16 @@ function CheckIcon() {
 
 function PlayIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="1" y="2.5" width="9" height="9" rx="1.5" />
       <path d="M10 5.5l3-2v7l-3-2" />
     </svg>
@@ -62,7 +89,9 @@ function NumericStepper({
       <button
         type="button"
         className="log-stepper-btn"
-        onClick={() => onChange(Math.max(min, parseFloat((value - step).toFixed(4))))}
+        onClick={() =>
+          onChange(Math.max(min, parseFloat((value - step).toFixed(4))))
+        }
         aria-label={`Decrease ${unit}`}
       >
         −
@@ -102,7 +131,9 @@ export function LogWorkoutClient({ token, plan }: Props) {
   const [elapsed, setElapsed] = useState(0);
   const [paused, setPaused] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [videoModalEx, setVideoModalEx] = useState<PlanForLog["exercises"][number] | null>(null);
+  const [videoModalEx, setVideoModalEx] = useState<
+    PlanForLog["exercises"][number] | null
+  >(null);
 
   const [log, setLog] = useState<ExerciseLog[]>(() =>
     plan.exercises.map((ex) => ({
@@ -126,7 +157,9 @@ export function LogWorkoutClient({ token, plan }: Props) {
     }
     const interval = setInterval(() => {
       setElapsed(
-        Math.floor((Date.now() - startTimeRef.current - totalPausedRef.current) / 1000),
+        Math.floor(
+          (Date.now() - startTimeRef.current - totalPausedRef.current) / 1000,
+        ),
       );
     }, 1000);
     return () => clearInterval(interval);
@@ -134,7 +167,10 @@ export function LogWorkoutClient({ token, plan }: Props) {
 
   const updateReps = (exIdx: number, setIdx: number, val: number) => {
     setLog((prev) => {
-      const next = prev.map((e) => ({ ...e, sets: e.sets.map((s) => ({ ...s })) }));
+      const next = prev.map((e) => ({
+        ...e,
+        sets: e.sets.map((s) => ({ ...s })),
+      }));
       next[exIdx].sets[setIdx].reps = val;
       return next;
     });
@@ -142,7 +178,10 @@ export function LogWorkoutClient({ token, plan }: Props) {
 
   const updateWeight = (exIdx: number, setIdx: number, val: number) => {
     setLog((prev) => {
-      const next = prev.map((e) => ({ ...e, sets: e.sets.map((s) => ({ ...s })) }));
+      const next = prev.map((e) => ({
+        ...e,
+        sets: e.sets.map((s) => ({ ...s })),
+      }));
       next[exIdx].sets[setIdx].weightLbs = val;
       return next;
     });
@@ -150,14 +189,19 @@ export function LogWorkoutClient({ token, plan }: Props) {
 
   const toggleSet = (exIdx: number, setIdx: number) => {
     setLog((prev) => {
-      const next = prev.map((e) => ({ ...e, sets: e.sets.map((s) => ({ ...s })) }));
+      const next = prev.map((e) => ({
+        ...e,
+        sets: e.sets.map((s) => ({ ...s })),
+      }));
       next[exIdx].sets[setIdx].completed = !next[exIdx].sets[setIdx].completed;
       return next;
     });
   };
 
   const fmtDate = new Date(plan.occurredAt).toLocaleDateString("en-US", {
-    month: "short", day: "numeric", year: "numeric",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 
   const buildExerciseLogs = () =>
@@ -186,7 +230,9 @@ export function LogWorkoutClient({ token, plan }: Props) {
         <div style={{ padding: "20px 0 4px" }}>
           <div className="log-plan-name">{plan.name}</div>
           <div className="log-subtitle">
-            {fmtDate} · {plan.exercises.length} exercise{plan.exercises.length !== 1 ? "s" : ""} · Tap checkboxes to complete sets
+            {fmtDate} · {plan.exercises.length} exercise
+            {plan.exercises.length !== 1 ? "s" : ""} · Tap checkboxes to
+            complete sets
           </div>
         </div>
 
@@ -205,9 +251,14 @@ export function LogWorkoutClient({ token, plan }: Props) {
                     type="button"
                     onClick={() => setVideoModalEx(ex)}
                     style={{
-                      background: "none", border: "none", cursor: "pointer",
-                      color: "var(--pink)", display: "flex", alignItems: "center",
-                      padding: "4px", marginRight: 4,
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "var(--pink)",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "4px",
+                      marginRight: 4,
                     }}
                     title="Watch video"
                   >
@@ -219,13 +270,12 @@ export function LogWorkoutClient({ token, plan }: Props) {
                 </div>
               </div>
 
-              {ex.comment && (
-                <div className="log-ex-desc">{ex.comment}</div>
-              )}
+              {ex.comment && <div className="log-ex-desc">{ex.comment}</div>}
 
               <div className="log-sets-table">
                 {exLog.sets.map((set, setIdx) => {
-                  const isDisabled = setIdx > 0 && !exLog.sets[setIdx - 1].completed;
+                  const isDisabled =
+                    setIdx > 0 && !exLog.sets[setIdx - 1].completed;
                   return (
                     <div
                       key={setIdx}
@@ -267,7 +317,9 @@ export function LogWorkoutClient({ token, plan }: Props) {
         <div className="timer-bar-inner">
           <div className={`timer-dot ${paused ? "paused" : "running"}`} />
           <div className="timer-info">
-            <span className="timer-label">{paused ? "Paused" : "Duration"}</span>
+            <span className="timer-label">
+              {paused ? "Paused" : "Duration"}
+            </span>
             <div className="timer-time">{fmtDuration(elapsed)}</div>
           </div>
           <button
@@ -277,11 +329,21 @@ export function LogWorkoutClient({ token, plan }: Props) {
             title={paused ? "Resume" : "Pause"}
           >
             {paused ? (
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
                 <polygon points="4,2 14,8 4,14" />
               </svg>
             ) : (
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
                 <rect x="3" y="2" width="4" height="12" rx="1" />
                 <rect x="9" y="2" width="4" height="12" rx="1" />
               </svg>
@@ -314,12 +376,34 @@ export function LogWorkoutClient({ token, plan }: Props) {
             onClick={(e) => e.stopPropagation()}
             style={{ padding: "0 0 env(safe-area-inset-bottom, 24px)" }}
           >
-            <div style={{ display: "flex", alignItems: "center", padding: "16px 16px 12px", gap: 12 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "16px 16px 12px",
+                gap: 12,
+              }}
+            >
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.03em",
+                  }}
+                >
                   {videoModalEx.name}
                 </div>
-                <div style={{ fontSize: 11, color: "var(--text-3)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "var(--text-3)",
+                    fontFamily: "var(--font-mono)",
+                    marginTop: 2,
+                  }}
+                >
                   Demo Video
                 </div>
               </div>
@@ -327,22 +411,43 @@ export function LogWorkoutClient({ token, plan }: Props) {
                 type="button"
                 onClick={() => setVideoModalEx(null)}
                 style={{
-                  background: "var(--surface2)", border: "1px solid var(--border2)",
-                  color: "var(--text-2)", borderRadius: 8, width: 32, height: 32,
-                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 18, lineHeight: 1,
+                  background: "var(--surface2)",
+                  border: "1px solid var(--border2)",
+                  color: "var(--text-2)",
+                  borderRadius: 8,
+                  width: 32,
+                  height: 32,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                  lineHeight: 1,
                 }}
               >
                 ×
               </button>
             </div>
             {videoModalEx.videoLinks[0] && (
-              <div style={{ margin: "0 16px 20px", borderRadius: 12, overflow: "hidden", aspectRatio: "16/9", background: "#000" }}>
+              <div
+                style={{
+                  margin: "0 16px 20px",
+                  borderRadius: 12,
+                  overflow: "hidden",
+                  aspectRatio: "16/9",
+                  background: "#000",
+                }}
+              >
                 <video
                   src={videoModalEx.videoLinks[0].video.fileUrl}
                   controls
                   playsInline
-                  style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    display: "block",
+                  }}
                 />
               </div>
             )}

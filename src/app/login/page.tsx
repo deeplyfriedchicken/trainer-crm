@@ -19,8 +19,7 @@ const spaceGrotesk = Space_Grotesk({
 const ERROR_MESSAGES: Record<string, string> = {
   not_found:
     "No account found for that Google address. Contact your admin to get access.",
-  unauthorized:
-    "Your account doesn't have CRM access. Contact your admin.",
+  unauthorized: "Your account doesn't have CRM access. Contact your admin.",
   invalid_state: "Login session expired. Please try again.",
   token_exchange: "Authentication failed. Please try again.",
   profile: "Couldn't retrieve your Google profile. Please try again.",
@@ -32,7 +31,9 @@ export default async function LoginPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
-  const errorMessage = error ? (ERROR_MESSAGES[error] ?? "Something went wrong. Please try again.") : null;
+  const errorMessage = error
+    ? (ERROR_MESSAGES[error] ?? "Something went wrong. Please try again.")
+    : null;
 
   return (
     <div

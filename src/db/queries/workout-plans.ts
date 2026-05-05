@@ -28,7 +28,8 @@ async function insertExercises(
         type: ex.type,
         sets: ex.sets,
         reps: ex.type === "reps" ? (ex.reps ?? null) : null,
-        durationSeconds: ex.type === "duration" ? (ex.durationSeconds ?? null) : null,
+        durationSeconds:
+          ex.type === "duration" ? (ex.durationSeconds ?? null) : null,
         weightLbs: ex.weightLbs ?? null,
         comment: ex.comment ?? null,
         createdBy: userId,
@@ -37,9 +38,12 @@ async function insertExercises(
       .returning();
 
     for (const videoId of ex.videoIds ?? []) {
-      await tx
-        .insert(exerciseVideos)
-        .values({ exerciseId: exercise.id, videoId, createdBy: userId, updatedBy: userId });
+      await tx.insert(exerciseVideos).values({
+        exerciseId: exercise.id,
+        videoId,
+        createdBy: userId,
+        updatedBy: userId,
+      });
     }
   }
 }
@@ -62,7 +66,14 @@ export async function createWorkoutPlan({
   return db.transaction(async (tx) => {
     const [plan] = await tx
       .insert(workoutPlans)
-      .values({ traineeId, name, occurredAt, comment: comment ?? null, createdBy, updatedBy: createdBy })
+      .values({
+        traineeId,
+        name,
+        occurredAt,
+        comment: comment ?? null,
+        createdBy,
+        updatedBy: createdBy,
+      })
       .returning();
 
     await insertExercises(tx, plan.id, exerciseInputs, createdBy);

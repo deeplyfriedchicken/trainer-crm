@@ -1,16 +1,36 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
-import { getCurrentUser } from "@/lib/auth";
 import { PageHeader } from "@/app/components/PageHeader";
 import { listTrainers } from "@/db/queries/trainers";
+import { getCurrentUser } from "@/lib/auth";
 import { AddTrainerButton } from "../_components/AddTrainerButton";
 import { TrainerCard } from "../_components/TrainerCard";
 
 const COLOR_MAP: Record<string, string> = {
-  A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",
-  F: "#FD6DBB", G: "#34FDFE", H: "#a78bfa", I: "#4ade80", J: "#FD6DBB",
-  K: "#34FDFE", L: "#a78bfa", M: "#4ade80", N: "#fb923c", O: "#FD6DBB",
-  P: "#34FDFE", Q: "#a78bfa", R: "#4ade80", S: "#FD6DBB", T: "#34FDFE",
-  U: "#a78bfa", V: "#4ade80", W: "#fb923c", X: "#FD6DBB", Y: "#34FDFE",
+  A: "#FD6DBB",
+  B: "#34FDFE",
+  C: "#a78bfa",
+  D: "#4ade80",
+  E: "#fb923c",
+  F: "#FD6DBB",
+  G: "#34FDFE",
+  H: "#a78bfa",
+  I: "#4ade80",
+  J: "#FD6DBB",
+  K: "#34FDFE",
+  L: "#a78bfa",
+  M: "#4ade80",
+  N: "#fb923c",
+  O: "#FD6DBB",
+  P: "#34FDFE",
+  Q: "#a78bfa",
+  R: "#4ade80",
+  S: "#FD6DBB",
+  T: "#34FDFE",
+  U: "#a78bfa",
+  V: "#4ade80",
+  W: "#fb923c",
+  X: "#FD6DBB",
+  Y: "#34FDFE",
   Z: "#a78bfa",
 };
 

@@ -93,12 +93,7 @@ export function PinModal({ token, hasPin }: Props) {
         ? "Choose a 6-digit PIN to secure your portal"
         : "Re-enter your PIN to confirm";
 
-  const keys = [
-    "1", "2", "3",
-    "4", "5", "6",
-    "7", "8", "9",
-    "", "0", "del",
-  ];
+  const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "del"];
 
   return (
     <div className="pin-overlay">
@@ -109,19 +104,12 @@ export function PinModal({ token, hasPin }: Props) {
         <div className="pin-title">{title}</div>
         <div className="pin-subtitle">{subtitle}</div>
 
-        <div
-          ref={dotsRef}
-          className={`pin-dots${shaking ? " shake" : ""}`}
-        >
+        <div ref={dotsRef} className={`pin-dots${shaking ? " shake" : ""}`}>
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               className={`pin-dot${
-                i < digits.length
-                  ? shaking
-                    ? " error"
-                    : " filled"
-                  : ""
+                i < digits.length ? (shaking ? " error" : " filled") : ""
               }`}
             />
           ))}

@@ -1,6 +1,10 @@
 "use client";
 
-import { Toaster as ChakraToaster, Toast, createToaster } from "@chakra-ui/react";
+import {
+  Toaster as ChakraToaster,
+  createToaster,
+  Toast,
+} from "@chakra-ui/react";
 
 export const toaster = createToaster({
   placement: "bottom-end",
@@ -49,7 +53,14 @@ export function Toaster() {
                 flexShrink: 0,
               }}
             />
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+              }}
+            >
               {toast.title && (
                 <Toast.Title fontSize="13px" fontWeight={700}>
                   {toast.title}
@@ -73,7 +84,10 @@ export function Toaster() {
               fontSize="16px"
               p="2px 6px"
               borderRadius="6px"
-              _hover={{ bg: "rgba(255,255,255,0.06)", color: "var(--neon-text)" }}
+              _hover={{
+                bg: "rgba(255,255,255,0.06)",
+                color: "var(--neon-text)",
+              }}
             >
               ×
             </Toast.CloseTrigger>

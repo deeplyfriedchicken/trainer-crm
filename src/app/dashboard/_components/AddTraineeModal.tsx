@@ -1,7 +1,7 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { HStack, VStack } from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Alert } from "@/app/components/Alert";
@@ -50,13 +50,16 @@ export function AddTraineeModal({
   }
 
   return (
-    <Dialog isOpen={isOpen} onClose={handleClose} title="Add Client" maxWidth={440}>
+    <Dialog
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Add Client"
+      maxWidth={440}
+    >
       <DialogBody>
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap="16px" align="stretch">
-            {errors.root && (
-              <Alert status="error">{errors.root.message}</Alert>
-            )}
+            {errors.root && <Alert status="error">{errors.root.message}</Alert>}
 
             <Field
               label="Full Name"

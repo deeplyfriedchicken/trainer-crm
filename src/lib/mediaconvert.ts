@@ -1,8 +1,8 @@
 import {
-  MediaConvertClient,
   CreateJobCommand,
+  MediaConvertClient,
 } from "@aws-sdk/client-mediaconvert";
-import { S3_BUCKET, S3_BASE_URL } from "@/lib/s3";
+import { S3_BASE_URL, S3_BUCKET } from "@/lib/s3";
 
 export const mediaConvert = new MediaConvertClient({
   region: process.env.AWS_REGION!,

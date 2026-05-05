@@ -19,7 +19,11 @@ export function ProfileStatStrip({ stats }: { stats: StatEntry[] }) {
           py="14px"
           textAlign="center"
           bg="rgba(255,255,255,0.03)"
-          borderRight={i < stats.length - 1 ? "1px solid rgba(255,255,255,0.08)" : undefined}
+          borderRight={
+            i < stats.length - 1
+              ? "1px solid rgba(255,255,255,0.08)"
+              : undefined
+          }
         >
           <Box
             fontFamily="var(--font-neon-display), sans-serif"

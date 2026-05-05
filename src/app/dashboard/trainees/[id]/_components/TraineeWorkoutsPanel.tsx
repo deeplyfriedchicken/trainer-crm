@@ -19,12 +19,25 @@ function fmtDate(d: Date | string): string {
   });
 }
 
-function RatingBadge({ label, value, color }: { label: string; value: number; color: string }) {
+function RatingBadge({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: string;
+}) {
   return (
     <span
       style={{
-        fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 20,
-        background: `${color}18`, color, border: `1px solid ${color}33`,
+        fontSize: 11,
+        fontWeight: 700,
+        padding: "2px 8px",
+        borderRadius: 20,
+        background: `${color}18`,
+        color,
+        border: `1px solid ${color}33`,
         fontFamily: "var(--font-neon-mono)",
       }}
     >
@@ -69,7 +82,9 @@ export function TraineeWorkoutsPanel({
           justifyContent: "space-between",
         }}
       >
-        <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Workout History</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
+          Workout History
+        </div>
         <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
           {workouts.length} logged
         </div>
@@ -93,39 +108,95 @@ export function TraineeWorkoutsPanel({
                 cursor: "pointer",
               }}
               onClick={() => toggle(w.id)}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") toggle(w.id); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") toggle(w.id);
+              }}
             >
               <div
                 style={{
-                  width: 34, height: 34, borderRadius: 9,
-                  background: `${accentColor}18`, border: `1px solid ${accentColor}33`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0, color: accentColor,
+                  width: 34,
+                  height: 34,
+                  borderRadius: 9,
+                  background: `${accentColor}18`,
+                  border: `1px solid ${accentColor}33`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  color: accentColor,
                 }}
               >
                 <LuDumbbell size={13} />
               </div>
 
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span
+                    style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}
+                  >
                     {w.workoutPlan?.name ?? fmtDate(w.createdAt)}
                   </span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 2 }}>
-                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", display: "flex", alignItems: "center", gap: 3 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 3,
+                    marginTop: 2,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: "rgba(255,255,255,0.35)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 3,
+                    }}
+                  >
                     <LuCalendar size={10} /> {fmtDate(w.createdAt)}
                   </span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", display: "flex", alignItems: "center", gap: 3 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginTop: 4,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: "rgba(255,255,255,0.4)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 3,
+                    }}
+                  >
                     <LuClock size={10} /> {fmtDuration(w.durationSeconds)}
                   </span>
                   {w.energyRating != null && (
-                    <RatingBadge label="Energy" value={w.energyRating} color={accentColor} />
+                    <RatingBadge
+                      label="Energy"
+                      value={w.energyRating}
+                      color={accentColor}
+                    />
                   )}
                   {w.painRating != null && (
-                    <RatingBadge label="Pain" value={w.painRating} color="#f87171" />
+                    <RatingBadge
+                      label="Pain"
+                      value={w.painRating}
+                      color="#f87171"
+                    />
                   )}
                 </div>
               </div>
@@ -133,7 +204,11 @@ export function TraineeWorkoutsPanel({
               <LuChevronDown
                 size={14}
                 color="rgba(255,255,255,0.3)"
-                style={{ transform: isOpen ? "rotate(180deg)" : undefined, transition: "transform 0.2s", flexShrink: 0 }}
+                style={{
+                  transform: isOpen ? "rotate(180deg)" : undefined,
+                  transition: "transform 0.2s",
+                  flexShrink: 0,
+                }}
               />
             </div>
 
@@ -146,12 +221,27 @@ export function TraineeWorkoutsPanel({
                 }}
               >
                 {w.comment && (
-                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontStyle: "italic", margin: "12px 0 8px", lineHeight: 1.5 }}>
+                  <p
+                    style={{
+                      fontSize: 13,
+                      color: "rgba(255,255,255,0.5)",
+                      fontStyle: "italic",
+                      margin: "12px 0 8px",
+                      lineHeight: 1.5,
+                    }}
+                  >
                     "{w.comment}"
                   </p>
                 )}
                 {w.exerciseLinks.length > 0 && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: w.comment ? 8 : 12 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 8,
+                      marginTop: w.comment ? 8 : 12,
+                    }}
+                  >
                     {w.exerciseLinks.map(({ exercise, setsData }) => (
                       <div
                         key={exercise.id}
@@ -162,7 +252,18 @@ export function TraineeWorkoutsPanel({
                           overflow: "hidden",
                         }}
                       >
-                        <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", padding: "7px 12px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontFamily: "var(--font-neon-display)", textTransform: "uppercase", letterSpacing: "0.03em" }}>
+                        <div
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 700,
+                            color: "#fff",
+                            padding: "7px 12px",
+                            borderBottom: "1px solid rgba(255,255,255,0.06)",
+                            fontFamily: "var(--font-neon-display)",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.03em",
+                          }}
+                        >
                           {exercise.name}
                         </div>
                         <div>
@@ -173,41 +274,120 @@ export function TraineeWorkoutsPanel({
                                 <div
                                   key={i}
                                   style={{
-                                    display: "grid", gridTemplateColumns: "42px 1fr 1fr 20px",
-                                    alignItems: "center", gap: 8, padding: "5px 12px",
-                                    borderBottom: i < setsData.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                                    display: "grid",
+                                    gridTemplateColumns: "42px 1fr 1fr 20px",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    padding: "5px 12px",
+                                    borderBottom:
+                                      i < setsData.length - 1
+                                        ? "1px solid rgba(255,255,255,0.04)"
+                                        : "none",
                                     opacity: s.completed ? 1 : 0.35,
                                     fontFamily: "var(--font-neon-mono)",
                                   }}
                                 >
-                                  <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.3)" }}>
+                                  <span
+                                    style={{
+                                      fontSize: 9,
+                                      fontWeight: 700,
+                                      color: "rgba(255,255,255,0.3)",
+                                    }}
+                                  >
                                     SET {i + 1}
                                   </span>
-                                  <span style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>
+                                  <span
+                                    style={{
+                                      fontSize: 12,
+                                      fontWeight: 700,
+                                      color: "#fff",
+                                    }}
+                                  >
                                     {isDur ? s.durationSeconds : s.reps}
-                                    <span style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginLeft: 3, fontWeight: 400 }}>
+                                    <span
+                                      style={{
+                                        fontSize: 9,
+                                        color: "rgba(255,255,255,0.35)",
+                                        marginLeft: 3,
+                                        fontWeight: 400,
+                                      }}
+                                    >
                                       {isDur ? "SEC" : "REPS"}
                                     </span>
                                   </span>
-                                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                                  <span
+                                    style={{
+                                      fontSize: 11,
+                                      color: "rgba(255,255,255,0.4)",
+                                    }}
+                                  >
                                     {s.weightLbs ? `${s.weightLbs} lbs` : "—"}
                                   </span>
-                                  <span style={{ fontSize: 11, color: s.completed ? accentColor : "rgba(255,255,255,0.2)", justifySelf: "end" }}>
+                                  <span
+                                    style={{
+                                      fontSize: 11,
+                                      color: s.completed
+                                        ? accentColor
+                                        : "rgba(255,255,255,0.2)",
+                                      justifySelf: "end",
+                                    }}
+                                  >
                                     {s.completed ? "✓" : "✕"}
                                   </span>
                                 </div>
                               );
                             })
                           ) : (
-                            <div style={{ display: "grid", gridTemplateColumns: "42px 1fr 1fr 20px", alignItems: "center", gap: 8, padding: "5px 12px", fontFamily: "var(--font-neon-mono)" }}>
-                              <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.3)" }}>PLAN</span>
-                              <span style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>
-                                {exercise.type === "duration" ? exercise.durationSeconds : exercise.reps}
-                                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginLeft: 3, fontWeight: 400 }}>
-                                  {exercise.type === "duration" ? "SEC" : "REPS"}
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns: "42px 1fr 1fr 20px",
+                                alignItems: "center",
+                                gap: 8,
+                                padding: "5px 12px",
+                                fontFamily: "var(--font-neon-mono)",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: 9,
+                                  fontWeight: 700,
+                                  color: "rgba(255,255,255,0.3)",
+                                }}
+                              >
+                                PLAN
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  color: "#fff",
+                                }}
+                              >
+                                {exercise.type === "duration"
+                                  ? exercise.durationSeconds
+                                  : exercise.reps}
+                                <span
+                                  style={{
+                                    fontSize: 9,
+                                    color: "rgba(255,255,255,0.35)",
+                                    marginLeft: 3,
+                                    fontWeight: 400,
+                                  }}
+                                >
+                                  {exercise.type === "duration"
+                                    ? "SEC"
+                                    : "REPS"}
                                 </span>
                               </span>
-                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{exercise.sets} sets</span>
+                              <span
+                                style={{
+                                  fontSize: 11,
+                                  color: "rgba(255,255,255,0.4)",
+                                }}
+                              >
+                                {exercise.sets} sets
+                              </span>
                               <span />
                             </div>
                           )}

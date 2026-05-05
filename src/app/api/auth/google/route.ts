@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { randomBytes } from "node:crypto";
+import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const mobile = req.nextUrl.searchParams.get("mobile") === "1";

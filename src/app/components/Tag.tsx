@@ -10,7 +10,12 @@ export interface NeonTagProps extends React.HTMLAttributes<HTMLElement> {
   onRemove?: () => void;
 }
 
-function TagBase({ children, colorScheme = "pink", onRemove, ...rest }: NeonTagProps) {
+function TagBase({
+  children,
+  colorScheme = "pink",
+  onRemove,
+  ...rest
+}: NeonTagProps) {
   const color = `var(--neon-${colorScheme})`;
   return (
     <Box

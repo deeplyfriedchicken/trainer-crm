@@ -14,7 +14,11 @@
   color: #fff;
   letter-spacing: -0.01em;
 }
-.headerSub { font-size: 12px; color: rgba(255, 255, 255, 0.35); margin-top: 3px; }
+.headerSub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 3px;
+}
 .closeBtn {
   width: 32px;
   height: 32px;
@@ -30,7 +34,9 @@
   transition: background 0.15s;
   flex-shrink: 0;
 }
-.closeBtn:hover { background: rgba(255, 255, 255, 0.12); }
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
 
 /* ── Scrollable body ── */
 .body {
@@ -42,9 +48,16 @@
   flex-direction: column;
   gap: 20px;
 }
-.body::-webkit-scrollbar { width: 4px; }
-.body::-webkit-scrollbar-track { background: transparent; }
-.body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+.body::-webkit-scrollbar {
+  width: 4px;
+}
+.body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
 /* ── Section title ── */
 .sectionTitle {
@@ -66,8 +79,14 @@
   margin-bottom: 6px;
   color: rgba(255, 255, 255, 0.45);
 }
-.fieldLabelError { color: #f87171; }
-.fieldError { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.fieldLabelError {
+  color: #f87171;
+}
+.fieldError {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
 
 /* ── Input / Textarea / Select ── */
 .input,
@@ -87,12 +106,27 @@
 }
 .input:focus,
 .textarea:focus,
-.select:focus { border-color: rgba(52, 253, 254, 0.5); }
-.inputError { background: rgba(248, 113, 113, 0.06); border-color: rgba(248, 113, 113, 0.5); }
-.inputError:focus { border-color: #f87171; }
-.textarea { resize: vertical; min-height: 72px; }
-.select { appearance: none; cursor: pointer; }
-.select option { background: #0f0f1e; }
+.select:focus {
+  border-color: rgba(52, 253, 254, 0.5);
+}
+.inputError {
+  background: rgba(248, 113, 113, 0.06);
+  border-color: rgba(248, 113, 113, 0.5);
+}
+.inputError:focus {
+  border-color: #f87171;
+}
+.textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+.select {
+  appearance: none;
+  cursor: pointer;
+}
+.select option {
+  background: #0f0f1e;
+}
 
 /* ── Two-col grid ── */
 .twoCol {
@@ -102,7 +136,11 @@
 }
 
 /* ── Exercise cards ── */
-.exerciseList { display: flex; flex-direction: column; gap: 12px; }
+.exerciseList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 .exerciseCard {
   background: rgba(255, 255, 255, 0.03);
@@ -139,7 +177,9 @@
   transition: background 0.15s;
   flex-shrink: 0;
 }
-.removeExBtn:hover { background: rgba(248, 113, 113, 0.2); }
+.removeExBtn:hover {
+  background: rgba(248, 113, 113, 0.2);
+}
 
 /* ── Row inside exercise card ── */
 .threeCol {
@@ -189,7 +229,9 @@
   flex-shrink: 0;
   transition: color 0.15s;
 }
-.videoChipRemove:hover { color: rgba(52, 253, 254, 0.9); }
+.videoChipRemove:hover {
+  color: rgba(52, 253, 254, 0.9);
+}
 
 .linkVideoBtn {
   display: inline-flex;
@@ -229,7 +271,10 @@
   transition: all 0.2s;
   width: 100%;
 }
-.addExBtn:hover { border-color: rgba(52, 253, 254, 0.5); color: var(--neon-cyan, #34fdfe); }
+.addExBtn:hover {
+  border-color: rgba(52, 253, 254, 0.5);
+  color: var(--neon-cyan, #34fdfe);
+}
 
 /* ── Error banner ── */
 .errorBanner {
@@ -263,7 +308,9 @@
   font-size: 13px;
   cursor: pointer;
 }
-.cancelBtn:hover { color: rgba(255, 255, 255, 0.8); }
+.cancelBtn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
 
 .saveBtn {
   display: inline-flex;
@@ -278,4 +325,7 @@
   cursor: pointer;
   transition: opacity 0.15s;
 }
-.saveBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+.saveBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

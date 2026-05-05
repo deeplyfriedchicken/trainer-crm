@@ -1,5 +1,9 @@
 import type { NextRequest } from "next/server";
-import { getTraineeById, updateTrainee, deleteTrainee } from "@/db/queries/trainees";
+import {
+  deleteTrainee,
+  getTraineeById,
+  updateTrainee,
+} from "@/db/queries/trainees";
 import { getRequestUser } from "@/lib/request-auth";
 
 export async function GET(
@@ -11,7 +15,8 @@ export async function GET(
 
   const { id } = await ctx.params;
   const trainee = await getTraineeById(id);
-  if (!trainee) return Response.json({ error: "Trainee not found" }, { status: 404 });
+  if (!trainee)
+    return Response.json({ error: "Trainee not found" }, { status: 404 });
   return Response.json({ data: trainee });
 }
 
@@ -25,7 +30,8 @@ export async function PATCH(
   const { id } = await ctx.params;
   const body = (await request.json()) as { name?: string; email?: string };
   const updated = await updateTrainee(id, body);
-  if (!updated) return Response.json({ error: "Trainee not found" }, { status: 404 });
+  if (!updated)
+    return Response.json({ error: "Trainee not found" }, { status: 404 });
   return Response.json({ data: updated });
 }
 

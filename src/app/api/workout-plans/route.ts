@@ -1,8 +1,11 @@
+import { desc, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
-import { eq, desc } from "drizzle-orm";
 import { db } from "@/db";
+import {
+  createWorkoutPlan,
+  type ExerciseInput,
+} from "@/db/queries/workout-plans";
 import { workoutPlans } from "@/db/schema";
-import { createWorkoutPlan, type ExerciseInput } from "@/db/queries/workout-plans";
 import { getRequestUser } from "@/lib/request-auth";
 
 export async function GET(request: NextRequest) {
@@ -11,7 +14,10 @@ export async function GET(request: NextRequest) {
 
   const traineeId = request.nextUrl.searchParams.get("traineeId");
   if (!traineeId) {
-    return Response.json({ error: "traineeId query param is required" }, { status: 400 });
+    return Response.json(
+      { error: "traineeId query param is required" },
+      { status: 400 },
+    );
   }
 
   const plans = await db.query.workoutPlans.findMany({
@@ -40,7 +46,10 @@ export async function POST(request: NextRequest) {
   };
 
   if (!body.traineeId || !body.name?.trim()) {
-    return Response.json({ error: "traineeId and name are required" }, { status: 400 });
+    return Response.json(
+      { error: "traineeId and name are required" },
+      { status: 400 },
+    );
   }
 
   const plan = await createWorkoutPlan({

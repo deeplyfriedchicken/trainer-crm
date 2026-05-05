@@ -1,5 +1,5 @@
 import "server-only";
-import { SignJWT, jwtVerify } from "jose";
+import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 
 type SessionPayload = { userId: string; expiresAt: number };
@@ -15,7 +15,10 @@ function key() {
 
 export async function createSession(userId: string): Promise<void> {
   const expiresAt = Date.now() + DURATION_MS;
-  const token = await new SignJWT({ userId, expiresAt } satisfies SessionPayload)
+  const token = await new SignJWT({
+    userId,
+    expiresAt,
+  } satisfies SessionPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(Math.floor(expiresAt / 1000))

@@ -7,7 +7,16 @@ import { getPresignedGetUrl } from "@/lib/s3";
 
 function ArrowLeft() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M11 14L6 9l5-5" />
     </svg>
   );
@@ -15,7 +24,16 @@ function ArrowLeft() {
 
 function VideoIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="1" y="2.5" width="9" height="9" rx="1.5" />
       <path d="M10 5.5l3-2v7l-3-2" />
     </svg>
@@ -105,8 +123,11 @@ export default async function ExerciseDetailPage({
           <div key={video.id}>
             <div
               style={{
-                fontSize: 12, fontWeight: 700, color: "var(--text-3)",
-                textTransform: "uppercase", letterSpacing: "0.06em",
+                fontSize: 12,
+                fontWeight: 700,
+                color: "var(--text-3)",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
                 margin: "20px 0 10px",
               }}
             >

@@ -3,9 +3,9 @@ import { setVideoTags } from "@/db/queries/tags";
 import { getVideoById, updateVideo } from "@/db/queries/videos";
 import { getApiUser } from "@/lib/api-auth";
 import {
-  submitTranscodeJob,
   getProcessedKey,
   getProcessedUrl,
+  submitTranscodeJob,
 } from "@/lib/mediaconvert";
 import { getPresignedGetUrl } from "@/lib/s3";
 

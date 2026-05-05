@@ -68,7 +68,15 @@ export async function listWorkoutsForTrainee(traineeId: string) {
       exerciseLinks: {
         with: {
           exercise: {
-            columns: { id: true, name: true, type: true, sets: true, reps: true, durationSeconds: true, weightLbs: true },
+            columns: {
+              id: true,
+              name: true,
+              type: true,
+              sets: true,
+              reps: true,
+              durationSeconds: true,
+              weightLbs: true,
+            },
           },
         },
       },
@@ -76,4 +84,6 @@ export async function listWorkoutsForTrainee(traineeId: string) {
   });
 }
 
-export type WorkoutRow = Awaited<ReturnType<typeof listWorkoutsForTrainee>>[number];
+export type WorkoutRow = Awaited<
+  ReturnType<typeof listWorkoutsForTrainee>
+>[number];

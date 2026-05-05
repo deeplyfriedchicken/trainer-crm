@@ -3,10 +3,14 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
+import { createWorkout, type ExerciseLogEntry } from "@/db/queries/workouts";
 import { users } from "@/db/schema";
-import { type ExerciseLogEntry, createWorkout } from "@/db/queries/workouts";
 import { hashPin, verifyPin } from "@/lib/client-pin";
-import { createClientSession, deleteClientSession, getClientSession } from "@/lib/client-session";
+import {
+  createClientSession,
+  deleteClientSession,
+  getClientSession,
+} from "@/lib/client-session";
 import { decryptUserId } from "@/lib/client-token";
 
 export async function authenticate(
@@ -62,7 +66,8 @@ export async function completeWorkout(
   if (!traineeId) return { error: "Invalid link." };
 
   const clientSession = await getClientSession();
-  if (clientSession?.traineeId !== traineeId) return { error: "Not authenticated." };
+  if (clientSession?.traineeId !== traineeId)
+    return { error: "Not authenticated." };
 
   await createWorkout({
     traineeId,

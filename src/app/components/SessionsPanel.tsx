@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import { LuCalendar, LuChevronLeft, LuChevronRight, LuDumbbell, LuPencil } from "react-icons/lu";
+import {
+  LuCalendar,
+  LuChevronLeft,
+  LuChevronRight,
+  LuDumbbell,
+  LuPencil,
+} from "react-icons/lu";
 import { Dialog, DialogBody } from "./Dialog";
 import styles from "./SessionsPanel.module.css";
 
@@ -34,13 +40,25 @@ export type SessionEntry = {
 
 // ── Sub-components ────────────────────────────────────────────────────────
 
-function StarGroup({ rating, label, color }: { rating: number; label: string; color: string }) {
+function StarGroup({
+  rating,
+  label,
+  color,
+}: {
+  rating: number;
+  label: string;
+  color: string;
+}) {
   return (
     <div className={styles.starGroup}>
       <div className={styles.starLabel}>{label}</div>
       <div className={styles.stars}>
         {[1, 2, 3, 4, 5].map((n) => (
-          <svg key={n} width="9" height="9" viewBox="0 0 24 24"
+          <svg
+            key={n}
+            width="9"
+            height="9"
+            viewBox="0 0 24 24"
             fill={n <= rating ? color : "rgba(255,255,255,0.1)"}
             stroke={n <= rating ? color : "rgba(255,255,255,0.15)"}
             strokeWidth="1.5"
@@ -55,7 +73,11 @@ function StarGroup({ rating, label, color }: { rating: number; label: string; co
 }
 
 function formatDate(d: Date) {
-  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // ── Exercise video modal (single or slideshow) ────────────────────────────
@@ -83,7 +105,12 @@ function ExerciseVideoModal({
         src={current.url}
         controls
         autoPlay
-        style={{ width: "100%", display: "block", maxHeight: "50vh", background: "#000" }}
+        style={{
+          width: "100%",
+          display: "block",
+          maxHeight: "50vh",
+          background: "#000",
+        }}
       />
 
       <DialogBody>
@@ -121,37 +148,102 @@ function ExerciseVideoModal({
               <LuChevronRight size={16} />
             </button>
 
-            <span className={styles.slideCount}>{idx + 1} / {total}</span>
+            <span className={styles.slideCount}>
+              {idx + 1} / {total}
+            </span>
           </div>
         )}
 
         {/* Exercise info */}
-        <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
+        <div
+          style={{
+            fontSize: 18,
+            fontWeight: 700,
+            color: "#fff",
+            marginBottom: 4,
+          }}
+        >
           {exercise.name}
         </div>
         {current.title && (
-          <div style={{ fontSize: 12, color: "rgba(52,253,254,0.7)", marginBottom: 14 }}>
+          <div
+            style={{
+              fontSize: 12,
+              color: "rgba(52,253,254,0.7)",
+              marginBottom: 14,
+            }}
+          >
             {current.title}
           </div>
         )}
 
-        <div style={{ display: "flex", gap: 8, marginBottom: exercise.comment ? 14 : 0, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: accentColor, background: `${accentColor}15`, border: `1px solid ${accentColor}30`, borderRadius: 6, padding: "3px 10px" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            marginBottom: exercise.comment ? 14 : 0,
+            flexWrap: "wrap",
+          }}
+        >
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: accentColor,
+              background: `${accentColor}15`,
+              border: `1px solid ${accentColor}30`,
+              borderRadius: 6,
+              padding: "3px 10px",
+            }}
+          >
             {exercise.sets} sets
           </span>
-          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", alignSelf: "center" }}>×</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 10px" }}>
-            {exercise.type === "duration" ? `${exercise.durationSeconds}s` : `${exercise.reps} reps`}
+          <span
+            style={{
+              fontSize: 12,
+              color: "rgba(255,255,255,0.3)",
+              alignSelf: "center",
+            }}
+          >
+            ×
+          </span>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: "rgba(255,255,255,0.6)",
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 6,
+              padding: "3px 10px",
+            }}
+          >
+            {exercise.type === "duration"
+              ? `${exercise.durationSeconds}s`
+              : `${exercise.reps} reps`}
           </span>
           {exercise.weightLbs != null && (
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", alignSelf: "center" }}>
+            <span
+              style={{
+                fontSize: 12,
+                color: "rgba(255,255,255,0.45)",
+                alignSelf: "center",
+              }}
+            >
               @ {exercise.weightLbs}lbs
             </span>
           )}
         </div>
 
         {exercise.comment && (
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.6, margin: 0 }}>
+          <p
+            style={{
+              fontSize: 13,
+              color: "rgba(255,255,255,0.55)",
+              lineHeight: 1.6,
+              margin: 0,
+            }}
+          >
             {exercise.comment}
           </p>
         )}
@@ -174,13 +266,16 @@ export function SessionsPanel({
   onEditSession?: (session: SessionEntry) => void;
 }) {
   const sorted = [...sessions].sort(
-    (a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
+    (a, b) =>
+      new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
   );
 
   const [openIds, setOpenIds] = useState<Set<string>>(
     () => new Set(sorted[0] ? [sorted[0].id] : []),
   );
-  const [videoExercise, setVideoExercise] = useState<SessionExercise | null>(null);
+  const [videoExercise, setVideoExercise] = useState<SessionExercise | null>(
+    null,
+  );
 
   function toggleRow(id: string) {
     setOpenIds((prev) => {
@@ -200,7 +295,11 @@ export function SessionsPanel({
             <button
               type="button"
               className={styles.newBtn}
-              style={{ background: `${accentColor}1e`, border: `1px solid ${accentColor}55`, color: accentColor }}
+              style={{
+                background: `${accentColor}1e`,
+                border: `1px solid ${accentColor}55`,
+                color: accentColor,
+              }}
               onClick={onNewSession}
             >
               + New
@@ -211,7 +310,9 @@ export function SessionsPanel({
         </div>
 
         <div className={styles.list}>
-          {sorted.length === 0 && <div className={styles.empty}>No sessions yet.</div>}
+          {sorted.length === 0 && (
+            <div className={styles.empty}>No sessions yet.</div>
+          )}
 
           {sorted.map((s, i) => {
             const isOpen = openIds.has(s.id);
@@ -224,48 +325,92 @@ export function SessionsPanel({
                   role="button"
                   tabIndex={0}
                   onClick={() => toggleRow(s.id)}
-                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") toggleRow(s.id); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") toggleRow(s.id);
+                  }}
                 >
                   {/* Left */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{
-                      width: 36, height: 36, borderRadius: 10,
-                      background: `${accentColor}18`, border: `1px solid ${accentColor}33`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      flexShrink: 0, color: accentColor,
-                    }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 12 }}
+                  >
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        background: `${accentColor}18`,
+                        border: `1px solid ${accentColor}33`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        color: accentColor,
+                      }}
+                    >
                       <LuCalendar size={14} />
                     </div>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>
+                      <div
+                        style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}
+                      >
                         {s.name}
                       </div>
-                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: "rgba(255,255,255,0.35)",
+                          marginTop: 2,
+                        }}
+                      >
                         {formatDate(s.occurredAt)}
                       </div>
                     </div>
                   </div>
 
                   {/* Right */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
                     {s.energyRating != null && (
-                      <><StarGroup rating={s.energyRating} label="Energy" color={accentColor} /><div className={styles.divider} /></>
+                      <>
+                        <StarGroup
+                          rating={s.energyRating}
+                          label="Energy"
+                          color={accentColor}
+                        />
+                        <div className={styles.divider} />
+                      </>
                     )}
                     {s.painRating != null && (
-                      <><StarGroup rating={s.painRating} label="Pain" color="#f87171" /><div className={styles.divider} /></>
+                      <>
+                        <StarGroup
+                          rating={s.painRating}
+                          label="Pain"
+                          color="#f87171"
+                        />
+                        <div className={styles.divider} />
+                      </>
                     )}
                     {onEditSession && (
                       <button
                         type="button"
                         className={styles.editBtn}
-                        onClick={(e) => { e.stopPropagation(); onEditSession(s); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEditSession(s);
+                        }}
                         title="Edit session"
                       >
                         <LuPencil size={12} />
                       </button>
                     )}
-                    <svg width="14" height="14" viewBox="0 0 24 24"
-                      fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.3)"
+                      strokeWidth="2"
                       className={`${styles.chevron}${isOpen ? ` ${styles.chevronOpen}` : ""}`}
                     >
                       <path d="M6 9l6 6 6-6" />
@@ -273,11 +418,19 @@ export function SessionsPanel({
                   </div>
                 </div>
 
-                <div className={styles.rowBody} style={{ maxHeight: isOpen ? 900 : 0 }}>
+                <div
+                  className={styles.rowBody}
+                  style={{ maxHeight: isOpen ? 900 : 0 }}
+                >
                   <div className={styles.rowBodyInner}>
                     {s.comment && (
                       <div className={styles.note}>
-                        <div className={styles.noteLabel} style={{ color: "rgba(255,255,255,0.35)" }}>Notes</div>
+                        <div
+                          className={styles.noteLabel}
+                          style={{ color: "rgba(255,255,255,0.35)" }}
+                        >
+                          Notes
+                        </div>
                         <p className={styles.noteText}>{s.comment}</p>
                       </div>
                     )}
@@ -288,32 +441,90 @@ export function SessionsPanel({
                         <div className={styles.exerciseList}>
                           {s.exercises.map((ex) => (
                             <div key={ex.id} className={styles.exerciseRow}>
-                              <div style={{
-                                width: 28, height: 28, borderRadius: 6,
-                                background: `${accentColor}18`, border: `1px solid ${accentColor}33`,
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                flexShrink: 0, color: accentColor,
-                              }}>
+                              <div
+                                style={{
+                                  width: 28,
+                                  height: 28,
+                                  borderRadius: 6,
+                                  background: `${accentColor}18`,
+                                  border: `1px solid ${accentColor}33`,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  flexShrink: 0,
+                                  color: accentColor,
+                                }}
+                              >
                                 <LuDumbbell size={12} />
                               </div>
 
-                              <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              <div
+                                style={{
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  color: "#fff",
+                                  flex: 1,
+                                  minWidth: 0,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
                                 {ex.name}
                               </div>
 
                               {/* Sets × Reps/Duration */}
-                              <div style={{ display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }}>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: accentColor, background: `${accentColor}15`, border: `1px solid ${accentColor}30`, borderRadius: 5, padding: "2px 7px" }}>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  gap: 6,
+                                  alignItems: "center",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    color: accentColor,
+                                    background: `${accentColor}15`,
+                                    border: `1px solid ${accentColor}30`,
+                                    borderRadius: 5,
+                                    padding: "2px 7px",
+                                  }}
+                                >
                                   {ex.sets} sets
                                 </span>
-                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>×</span>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 5, padding: "2px 7px" }}>
+                                <span
+                                  style={{
+                                    fontSize: 11,
+                                    color: "rgba(255,255,255,0.3)",
+                                  }}
+                                >
+                                  ×
+                                </span>
+                                <span
+                                  style={{
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    color: "rgba(255,255,255,0.6)",
+                                    background: "rgba(255,255,255,0.06)",
+                                    border: "1px solid rgba(255,255,255,0.1)",
+                                    borderRadius: 5,
+                                    padding: "2px 7px",
+                                  }}
+                                >
                                   {ex.type === "duration"
                                     ? `${ex.durationSeconds}s`
                                     : `${ex.reps} reps`}
                                 </span>
                                 {ex.weightLbs != null && (
-                                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                                  <span
+                                    style={{
+                                      fontSize: 11,
+                                      color: "rgba(255,255,255,0.4)",
+                                    }}
+                                  >
                                     @ {ex.weightLbs}lbs
                                   </span>
                                 )}
@@ -325,11 +536,17 @@ export function SessionsPanel({
                                   type="button"
                                   className={styles.playBtn}
                                   onClick={() => setVideoExercise(ex)}
-                                  title={ex.videos.length > 1 ? `${ex.videos.length} videos` : ex.videos[0]?.title}
+                                  title={
+                                    ex.videos.length > 1
+                                      ? `${ex.videos.length} videos`
+                                      : ex.videos[0]?.title
+                                  }
                                 >
                                   <FaPlay size={8} color="#34FDFE" />
                                   {ex.videos.length > 1 && (
-                                    <span className={styles.playCount}>{ex.videos.length}</span>
+                                    <span className={styles.playCount}>
+                                      {ex.videos.length}
+                                    </span>
                                   )}
                                 </button>
                               )}
@@ -340,7 +557,14 @@ export function SessionsPanel({
                     )}
 
                     {!s.comment && s.exercises.length === 0 && (
-                      <p style={{ fontSize: 13, color: "var(--neon-text-dim)", margin: "12px 0 4px", fontStyle: "italic" }}>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: "var(--neon-text-dim)",
+                          margin: "12px 0 4px",
+                          fontStyle: "italic",
+                        }}
+                      >
                         No details recorded for this session.
                       </p>
                     )}

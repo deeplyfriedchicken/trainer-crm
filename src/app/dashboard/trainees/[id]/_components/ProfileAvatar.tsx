@@ -27,7 +27,10 @@ export function ProfileAvatar({
       {statusColor && (
         <div
           className={styles.statusDot}
-          style={{ background: statusColor, boxShadow: `0 0 8px ${statusColor}` }}
+          style={{
+            background: statusColor,
+            boxShadow: `0 0 8px ${statusColor}`,
+          }}
         />
       )}
     </div>

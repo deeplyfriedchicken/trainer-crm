@@ -78,9 +78,7 @@ export function TrainerCard({
 
       {/* Stats */}
       <Flex justify="center" gap="24px" mb="20px">
-        {[
-          { label: "Videos", value: videoCount },
-        ].map(({ label, value }) => (
+        {[{ label: "Videos", value: videoCount }].map(({ label, value }) => (
           <Box key={label} textAlign="center">
             <Box
               fontFamily="var(--font-neon-display), sans-serif"

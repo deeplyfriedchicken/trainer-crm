@@ -27,7 +27,9 @@ export function ProfileHero({
     >
       <div
         className={styles.accentBar}
-        style={{ background: `linear-gradient(90deg, ${accentColor}, transparent)` }}
+        style={{
+          background: `linear-gradient(90deg, ${accentColor}, transparent)`,
+        }}
       />
       <div
         className={styles.ambientGlow}
@@ -35,7 +37,11 @@ export function ProfileHero({
       />
 
       <div className={styles.body}>
-        <ProfileAvatar name={name} accentColor={accentColor} statusColor={statusColor} />
+        <ProfileAvatar
+          name={name}
+          accentColor={accentColor}
+          statusColor={statusColor}
+        />
 
         <div className={styles.info}>
           <div className={styles.nameRow}>

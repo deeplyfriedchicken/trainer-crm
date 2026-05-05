@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { createSession } from "@/lib/session";
 import { encryptUserId } from "@/lib/client-token";
+import { createSession } from "@/lib/session";
 
 const CRM_ROLES = new Set(["admin", "trainer_manager", "trainer"] as const);
 
@@ -34,7 +34,10 @@ export async function GET(req: NextRequest) {
   let nonce = storedState;
   let mobile = false;
   try {
-    const parsed = JSON.parse(storedState) as { nonce: string; mobile?: boolean };
+    const parsed = JSON.parse(storedState) as {
+      nonce: string;
+      mobile?: boolean;
+    };
     nonce = parsed.nonce;
     mobile = parsed.mobile ?? false;
   } catch {
@@ -50,7 +53,9 @@ export async function GET(req: NextRequest) {
   }
 
   if (incomingNonce !== nonce) {
-    return mobile ? mobileError("invalid_state") : loginError(req, "invalid_state");
+    return mobile
+      ? mobileError("invalid_state")
+      : loginError(req, "invalid_state");
   }
 
   // Exchange code for tokens
@@ -67,7 +72,9 @@ export async function GET(req: NextRequest) {
   });
 
   if (!tokenRes.ok) {
-    return mobile ? mobileError("token_exchange") : loginError(req, "token_exchange");
+    return mobile
+      ? mobileError("token_exchange")
+      : loginError(req, "token_exchange");
   }
 
   const { access_token } = await tokenRes.json();
@@ -96,7 +103,9 @@ export async function GET(req: NextRequest) {
 
   const hasCRMRole = user.roles.some((r) => CRM_ROLES.has(r.role as never));
   if (!hasCRMRole) {
-    return mobile ? mobileError("unauthorized") : loginError(req, "unauthorized");
+    return mobile
+      ? mobileError("unauthorized")
+      : loginError(req, "unauthorized");
   }
 
   if (mobile) {

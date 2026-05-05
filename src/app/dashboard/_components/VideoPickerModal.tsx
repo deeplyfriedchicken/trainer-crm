@@ -24,12 +24,16 @@ function fmtDuration(s: number | null): string | null {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   const sec = s % 60;
-  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  if (h > 0)
+    return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   return `${m}:${String(sec).padStart(2, "0")}`;
 }
 
 function sanitizeTitle(filename: string) {
-  return filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").trim();
+  return filename
+    .replace(/\.[^/.]+$/, "")
+    .replace(/[-_]/g, " ")
+    .trim();
 }
 
 // ── Thumbnail (lightweight video preview) ────────────────────────────────
@@ -47,7 +51,13 @@ function PickerThumb({ src }: { src: string }) {
         const v = ref.current;
         if (v) v.currentTime = Math.min(1, v.duration * 0.1);
       }}
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
     />
   );
 }
@@ -85,7 +95,9 @@ export function VideoPickerModal({
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [uploadTitles, setUploadTitles] = useState<string[]>([]);
   const [uploadPhase, setUploadPhase] = useState<UploadPhase>("idle");
-  const [uploadProgress, setUploadProgress] = useState<Record<number, number>>({});
+  const [uploadProgress, setUploadProgress] = useState<Record<number, number>>(
+    {},
+  );
   const [dragging, setDragging] = useState(false);
   const [titleErrors, setTitleErrors] = useState<boolean[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -115,12 +127,17 @@ export function VideoPickerModal({
 
     fetch(`/api/videos?${params}`)
       .then((r) => r.json())
-      .then((json: { data: ApiVideo[]; pagination: { limit: number; offset: number } }) => {
-        const fetched = json.data ?? [];
-        setVideos((prev) => (offset === 0 ? fetched : [...prev, ...fetched]));
-        setHasMore(fetched.length === PAGE_SIZE);
-        setLoading(false);
-      })
+      .then(
+        (json: {
+          data: ApiVideo[];
+          pagination: { limit: number; offset: number };
+        }) => {
+          const fetched = json.data ?? [];
+          setVideos((prev) => (offset === 0 ? fetched : [...prev, ...fetched]));
+          setHasMore(fetched.length === PAGE_SIZE);
+          setLoading(false);
+        },
+      )
       .catch(() => setLoading(false));
   }, [isOpen, view, committedQuery, offset, refreshKey, traineeId]);
 
@@ -156,7 +173,10 @@ export function VideoPickerModal({
     const videoFiles = files.filter((f) => f.type.startsWith("video/"));
     if (!videoFiles.length) return;
     setUploadFiles((prev) => [...prev, ...videoFiles]);
-    setUploadTitles((prev) => [...prev, ...videoFiles.map((f) => sanitizeTitle(f.name))]);
+    setUploadTitles((prev) => [
+      ...prev,
+      ...videoFiles.map((f) => sanitizeTitle(f.name)),
+    ]);
     setTitleErrors((prev) => [...prev, ...videoFiles.map(() => false)]);
   }
 
@@ -213,7 +233,9 @@ export function VideoPickerModal({
             if (xhr.status >= 200 && xhr.status < 300) resolve();
             else reject(new Error(`Upload failed: ${xhr.status}`));
           });
-          xhr.addEventListener("error", () => reject(new Error("Upload network error")));
+          xhr.addEventListener("error", () =>
+            reject(new Error("Upload network error")),
+          );
           xhr.open("PUT", uploadUrl);
           xhr.setRequestHeader("Content-Type", file.type);
           xhr.send(file);
@@ -225,7 +247,9 @@ export function VideoPickerModal({
           await fetch(`/api/videos/${videoId}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title: uploadTitles[i]?.trim() || uploadFiles[i]?.name }),
+            body: JSON.stringify({
+              title: uploadTitles[i]?.trim() || uploadFiles[i]?.name,
+            }),
           });
         }),
       );
@@ -264,7 +288,10 @@ export function VideoPickerModal({
           <button
             type="button"
             className={`${styles.tabBtn}${view === "upload" ? ` ${styles.tabBtnActive}` : ""}`}
-            onClick={() => { resetUpload(); setView("upload"); }}
+            onClick={() => {
+              resetUpload();
+              setView("upload");
+            }}
             disabled={uploadPhase === "uploading"}
           >
             <LuUpload size={11} />
@@ -319,12 +346,19 @@ export function VideoPickerModal({
                       key={v.id}
                       className={`${styles.card}${linked ? ` ${styles.cardAlreadyLinked}` : ""}`}
                       onClick={() => {
-                        if (!linked) onSelect({ id: v.id, title: v.title, url: v.fileUrl });
+                        if (!linked)
+                          onSelect({
+                            id: v.id,
+                            title: v.title,
+                            url: v.fileUrl,
+                          });
                       }}
                     >
                       <div className={styles.thumb}>
                         <PickerThumb src={v.fileUrl} />
-                        {linked && <div className={styles.linkedBadge}>Linked</div>}
+                        {linked && (
+                          <div className={styles.linkedBadge}>Linked</div>
+                        )}
                         <div className={styles.playOverlay}>
                           <div className={styles.playCircle}>
                             <FaPlay size={9} color="#34FDFE" />
@@ -333,7 +367,9 @@ export function VideoPickerModal({
                       </div>
                       <div className={styles.cardBody}>
                         <div className={styles.cardTitle}>{v.title}</div>
-                        {dur && <div className={styles.cardDuration}>{dur}</div>}
+                        {dur && (
+                          <div className={styles.cardDuration}>{dur}</div>
+                        )}
                       </div>
                     </div>
                   );
@@ -370,9 +406,14 @@ export function VideoPickerModal({
                         <LuFilm size={14} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div className={styles.uploadingTitle}>{uploadTitles[i] || f.name}</div>
+                        <div className={styles.uploadingTitle}>
+                          {uploadTitles[i] || f.name}
+                        </div>
                         <div className={styles.progressTrack}>
-                          <div className={styles.progressBar} style={{ width: `${pct}%` }} />
+                          <div
+                            className={styles.progressBar}
+                            style={{ width: `${pct}%` }}
+                          />
                         </div>
                       </div>
                       <div className={styles.uploadPercent}>{pct}%</div>
@@ -388,15 +429,30 @@ export function VideoPickerModal({
             <div className={styles.uploadBody}>
               <div className={styles.successBox}>
                 <div className={styles.successIcon}>
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round">
+                  <svg
+                    width="26"
+                    height="26"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#4ade80"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                 </div>
                 <div className={styles.successTitle}>
-                  {uploadFiles.length} Video{uploadFiles.length !== 1 ? "s" : ""} Uploaded
+                  {uploadFiles.length} Video
+                  {uploadFiles.length !== 1 ? "s" : ""} Uploaded
                 </div>
-                <div className={styles.successSub}>Go back to the library to select them.</div>
-                <button type="button" className={styles.backToLibBtn} onClick={handleUploadDone}>
+                <div className={styles.successSub}>
+                  Go back to the library to select them.
+                </div>
+                <button
+                  type="button"
+                  className={styles.backToLibBtn}
+                  onClick={handleUploadDone}
+                >
                   Back to Library
                 </button>
               </div>
@@ -426,10 +482,14 @@ export function VideoPickerModal({
                 >
                   <LuUpload
                     size={uploadFiles.length > 0 ? 22 : 30}
-                    color={dragging ? "var(--neon-cyan)" : "rgba(52,253,254,0.5)"}
+                    color={
+                      dragging ? "var(--neon-cyan)" : "rgba(52,253,254,0.5)"
+                    }
                     style={{ margin: "0 auto 8px" }}
                   />
-                  <div className={`${styles.dropLabel}${dragging ? ` ${styles.dropLabelActive}` : ""}`}>
+                  <div
+                    className={`${styles.dropLabel}${dragging ? ` ${styles.dropLabelActive}` : ""}`}
+                  >
                     {dragging
                       ? "Drop to add"
                       : uploadFiles.length > 0
@@ -438,7 +498,11 @@ export function VideoPickerModal({
                   </div>
                   {uploadFiles.length === 0 && (
                     <div className={styles.dropSub}>
-                      or <span className={styles.dropBrowseLink}>browse files</span> · MP4, MOV, AVI
+                      or{" "}
+                      <span className={styles.dropBrowseLink}>
+                        browse files
+                      </span>{" "}
+                      · MP4, MOV, AVI
                     </div>
                   )}
                 </div>
@@ -470,7 +534,11 @@ export function VideoPickerModal({
                               }
                             }}
                           />
-                          {titleErrors[i] && <div className={styles.titleError}>Title required</div>}
+                          {titleErrors[i] && (
+                            <div className={styles.titleError}>
+                              Title required
+                            </div>
+                          )}
                         </div>
                         <button
                           type="button"
@@ -496,7 +564,10 @@ export function VideoPickerModal({
                   <button
                     type="button"
                     className={styles.cancelUploadBtn}
-                    onClick={() => { resetUpload(); setView("library"); }}
+                    onClick={() => {
+                      resetUpload();
+                      setView("library");
+                    }}
                   >
                     Cancel
                   </button>
@@ -507,7 +578,8 @@ export function VideoPickerModal({
                     onClick={startUpload}
                   >
                     <LuUpload size={12} />
-                    Upload {uploadFiles.length > 0
+                    Upload{" "}
+                    {uploadFiles.length > 0
                       ? `${uploadFiles.length} Video${uploadFiles.length > 1 ? "s" : ""}`
                       : "Videos"}
                   </button>

@@ -123,24 +123,27 @@ async function extract() {
   lines.push(
     `async function seed() {`,
     `  await db.transaction(async (tx) => {`,
-    `    await tx.execute(sql` + "`" +
-    `\n      TRUNCATE TABLE\n` +
-    `        messages,\n` +
-    `        workout_videos,\n` +
-    `        workout_exercises,\n` +
-    `        workouts,\n` +
-    `        workout_plan_videos,\n` +
-    `        exercise_videos,\n` +
-    `        exercises,\n` +
-    `        workout_plans,\n` +
-    `        video_tags,\n` +
-    `        videos,\n` +
-    `        tags,\n` +
-    `        chats,\n` +
-    `        user_roles,\n` +
-    `        users\n` +
-    `      RESTART IDENTITY CASCADE\n` +
-    `    ` + "`" + `);`,
+    `    await tx.execute(sql` +
+      "`" +
+      `\n      TRUNCATE TABLE\n` +
+      `        messages,\n` +
+      `        workout_videos,\n` +
+      `        workout_exercises,\n` +
+      `        workouts,\n` +
+      `        workout_plan_videos,\n` +
+      `        exercise_videos,\n` +
+      `        exercises,\n` +
+      `        workout_plans,\n` +
+      `        video_tags,\n` +
+      `        videos,\n` +
+      `        tags,\n` +
+      `        chats,\n` +
+      `        user_roles,\n` +
+      `        users\n` +
+      `      RESTART IDENTITY CASCADE\n` +
+      `    ` +
+      "`" +
+      `);`,
     ``,
     `    // Insert in FK dependency order`,
     `    if (usersData.length) await tx.insert(users).values(usersData as any);`,

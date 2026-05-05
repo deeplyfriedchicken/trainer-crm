@@ -14,7 +14,10 @@ export default async function VideosPage() {
     includeDeleted: isAdmin,
   });
   const videos = await Promise.all(
-    raw.map(async (v) => ({ ...v, fileUrl: await getPresignedGetUrl(v.fileKey, 3600) })),
+    raw.map(async (v) => ({
+      ...v,
+      fileUrl: await getPresignedGetUrl(v.fileKey, 3600),
+    })),
   );
 
   return (

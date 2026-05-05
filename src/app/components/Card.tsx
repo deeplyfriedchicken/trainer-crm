@@ -1,12 +1,15 @@
 "use client";
 
-import { Card as ChakraCard, type CardRootProps, chakra } from "@chakra-ui/react";
+import {
+  type CardRootProps,
+  Card as ChakraCard,
+  chakra,
+} from "@chakra-ui/react";
 import { forwardRef } from "react";
 
 export type NeonCardVariant = "solid" | "outlined" | "glow";
 
-export interface NeonCardProps
-  extends Omit<CardRootProps, "variant" | "size"> {
+export interface NeonCardProps extends Omit<CardRootProps, "variant" | "size"> {
   variant?: NeonCardVariant;
   glowColor?: "pink" | "cyan";
 }

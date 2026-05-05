@@ -18,5 +18,7 @@ export async function upsertTag(name: string) {
 export async function setVideoTags(videoId: string, tagIds: string[]) {
   await db.delete(videoTags).where(eq(videoTags.videoId, videoId));
   if (tagIds.length === 0) return;
-  await db.insert(videoTags).values(tagIds.map((tagId) => ({ videoId, tagId })));
+  await db
+    .insert(videoTags)
+    .values(tagIds.map((tagId) => ({ videoId, tagId })));
 }

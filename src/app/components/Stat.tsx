@@ -21,7 +21,11 @@ function StatBase({
 }: NeonStatProps) {
   const color = `var(--neon-${accent})`;
   const indicatorColor =
-    indicator === "up" ? "#4ade80" : indicator === "down" ? "#ff5472" : undefined;
+    indicator === "up"
+      ? "#4ade80"
+      : indicator === "down"
+        ? "#ff5472"
+        : undefined;
   return (
     <Box
       display="flex"

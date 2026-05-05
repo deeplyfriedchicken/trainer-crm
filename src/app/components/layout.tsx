@@ -20,7 +20,11 @@ const spaceMono = Space_Mono({
   variable: "--font-neon-mono",
 });
 
-export default function ComponentsLayout({ children }: { children: ReactNode }) {
+export default function ComponentsLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <div
       className={`neon ${barlowCondensed.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}

@@ -3,75 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { ClientData } from "@/db/queries/client";
-
-function ChevronDown() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 6l4 4 4-4" />
-    </svg>
-  );
-}
-
-function ArrowRight() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 11l4-4-4-4" />
-    </svg>
-  );
-}
-
-function VideoIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 14 14"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="1" y="2.5" width="9" height="9" rx="1.5" />
-      <path d="M10 5.5l3-2v7l-3-2" />
-    </svg>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    >
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
+import { LuChevronDown, LuChevronRight, LuPlus, LuVideo } from "react-icons/lu";
+import type { ClientChat, ClientData } from "@/db/queries/client";
+import { ClientChatPanel } from "./ClientChatPanel";
 
 type Plan = ClientData["workoutPlans"][number];
 type Workout = ClientData["workouts"][number];
@@ -107,7 +41,7 @@ function PlanCard({ plan, token }: { plan: Plan; token: string }) {
           </div>
         </div>
         <div className={`plan-chevron${open ? " open" : ""}`}>
-          <ChevronDown />
+          <LuChevronDown size={16} />
         </div>
       </div>
 
@@ -122,7 +56,7 @@ function PlanCard({ plan, token }: { plan: Plan; token: string }) {
               <span className="ex-name">{ex.name}</span>
               {ex.videoLinks.length > 0 && (
                 <span className="ex-tag has-video">
-                  <VideoIcon /> Video
+                  <LuVideo size={12} /> Video
                 </span>
               )}
               <span className="ex-tag">
@@ -131,7 +65,7 @@ function PlanCard({ plan, token }: { plan: Plan; token: string }) {
                   : `${ex.sets}×${ex.reps}`}
               </span>
               <span className="ex-arrow">
-                <ArrowRight />
+                <LuChevronRight size={14} />
               </span>
             </Link>
           ))}
@@ -177,7 +111,7 @@ function HistoryCard({ workout }: { workout: Workout }) {
                 transition: "transform 0.2s",
               }}
             >
-              <ChevronDown />
+              <LuChevronDown size={16} />
             </span>
           </div>
         </div>
@@ -312,7 +246,7 @@ function ChoosePlanSheet({
                 {p.exercises.length !== 1 ? "s" : ""}
               </span>
               <span style={{ color: "var(--text-3)", marginLeft: 8 }}>
-                <ArrowRight />
+                <LuChevronRight size={14} />
               </span>
             </div>
           ))
@@ -324,10 +258,11 @@ function ChoosePlanSheet({
 }
 
 interface Props {
-  trainee: { name: string; email: string };
+  trainee: { id: string; name: string; email: string };
   workoutPlans: Plan[];
   workouts: Workout[];
   token: string;
+  chat: ClientChat | null;
 }
 
 export function WorkoutPlansView({
@@ -335,8 +270,9 @@ export function WorkoutPlansView({
   workoutPlans,
   workouts,
   token,
+  chat,
 }: Props) {
-  const [tab, setTab] = useState<"plans" | "history">("plans");
+  const [tab, setTab] = useState<"plans" | "history" | "chat">("plans");
   const [showChoosePlan, setShowChoosePlan] = useState(false);
 
   const initials = trainee.name
@@ -390,9 +326,18 @@ export function WorkoutPlansView({
           >
             History{workouts.length > 0 ? ` (${workouts.length})` : ""}
           </button>
+          {chat && (
+            <button
+              className={`client-tab${tab === "chat" ? " active" : ""}`}
+              onClick={() => setTab("chat")}
+              type="button"
+            >
+              Chat
+            </button>
+          )}
         </div>
 
-        {tab === "plans" ? (
+        {tab === "plans" && (
           <div>
             {workoutPlans.length === 0 ? (
               <div className="client-empty">
@@ -409,7 +354,9 @@ export function WorkoutPlansView({
             )}
             <div style={{ height: 100 }} />
           </div>
-        ) : (
+        )}
+
+        {tab === "history" && (
           <div>
             {workouts.length === 0 ? (
               <div className="client-empty">
@@ -425,6 +372,15 @@ export function WorkoutPlansView({
             <div style={{ height: 60 }} />
           </div>
         )}
+
+        {tab === "chat" && chat && (
+          <ClientChatPanel
+            chatId={chat.id}
+            traineeId={trainee.id}
+            initialMessages={chat.messages}
+            trainer={chat.trainer}
+          />
+        )}
       </div>
 
       <button
@@ -433,7 +389,7 @@ export function WorkoutPlansView({
         type="button"
         title="Log Workout"
       >
-        <PlusIcon />
+        <LuPlus size={24} strokeWidth={2.5} />
       </button>
 
       {showChoosePlan && (

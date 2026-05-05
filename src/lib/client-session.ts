@@ -1,6 +1,9 @@
 import "server-only";
+import { eq } from "drizzle-orm";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { db } from "@/db";
+import { users } from "@/db/schema";
 
 type ClientSessionPayload = { traineeId: string; expiresAt: number };
 
@@ -44,6 +47,19 @@ export async function getClientSession(): Promise<{
     const { payload } = await jwtVerify<ClientSessionPayload>(token, key(), {
       algorithms: ["HS256"],
     });
+
+    // Reject sessions issued before the PIN was last reset. pinUpdatedAt is
+    // set to now() on reset, so any token with an older iat is invalidated.
+    if (payload.iat) {
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, payload.traineeId),
+        columns: { pinUpdatedAt: true },
+      });
+      if (user?.pinUpdatedAt && user.pinUpdatedAt.getTime() / 1000 > payload.iat) {
+        return null;
+      }
+    }
+
     return { traineeId: payload.traineeId };
   } catch {
     return null;

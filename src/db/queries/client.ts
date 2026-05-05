@@ -1,6 +1,6 @@
-import { desc, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { exercises, users, workoutPlans, workouts } from "@/db/schema";
+import { chats, exercises, messages, users, workoutPlans } from "@/db/schema";
 
 export async function getClientData(traineeId: string) {
   const user = await db.query.users.findFirst({
@@ -159,3 +159,19 @@ export async function getPlanForLog(planId: string, traineeId: string) {
 }
 
 export type PlanForLog = NonNullable<Awaited<ReturnType<typeof getPlanForLog>>>;
+
+export async function getClientChat(traineeId: string) {
+  const chat = await db.query.chats.findFirst({
+    where: eq(chats.traineeId, traineeId),
+    with: {
+      trainer: { columns: { id: true, name: true, email: true } },
+      messages: {
+        orderBy: [asc(messages.createdAt)],
+        with: { sender: { columns: { id: true, name: true, email: true } } },
+      },
+    },
+  });
+  return chat ?? null;
+}
+
+export type ClientChat = NonNullable<Awaited<ReturnType<typeof getClientChat>>>;

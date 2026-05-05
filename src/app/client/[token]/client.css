@@ -27,6 +27,18 @@
   --radius: 14px;
   --radius-sm: 8px;
   --max-w: 520px;
+
+  /* Aliases so shared components (ChatPanel, etc.) resolve their tokens here */
+  --neon-pink: var(--pink);
+  --neon-cyan: var(--cyan);
+  --neon-surface: var(--surface);
+  --neon-border: var(--border);
+  --neon-text: var(--text);
+  --neon-text-muted: var(--text-2);
+  --neon-text-dim: var(--text-3);
+  --font-neon-body: var(--font-body);
+  --font-neon-display: var(--font-display);
+  --font-neon-mono: var(--font-mono);
 }
 
 html,

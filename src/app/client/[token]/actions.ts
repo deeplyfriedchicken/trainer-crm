@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
+import { createMessage } from "@/db/queries/chats";
 import { createWorkout, type ExerciseLogEntry } from "@/db/queries/workouts";
 import { users } from "@/db/schema";
 import { hashPin, verifyPin } from "@/lib/client-pin";
@@ -44,6 +45,12 @@ export async function authenticate(
 
   await createClientSession(traineeId);
   redirect(`/client/${token}`);
+}
+
+export async function sendClientMessage(chatId: string, text: string) {
+  const session = await getClientSession();
+  if (!session) throw new Error("Unauthorized");
+  return createMessage(chatId, session.traineeId, { text });
 }
 
 export async function logout(token: string): Promise<void> {

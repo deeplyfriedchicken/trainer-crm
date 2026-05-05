@@ -7,6 +7,7 @@ import { getPresignedGetUrl } from "@/lib/s3";
 import { BackLink } from "./_components/BackLink";
 import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
+import { ResetPinButton } from "./_components/ResetPinButton";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
 import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
 import { TraineeVideosPanel } from "./_components/TraineeVideosPanel";
@@ -129,7 +130,10 @@ export default async function TraineePage({
         }}
       >
         <BackLink href="/dashboard">Back to Dashboard</BackLink>
-        <ClientPortalLink encryptedToken={clientToken} />
+        <div style={{ display: "flex", gap: 8 }}>
+          <ResetPinButton traineeId={trainee.id} />
+          <ClientPortalLink encryptedToken={clientToken} />
+        </div>
       </div>
 
       <ProfileHero

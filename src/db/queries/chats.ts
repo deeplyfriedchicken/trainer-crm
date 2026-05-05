@@ -1,6 +1,36 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, or } from "drizzle-orm";
 import { db } from "@/db";
 import { chats, type MessageContent, messages } from "@/db/schema";
+
+export async function listChatsForUser(userId: string) {
+  return db.query.chats.findMany({
+    where: or(eq(chats.traineeId, userId), eq(chats.trainerId, userId)),
+    with: {
+      trainee: { columns: { id: true, name: true, email: true } },
+      trainer: { columns: { id: true, name: true, email: true } },
+      messages: {
+        orderBy: [desc(messages.createdAt)],
+        limit: 1,
+        with: { sender: { columns: { id: true, name: true, email: true } } },
+      },
+    },
+    orderBy: [desc(chats.updatedAt)],
+  });
+}
+
+export async function getChatById(chatId: string) {
+  return db.query.chats.findFirst({
+    where: eq(chats.id, chatId),
+    with: {
+      trainee: { columns: { id: true, name: true, email: true } },
+      trainer: { columns: { id: true, name: true, email: true } },
+      messages: {
+        orderBy: [asc(messages.createdAt)],
+        with: { sender: { columns: { id: true, name: true, email: true } } },
+      },
+    },
+  });
+}
 
 export async function getOrCreateChat(traineeId: string, trainerId: string) {
   const existing = await db.query.chats.findFirst({

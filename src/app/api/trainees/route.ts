@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const allowed = new Set(["admin", "trainer_manager"] as const);
+  const allowed = new Set(["admin", "trainer_manager", "trainer"] as const);
   if (!user.roles.some((r) => allowed.has(r as never))) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }

@@ -69,6 +69,7 @@ export default async function TrainersPage() {
               color={colorFor(t.name)}
               initial={t.name[0]?.toUpperCase() ?? "?"}
               videoCount={t.videoCount}
+              roles={t.roles}
             />
           ))}
         </SimpleGrid>

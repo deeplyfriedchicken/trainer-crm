@@ -42,6 +42,7 @@ export function Dialog({
     // from panelRef — instead query every scrollable element directly.
     const locked: { el: HTMLElement; prev: string }[] = [];
     document.querySelectorAll<HTMLElement>("*").forEach((el) => {
+      if (panelRef.current?.contains(el)) return;
       const oy = getComputedStyle(el).overflowY;
       if (
         (oy === "auto" || oy === "scroll") &&

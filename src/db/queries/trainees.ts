@@ -69,6 +69,7 @@ export async function getTraineeById(id: string) {
                       fileKey: true,
                       fileUrl: true,
                       durationSeconds: true,
+                      deletedAt: true,
                     },
                   },
                 },
@@ -126,7 +127,7 @@ export async function getTraineeById(id: string) {
       createdAt: videos.createdAt,
     })
     .from(videos)
-    .where(eq(videos.traineeId, id))
+    .where(and(eq(videos.traineeId, id), isNull(videos.deletedAt)))
     .orderBy(desc(videos.createdAt));
 
   return {
@@ -136,7 +137,13 @@ export async function getTraineeById(id: string) {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     directVideos,
-    workoutPlans: user.workoutPlans,
+    workoutPlans: user.workoutPlans.map((wp) => ({
+      ...wp,
+      exercises: wp.exercises.map((ex) => ({
+        ...ex,
+        videoLinks: ex.videoLinks.filter((l) => !l.video?.deletedAt),
+      })),
+    })),
     workouts: user.workouts,
   };
 }

@@ -1,4 +1,12 @@
 import { Box, Flex } from "@chakra-ui/react";
+import { Badge } from "@/app/components/Badge";
+
+const ROLE_LABEL: Record<string, string> = {
+  trainer: "Trainer",
+  trainer_manager: "Trainer Manager",
+  admin: "Admin",
+  trainee: "Trainee",
+};
 
 type TrainerCardProps = {
   name: string;
@@ -6,6 +14,7 @@ type TrainerCardProps = {
   color: string;
   initial: string;
   videoCount: number;
+  roles: string[];
 };
 
 export function TrainerCard({
@@ -14,6 +23,7 @@ export function TrainerCard({
   color,
   initial,
   videoCount,
+  roles,
 }: TrainerCardProps) {
   return (
     <Box
@@ -72,9 +82,22 @@ export function TrainerCard({
       >
         {name}
       </Box>
-      <Box fontSize="12px" color="var(--neon-text-dim)" mb="16px">
+      <Box fontSize="12px" color="var(--neon-text-dim)" mb="10px">
         {email}
       </Box>
+
+      {/* Roles */}
+      <Flex justify="center" gap="6px" flexWrap="wrap" mb="16px">
+        {roles.map((role) => (
+          <Badge
+            key={role}
+            colorScheme={role === "trainer_manager" ? "cyan" : "pink"}
+            variant="subtle"
+          >
+            {ROLE_LABEL[role] ?? role}
+          </Badge>
+        ))}
+      </Flex>
 
       {/* Stats */}
       <Flex justify="center" gap="24px" mb="20px">

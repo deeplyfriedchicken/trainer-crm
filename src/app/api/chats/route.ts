@@ -14,18 +14,19 @@ export async function POST(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = (await request.json()) as { traineeId?: string; trainerId?: string };
-  if (!body.traineeId?.trim() || !body.trainerId?.trim()) {
-    return Response.json({ error: "traineeId and trainerId are required" }, { status: 400 });
+  const body = (await request.json()) as { traineeId?: string };
+  if (!body.traineeId?.trim()) {
+    return Response.json({ error: "traineeId is required" }, { status: 400 });
   }
+  const traineeId = body.traineeId.trim();
 
-  // Only allow participants or privileged roles to open a thread
-  const privileged = new Set(["admin", "trainer_manager"] as const);
-  const isParticipant = user.id === body.traineeId || user.id === body.trainerId;
-  if (!isParticipant && !user.roles.some((r) => privileged.has(r as never))) {
+  // The trainee themselves, or any trainer/admin/manager, can open the thread.
+  const privileged = new Set(["admin", "trainer_manager", "trainer"] as const);
+  const isTrainee = user.id === traineeId;
+  if (!isTrainee && !user.roles.some((r) => privileged.has(r as never))) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const chat = await getOrCreateChat(body.traineeId.trim(), body.trainerId.trim());
+  const chat = await getOrCreateChat(traineeId);
   return Response.json({ data: chat }, { status: 201 });
 }

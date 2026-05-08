@@ -9,21 +9,25 @@ Use pnpm
 
 # Database schema
 
-PostgreSQL via Drizzle ORM. Schema lives at `src/db/schema.ts`; migrations in `drizzle/`. Every table uses cuid2 `text` ids and `created_at`/`updated_at` timestamptz where noted. Tables that record audit attribution (`coaching_sessions`, `exercises`, `coaching_session_videos`, `exercise_videos`) also carry `created_by` / `updated_by` via a shared `authorship` block: both NOT NULL, FK → `users.id` ON DELETE RESTRICT.
+PostgreSQL via Drizzle ORM. Schema lives at `src/db/schema.ts`; migrations in `drizzle/`. Every table uses cuid2 `text` ids and `created_at`/`updated_at` timestamptz where noted. Tables that record audit attribution (`workout_plans`, `exercises`, `workout_plan_videos`, `exercise_videos`, `workouts`, `workout_exercises`, `workout_videos`) also carry `created_by` / `updated_by` via a shared `authorship` block: both NOT NULL, FK → `users.id` ON DELETE RESTRICT.
 
 ## Enums
 
 - `user_role`: `admin` | `trainer_manager` | `trainer` | `trainee`
-- `video_status`: `uploading` | `ready` | `failed`
+- `video_status`: `uploading` | `processing` | `ready` | `failed`
+- `exercise_type`: `reps` | `duration`
 
 ## `users`
-| column      | type         | notes                        |
-|-------------|--------------|------------------------------|
-| id          | text PK      | cuid2                        |
-| email       | text         | NOT NULL, unique (`users_email_idx`) |
-| name        | text         | NOT NULL                     |
-| created_at  | timestamptz  | default now()                |
-| updated_at  | timestamptz  | default now(), auto-updates  |
+| column          | type        | notes                                        |
+|-----------------|-------------|----------------------------------------------|
+| id              | text PK     | cuid2                                        |
+| email           | text        | NOT NULL, unique (`users_email_idx`)         |
+| name            | text        | NOT NULL                                     |
+| pin             | text        | nullable; client-portal PIN                  |
+| pin_updated_at  | timestamptz | nullable                                     |
+| deleted_at      | timestamptz | nullable; soft-delete marker                 |
+| created_at      | timestamptz | default now()                                |
+| updated_at      | timestamptz | default now(), auto-updates                  |
 
 ## `user_roles`
 Composite PK `(user_id, role)` — a user may hold multiple roles.
@@ -36,95 +40,83 @@ Composite PK `(user_id, role)` — a user may hold multiple roles.
 
 Indexes: `user_roles_role_idx` on `role`.
 
-## `trainer_assignments`
-Links a trainer to a trainee. History is retained: an assignment ends by setting `ended_at` rather than deleting the row.
-
-| column      | type        | notes                                         |
-|-------------|-------------|-----------------------------------------------|
-| id          | text PK     | cuid2                                         |
-| trainer_id  | text        | FK → `users.id` ON DELETE CASCADE             |
-| trainee_id  | text        | FK → `users.id` ON DELETE CASCADE             |
-| assigned_at | timestamptz | default now()                                 |
-| ended_at    | timestamptz | nullable; NULL = active                       |
-
-Indexes:
-- `trainer_assignments_trainer_idx` on `trainer_id`
-- `trainer_assignments_trainee_idx` on `trainee_id`
-- `trainer_assignments_active_pair_idx` — **partial unique** on `(trainer_id, trainee_id) WHERE ended_at IS NULL`. Only one active pairing at a time; ended rows stay as history.
-
 ## `videos`
-Uploaded via UploadThing; columns map directly from the webhook payload. Videos are never tied to a trainee directly — attribution flows through the join tables `coaching_session_videos` and `exercise_videos`.
+S3-backed, processed via AWS MediaConvert. A video may optionally be linked directly to a trainee via `trainee_id`; it is also attached to plans, exercises, or logged workouts via the join tables `workout_plan_videos`, `exercise_videos`, and `workout_videos`.
 
-| column            | type          | notes                                              |
-|-------------------|---------------|----------------------------------------------------|
-| id                | text PK       | cuid2                                              |
-| uploader_id       | text          | FK → `users.id` ON DELETE RESTRICT                 |
-| title             | text          | NOT NULL                                           |
-| description       | text nullable |                                                    |
-| file_key          | text          | NOT NULL, unique (`videos_file_key_idx`)           |
-| file_url          | text          | NOT NULL                                           |
-| file_name         | text          | NOT NULL                                           |
-| file_size_bytes   | bigint        | NOT NULL (mapped as `number`)                      |
-| mime_type         | text          | NOT NULL                                           |
-| duration_seconds  | integer       | nullable                                           |
-| status            | video_status  | NOT NULL, default `uploading`                      |
-| created_at        | timestamptz   | default now()                                      |
-| updated_at        | timestamptz   | default now(), auto-updates                        |
+| column             | type          | notes                                              |
+|--------------------|---------------|----------------------------------------------------|
+| id                 | text PK       | cuid2                                              |
+| uploader_id        | text          | FK → `users.id` ON DELETE RESTRICT                 |
+| trainee_id         | text          | nullable; FK → `users.id` ON DELETE SET NULL       |
+| title              | text          | NOT NULL                                           |
+| description        | text          | nullable                                           |
+| file_key           | text          | NOT NULL, unique (`videos_file_key_idx`)           |
+| file_url           | text          | NOT NULL                                           |
+| file_name          | text          | NOT NULL                                           |
+| file_size_bytes    | bigint        | NOT NULL (mapped as `number`)                      |
+| mime_type          | text          | NOT NULL                                           |
+| duration_seconds   | integer       | nullable                                           |
+| status             | video_status  | NOT NULL, default `uploading`                      |
+| original_file_key  | text          | nullable; pre-transcode key                        |
+| deleted_at         | timestamptz   | nullable; soft-delete marker                       |
+| created_at         | timestamptz   | default now()                                      |
+| updated_at         | timestamptz   | default now(), auto-updates                        |
 
 Indexes: `videos_uploader_idx` on `uploader_id`, unique `videos_file_key_idx` on `file_key`.
 
-## `coaching_sessions`
-One row per session conducted for a trainee. Client-feedback fields (`completed`, `energy_rating`, `pain_rating`, `comment`) are nullable — they're filled in when the trainee answers the post-session questionnaire.
+## `workout_plans`
+A plan assigned to a trainee — the prescribed workout. Has many `exercises`. Logged workouts reference this via `workouts.workout_plan_id`.
 
-| column         | type          | notes                                               |
-|----------------|---------------|-----------------------------------------------------|
-| id             | text PK       | cuid2                                               |
-| trainee_id     | text          | FK → `users.id` ON DELETE CASCADE                   |
-| occurred_at    | timestamptz   | NOT NULL; when the session happened                 |
-| completed      | boolean       | nullable; NULL = not yet answered                   |
-| energy_rating  | integer       | nullable; CHECK `IS NULL OR BETWEEN 1 AND 5`        |
-| pain_rating    | integer       | nullable; CHECK `IS NULL OR BETWEEN 1 AND 5`        |
-| comment        | text          | nullable                                            |
-| created_at     | timestamptz   | default now()                                       |
-| updated_at     | timestamptz   | default now(), auto-updates                         |
-| created_by     | text          | FK → `users.id` ON DELETE RESTRICT, NOT NULL        |
-| updated_by     | text          | FK → `users.id` ON DELETE RESTRICT, NOT NULL        |
+| column          | type        | notes                                          |
+|-----------------|-------------|------------------------------------------------|
+| id              | text PK     | cuid2                                          |
+| trainee_id      | text        | FK → `users.id` ON DELETE CASCADE              |
+| name            | text        | NOT NULL, default `''`                         |
+| occurred_at     | timestamptz | NOT NULL                                       |
+| comment         | text        | nullable                                       |
+| created_at      | timestamptz | default now()                                  |
+| updated_at      | timestamptz | default now(), auto-updates                    |
+| created_by      | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL   |
+| updated_by      | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL   |
 
-Indexes: `coaching_sessions_trainee_idx`, `coaching_sessions_occurred_at_idx`, `coaching_sessions_created_by_idx`.
-Check constraints: `coaching_sessions_energy_rating_range`, `coaching_sessions_pain_rating_range`.
+Indexes: `workout_plans_trainee_idx`, `workout_plans_occurred_at_idx`, `workout_plans_created_by_idx`.
 
 ## `exercises`
-Child of `coaching_sessions` — a session has many exercises. Deleting a session cascades to its exercises.
+Child of `workout_plans` — a plan has many exercises. Deleting a plan cascades to its exercises. The `type` field discriminates between `reps`-based and `duration`-based exercises; a CHECK constraint enforces that the matching column is set.
 
-| column     | type        | notes                                               |
-|------------|-------------|-----------------------------------------------------|
-| id         | text PK     | cuid2                                               |
-| session_id | text        | FK → `coaching_sessions.id` ON DELETE CASCADE       |
-| name       | text        | NOT NULL                                            |
-| sets       | integer     | NOT NULL                                            |
-| reps       | integer     | NOT NULL                                            |
-| comment    | text        | nullable                                            |
-| created_at | timestamptz | default now()                                       |
-| updated_at | timestamptz | default now(), auto-updates                         |
-| created_by | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL        |
-| updated_by | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL        |
+| column            | type          | notes                                                       |
+|-------------------|---------------|-------------------------------------------------------------|
+| id                | text PK       | cuid2                                                       |
+| workout_plan_id   | text          | FK → `workout_plans.id` ON DELETE CASCADE                   |
+| name              | text          | NOT NULL                                                    |
+| type              | exercise_type | NOT NULL, default `reps`                                    |
+| sets              | integer       | NOT NULL                                                    |
+| reps              | integer       | nullable; required when `type='reps'` (CHECK)               |
+| duration_seconds  | integer       | nullable; required when `type='duration'` (CHECK)           |
+| weight_lbs        | real          | nullable                                                    |
+| comment           | text          | nullable                                                    |
+| created_at        | timestamptz   | default now()                                               |
+| updated_at        | timestamptz   | default now(), auto-updates                                 |
+| created_by        | text          | FK → `users.id` ON DELETE RESTRICT, NOT NULL                |
+| updated_by        | text          | FK → `users.id` ON DELETE RESTRICT, NOT NULL                |
 
-Indexes: `exercises_session_idx`, `exercises_created_by_idx`.
+Indexes: `exercises_plan_idx`, `exercises_created_by_idx`.
+Check constraint: `exercises_type_fields_check` — `(type='reps' AND reps IS NOT NULL) OR (type='duration' AND duration_seconds IS NOT NULL)`.
 
-## `coaching_session_videos`
-Join table linking a session to one or more rows in `videos` — for videos attached to the session as a whole rather than to a specific exercise. Both sides cascade on delete.
+## `workout_plan_videos`
+Join table linking a plan to one or more rows in `videos` — for videos attached to the plan as a whole rather than a specific exercise. Both sides cascade on delete.
 
-| column     | type        | notes                                                 |
-|------------|-------------|-------------------------------------------------------|
-| session_id | text        | FK → `coaching_sessions.id` ON DELETE CASCADE         |
-| video_id   | text        | FK → `videos.id` ON DELETE CASCADE                    |
-| created_at | timestamptz | default now()                                         |
-| updated_at | timestamptz | default now(), auto-updates                           |
-| created_by | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL          |
-| updated_by | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL          |
+| column            | type        | notes                                                |
+|-------------------|-------------|------------------------------------------------------|
+| workout_plan_id   | text        | FK → `workout_plans.id` ON DELETE CASCADE            |
+| video_id          | text        | FK → `videos.id` ON DELETE CASCADE                   |
+| created_at        | timestamptz | default now()                                        |
+| updated_at        | timestamptz | default now(), auto-updates                          |
+| created_by        | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL         |
+| updated_by        | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL         |
 
-Primary key: composite `(session_id, video_id)`.
-Indexes: `coaching_session_videos_video_idx` on `video_id`, `coaching_session_videos_created_by_idx` on `created_by`.
+Primary key: composite `(workout_plan_id, video_id)`.
+Indexes: `workout_plan_videos_video_idx` on `video_id`, `workout_plan_videos_created_by_idx` on `created_by`.
 
 ## `exercise_videos`
 Join table linking an exercise to one or more rows in `videos`. Both sides cascade on delete.
@@ -139,20 +131,72 @@ Join table linking an exercise to one or more rows in `videos`. Both sides casca
 | updated_by  | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL         |
 
 Primary key: composite `(exercise_id, video_id)`.
-Indexes: `exercise_videos_video_idx` on `video_id`, `exercise_videos_created_by_idx` on `created_by` (the `exercise_id` side is covered by the composite PK).
+Indexes: `exercise_videos_video_idx` on `video_id`, `exercise_videos_created_by_idx` on `created_by`.
+
+## `workouts`
+A logged workout session — what the trainee actually did. May reference the `workout_plan` it was performed against (nullable; `ON DELETE SET NULL` so workout history survives plan deletion). Pain and energy ratings are 1–10 self-reports, nullable.
+
+| column           | type        | notes                                                |
+|------------------|-------------|------------------------------------------------------|
+| id               | text PK     | cuid2                                                |
+| trainee_id       | text        | FK → `users.id` ON DELETE CASCADE                    |
+| workout_plan_id  | text        | nullable; FK → `workout_plans.id` ON DELETE SET NULL |
+| duration_seconds | integer     | NOT NULL                                             |
+| pain_rating      | integer     | nullable; CHECK `IS NULL OR BETWEEN 1 AND 10`        |
+| energy_rating    | integer     | nullable; CHECK `IS NULL OR BETWEEN 1 AND 10`        |
+| comment          | text        | nullable                                             |
+| created_at       | timestamptz | default now()                                        |
+| updated_at       | timestamptz | default now(), auto-updates                          |
+| created_by       | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL         |
+| updated_by       | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL         |
+
+Indexes: `workouts_trainee_idx`, `workouts_plan_idx`, `workouts_created_at_idx`.
+Check constraints: `workouts_energy_rating_range`, `workouts_pain_rating_range`.
+
+## `workout_exercises`
+Join table linking a logged `workout` to the `exercises` performed during it. Per-set data is stored as JSONB on `sets_data` so the schema is extensible without migrations. Both sides cascade on delete.
+
+| column       | type        | notes                                                 |
+|--------------|-------------|-------------------------------------------------------|
+| workout_id   | text        | FK → `workouts.id` ON DELETE CASCADE                  |
+| exercise_id  | text        | FK → `exercises.id` ON DELETE CASCADE                 |
+| sets_data    | jsonb       | nullable; typed `WorkoutSetLog[]` (see below)         |
+| created_at   | timestamptz | default now()                                         |
+| updated_at   | timestamptz | default now(), auto-updates                           |
+| created_by   | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL          |
+| updated_by   | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL          |
+
+Primary key: composite `(workout_id, exercise_id)`.
+Indexes: `workout_exercises_exercise_idx`, `workout_exercises_created_by_idx`.
+
+TypeScript type: `WorkoutSetLog = { reps?: number; durationSeconds?: number; weightLbs?: number; completed: boolean }` — exported from `src/db/schema.ts`.
+
+## `workout_videos`
+Join table linking a logged `workout` to one or more rows in `videos`. Both sides cascade on delete.
+
+| column      | type        | notes                                                |
+|-------------|-------------|------------------------------------------------------|
+| workout_id  | text        | FK → `workouts.id` ON DELETE CASCADE                 |
+| video_id    | text        | FK → `videos.id` ON DELETE CASCADE                   |
+| created_at  | timestamptz | default now()                                        |
+| updated_at  | timestamptz | default now(), auto-updates                          |
+| created_by  | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL         |
+| updated_by  | text        | FK → `users.id` ON DELETE RESTRICT, NOT NULL         |
+
+Primary key: composite `(workout_id, video_id)`.
+Indexes: `workout_videos_video_idx` on `video_id`, `workout_videos_created_by_idx` on `created_by`.
 
 ## `chats`
-One chat thread per trainer ↔ trainee pair. Created on first message send via `getOrCreateChat`.
+One chat thread per trainee — shared across all trainers. Any trainer who messages the trainee writes into this single thread, and the trainee sees every message. Created on first message send via `getOrCreateChat`.
 
 | column      | type        | notes                                         |
 |-------------|-------------|-----------------------------------------------|
 | id          | text PK     | cuid2                                         |
 | trainee_id  | text        | FK → `users.id` ON DELETE CASCADE             |
-| trainer_id  | text        | FK → `users.id` ON DELETE CASCADE             |
 | created_at  | timestamptz | default now()                                 |
 | updated_at  | timestamptz | default now(), auto-updates                   |
 
-Indexes: `chats_trainee_trainer_idx` (unique), `chats_trainee_idx`, `chats_trainer_idx`.
+Indexes: `chats_trainee_idx` (unique).
 
 ## `messages`
 Individual messages within a chat. Content is stored as **JSONB** (`{ text: string }`) so the schema is extensible for future attachments, reactions, etc. without migrations.
@@ -172,11 +216,11 @@ TypeScript type: `MessageContent` is exported from `src/db/schema.ts`. Extend it
 ## `tags`
 Flat tag vocabulary. Tags are created on-the-fly and linked to videos via `video_tags`.
 
-| column     | type        | notes                        |
-|------------|-------------|------------------------------|
-| id         | text PK     | cuid2                        |
-| name       | text        | NOT NULL, unique (`tags_name_idx`) |
-| created_at | timestamptz | default now()                |
+| column     | type        | notes                                |
+|------------|-------------|--------------------------------------|
+| id         | text PK     | cuid2                                |
+| name       | text        | NOT NULL, unique (`tags_name_idx`)   |
+| created_at | timestamptz | default now()                        |
 
 ## `video_tags`
 Join table linking videos to tags. Both sides cascade on delete.
@@ -192,15 +236,19 @@ Indexes: `video_tags_tag_idx` on `tag_id`.
 
 ## Relations (Drizzle)
 
-- `users` → many `user_roles`; many `trainer_assignments` (as trainer and as trainee); many `videos` (as uploader); many `coaching_sessions` (as trainee, via `coaching_sessions_trainee`).
-- `trainer_assignments` → one trainer, one trainee (both `users`).
-- `videos` → one uploader (`users`); many `exercise_videos`; many `coaching_session_videos`; many `videoTags`.
-- `coaching_sessions` → one trainee, one creator, one updater (all `users`, disambiguated by relation names `coaching_sessions_trainee` / `coaching_sessions_creator` / `coaching_sessions_updater`); many `exercises`; many `coaching_session_videos`.
-- `exercises` → one parent `coaching_session`; one creator, one updater (both `users`, relation names `exercises_creator` / `exercises_updater`); many `exercise_videos`.
-- `coaching_session_videos` → one `coaching_session`, one `video`.
+- `users` → many `user_roles`; many `videos` as uploader and as direct trainee (relation names `videos_uploader` / `videos_trainee`); many `workout_plans` as trainee (`workout_plans_trainee`); many `workouts` as trainee (`workouts_trainee`).
+- `videos` → one uploader, one optional trainee (both `users`); many `exercise_videos`; many `workout_plan_videos`; many `workout_videos`; many `video_tags`.
+- `workout_plans` → one trainee, one creator, one updater (`workout_plans_trainee` / `workout_plans_creator` / `workout_plans_updater`); many `exercises`; many `workout_plan_videos`; many `workouts`.
+- `exercises` → one parent `workout_plan`; one creator, one updater (`exercises_creator` / `exercises_updater`); many `exercise_videos`; many `workout_exercises`.
+- `workouts` → one trainee, one optional `workout_plan`, one creator, one updater (`workouts_trainee` / `workouts_creator` / `workouts_updater`); many `workout_exercises`; many `workout_videos`.
+- `workout_plan_videos` → one `workout_plan`, one `video`.
 - `exercise_videos` → one `exercise`, one `video`.
-- `tags` → many `videoTags`.
-- `videoTags` → one `video`, one `tag`.
+- `workout_exercises` → one `workout`, one `exercise`.
+- `workout_videos` → one `workout`, one `video`.
+- `chats` → one trainee (`chats_trainee`); many `messages`. Senders of those messages can be any user (trainee or any trainer).
+- `messages` → one `chat`, one sender (`messages_sender`).
+- `tags` → many `video_tags`.
+- `video_tags` → one `video`, one `tag`.
 
 # Component system
 

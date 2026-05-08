@@ -164,7 +164,6 @@ export async function getClientChat(traineeId: string) {
   const chat = await db.query.chats.findFirst({
     where: eq(chats.traineeId, traineeId),
     with: {
-      trainer: { columns: { id: true, name: true, email: true } },
       messages: {
         orderBy: [asc(messages.createdAt)],
         with: { sender: { columns: { id: true, name: true, email: true } } },

@@ -378,7 +378,6 @@ export function WorkoutPlansView({
             chatId={chat.id}
             traineeId={trainee.id}
             initialMessages={chat.messages}
-            trainer={chat.trainer}
           />
         )}
       </div>

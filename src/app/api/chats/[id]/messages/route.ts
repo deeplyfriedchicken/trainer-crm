@@ -1,12 +1,22 @@
 import type { NextRequest } from "next/server";
-import { getChatById, getChatMessages, createMessage } from "@/db/queries/chats";
+import {
+  createMessage,
+  getChatById,
+  getChatMessages,
+} from "@/db/queries/chats";
 import { getRequestUser } from "@/lib/request-auth";
 
-async function resolveChat(chatId: string, userId: string) {
+const PRIVILEGED = new Set(["admin", "trainer_manager", "trainer"] as const);
+
+async function resolveChat(
+  chatId: string,
+  user: { id: string; roles: string[] },
+) {
   const chat = await getChatById(chatId);
   if (!chat) return null;
-  const isParticipant = chat.traineeId === userId || chat.trainerId === userId;
-  return isParticipant ? chat : null;
+  const isTrainee = chat.traineeId === user.id;
+  const isPrivileged = user.roles.some((r) => PRIVILEGED.has(r as never));
+  return isTrainee || isPrivileged ? chat : null;
 }
 
 export async function GET(
@@ -17,7 +27,7 @@ export async function GET(
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await ctx.params;
-  const chat = await resolveChat(id, user.id);
+  const chat = await resolveChat(id, user);
   if (!chat) return Response.json({ error: "Chat not found" }, { status: 404 });
 
   const data = await getChatMessages(id);
@@ -32,7 +42,7 @@ export async function POST(
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await ctx.params;
-  const chat = await resolveChat(id, user.id);
+  const chat = await resolveChat(id, user);
   if (!chat) return Response.json({ error: "Chat not found" }, { status: 404 });
 
   const body = (await request.json()) as { text?: string };

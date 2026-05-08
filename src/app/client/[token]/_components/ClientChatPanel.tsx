@@ -7,20 +7,27 @@ type Props = {
   chatId: string;
   traineeId: string;
   initialMessages: ChatMessage[];
-  trainer: { id: string; name: string; email: string };
 };
 
-export function ClientChatPanel({
-  chatId,
-  traineeId,
-  initialMessages,
-  trainer,
-}: Props) {
+const FALLBACK_PARTICIPANT = {
+  id: "coaching-team",
+  name: "Coaching Team",
+  email: "",
+};
+
+export function ClientChatPanel({ chatId, traineeId, initialMessages }: Props) {
+  // Show the most recent non-self sender in the header. Falls back to a
+  // generic label if no trainer has messaged yet.
+  const latestTrainer = [...initialMessages]
+    .reverse()
+    .find((m) => m.sender.id !== traineeId)?.sender;
+  const participant = latestTrainer ?? FALLBACK_PARTICIPANT;
+
   return (
     <ChatPanel
       initialMessages={initialMessages}
       currentUserId={traineeId}
-      participant={trainer}
+      participant={participant}
       onSend={async (text) => {
         const msg = await sendClientMessage(chatId, text);
         return msg as ChatMessage;

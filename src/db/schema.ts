@@ -312,16 +312,9 @@ export const chats = pgTable(
     traineeId: text("trainee_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    trainerId: text("trainer_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
     ...timestamps,
   },
-  (t) => [
-    uniqueIndex("chats_trainee_trainer_idx").on(t.traineeId, t.trainerId),
-    index("chats_trainee_idx").on(t.traineeId),
-    index("chats_trainer_idx").on(t.trainerId),
-  ],
+  (t) => [uniqueIndex("chats_trainee_idx").on(t.traineeId)],
 );
 
 export const messages = pgTable(
@@ -531,11 +524,6 @@ export const chatsRelations = relations(chats, ({ one, many }) => ({
     fields: [chats.traineeId],
     references: [users.id],
     relationName: "chats_trainee",
-  }),
-  trainer: one(users, {
-    fields: [chats.trainerId],
-    references: [users.id],
-    relationName: "chats_trainer",
   }),
   messages: many(messages),
 }));

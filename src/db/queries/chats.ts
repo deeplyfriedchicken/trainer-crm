@@ -1,13 +1,22 @@
-import { and, asc, desc, eq, or } from "drizzle-orm";
+import { and, asc, desc, eq, exists, or } from "drizzle-orm";
 import { db } from "@/db";
 import { chats, type MessageContent, messages } from "@/db/schema";
 
 export async function listChatsForUser(userId: string) {
   return db.query.chats.findMany({
-    where: or(eq(chats.traineeId, userId), eq(chats.trainerId, userId)),
+    where: or(
+      eq(chats.traineeId, userId),
+      exists(
+        db
+          .select({ one: messages.id })
+          .from(messages)
+          .where(
+            and(eq(messages.chatId, chats.id), eq(messages.senderId, userId)),
+          ),
+      ),
+    ),
     with: {
       trainee: { columns: { id: true, name: true, email: true } },
-      trainer: { columns: { id: true, name: true, email: true } },
       messages: {
         orderBy: [desc(messages.createdAt)],
         limit: 1,
@@ -23,7 +32,6 @@ export async function getChatById(chatId: string) {
     where: eq(chats.id, chatId),
     with: {
       trainee: { columns: { id: true, name: true, email: true } },
-      trainer: { columns: { id: true, name: true, email: true } },
       messages: {
         orderBy: [asc(messages.createdAt)],
         with: { sender: { columns: { id: true, name: true, email: true } } },
@@ -32,9 +40,9 @@ export async function getChatById(chatId: string) {
   });
 }
 
-export async function getOrCreateChat(traineeId: string, trainerId: string) {
+export async function getOrCreateChat(traineeId: string) {
   const existing = await db.query.chats.findFirst({
-    where: and(eq(chats.traineeId, traineeId), eq(chats.trainerId, trainerId)),
+    where: eq(chats.traineeId, traineeId),
     with: {
       messages: {
         orderBy: [asc(messages.createdAt)],
@@ -45,10 +53,7 @@ export async function getOrCreateChat(traineeId: string, trainerId: string) {
 
   if (existing) return existing;
 
-  const [created] = await db
-    .insert(chats)
-    .values({ traineeId, trainerId })
-    .returning();
+  const [created] = await db.insert(chats).values({ traineeId }).returning();
 
   return {
     ...created,

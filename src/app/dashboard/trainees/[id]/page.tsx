@@ -60,7 +60,7 @@ export default async function TraineePage({
 
   if (!trainee) notFound();
 
-  const chat = await getOrCreateChat(trainee.id, currentUser.id);
+  const chat = await getOrCreateChat(trainee.id);
 
   const accentColor = colorFor(trainee.name);
   const clientToken = encryptUserId(trainee.id);

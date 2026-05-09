@@ -1,24 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import {
-  LuCalendar,
-  LuClock,
-  LuFileVideo,
-  LuHardDrive,
-  LuTrash2,
-  LuUpload,
-  LuUser,
-} from "react-icons/lu";
+import { LuTrash2, LuUpload } from "react-icons/lu";
 import { Button } from "@/app/components/Button";
-import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { PageHeader } from "@/app/components/PageHeader";
-import { usePermissions } from "@/app/dashboard/_hooks/usePermissions";
 import { deleteVideo } from "@/app/dashboard/videos/actions";
 import type { VideoRow as VideoRowType } from "@/db/queries/videos";
 import { UploadModal } from "./UploadModal";
+import { VideoDetailModal } from "./VideoDetailModal";
 import styles from "./VideoGallery.module.css";
 
 type Tag = VideoRowType["videoTags"][number]["tag"];
@@ -226,12 +217,9 @@ export function VideoGallery({
   subtitle?: string;
 }) {
   const router = useRouter();
-  const { canDeleteVideo } = usePermissions();
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [activeTag, setActiveTag] = useState<string>("All");
   const [selectedVideo, setSelectedVideo] = useState<VideoRowType | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<VideoRowType | null>(null);
-  const [isPending, startTransition] = useTransition();
 
   // Collect unique tags across all videos
   const allTags: Tag[] = [];
@@ -308,154 +296,18 @@ export function VideoGallery({
           </div>
         )}
 
-        {selectedVideo &&
-          (() => {
-            const v = selectedVideo;
-            const uploaderCol = uploaderColor(v.uploader.name);
-            const duration = formatDuration(v.durationSeconds);
-            return (
-              <Dialog
-                isOpen
-                onClose={() => setSelectedVideo(null)}
-                maxWidth={900}
-              >
-                <div style={{ position: "relative" }}>
-                  <video
-                    key={v.id}
-                    src={v.fileUrl}
-                    controls
-                    autoPlay
-                    style={{
-                      width: "100%",
-                      display: "block",
-                      maxHeight: "52vh",
-                      background: "#000",
-                    }}
-                  >
-                    <track
-                      kind="captions"
-                      srcLang="en"
-                      label="English"
-                      src="data:text/vtt;charset=utf-8,WEBVTT"
-                      default
-                    />
-                  </video>
-                  {canDeleteVideo && !v.deletedAt && (
-                    <button
-                      type="button"
-                      className={styles.videoDeleteBtn}
-                      onClick={() => {
-                        setSelectedVideo(null);
-                        setDeleteTarget(v);
-                      }}
-                      aria-label="Delete video"
-                    >
-                      <LuTrash2 size={15} />
-                    </button>
-                  )}
-                </div>
-                <DialogBody>
-                  <div style={{ marginBottom: 14 }}>
-                    <div
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 700,
-                        color: "#fff",
-                        lineHeight: 1.3,
-                        marginBottom: 6,
-                      }}
-                    >
-                      {v.title}
-                    </div>
-                    {v.videoTags.length > 0 && (
-                      <div
-                        style={{ display: "flex", gap: 6, flexWrap: "wrap" }}
-                      >
-                        {v.videoTags.map(({ tag }: { tag: Tag }) => {
-                          const c = tagColor(tag.name);
-                          return (
-                            <span
-                              key={tag.id}
-                              style={{
-                                background: `${c}22`,
-                                color: c,
-                                border: `1px solid ${c}44`,
-                                borderRadius: 20,
-                                padding: "2px 10px",
-                                fontSize: 11,
-                                fontWeight: 700,
-                                textTransform: "uppercase",
-                                letterSpacing: "0.05em",
-                              }}
-                            >
-                              {tag.name}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  {v.description && (
-                    <p
-                      style={{
-                        fontSize: 13,
-                        color: "rgba(255,255,255,0.5)",
-                        lineHeight: 1.6,
-                        marginBottom: 18,
-                      }}
-                    >
-                      {v.description}
-                    </p>
-                  )}
-
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "10px 24px",
-                    }}
-                  >
-                    <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 7,
-                        }}
-                      >
-                        <div
-                          className={styles.miniAvatar}
-                          style={{
-                            background: `${uploaderCol}22`,
-                            borderColor: `${uploaderCol}55`,
-                            color: uploaderCol,
-                          }}
-                        >
-                          {v.uploader.name[0]?.toUpperCase()}
-                        </div>
-                        {v.uploader.name}
-                      </div>
-                    </MetaRow>
-                    <MetaRow icon={<LuCalendar size={13} />} label="Uploaded">
-                      {formatDate(v.createdAt)}
-                    </MetaRow>
-                    {duration && (
-                      <MetaRow icon={<LuClock size={13} />} label="Duration">
-                        {duration}
-                      </MetaRow>
-                    )}
-                    <MetaRow icon={<LuHardDrive size={13} />} label="File size">
-                      {formatFileSize(v.fileSizeBytes)}
-                    </MetaRow>
-                    <MetaRow icon={<LuFileVideo size={13} />} label="File">
-                      {v.fileName}
-                    </MetaRow>
-                  </div>
-                </DialogBody>
-              </Dialog>
-            );
-          })()}
+        {selectedVideo && (
+          <VideoDetailModal
+            videoId={selectedVideo.id}
+            fileUrl={selectedVideo.fileUrl}
+            initialTitle={selectedVideo.title}
+            onClose={() => setSelectedVideo(null)}
+            onDelete={async () => {
+              await deleteVideo(selectedVideo.id);
+              router.refresh();
+            }}
+          />
+        )}
       </div>
       <UploadModal
         isOpen={isUploadOpen}
@@ -466,91 +318,6 @@ export function VideoGallery({
         }}
       />
 
-      <Dialog
-        isOpen={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        title="Delete Video"
-        maxWidth={440}
-      >
-        <DialogBody>
-          <p
-            style={{
-              fontSize: 14,
-              color: "rgba(255,255,255,0.65)",
-              marginBottom: 20,
-              lineHeight: 1.6,
-            }}
-          >
-            Are you sure you want to delete{" "}
-            <span style={{ color: "#fff", fontWeight: 600 }}>
-              {deleteTarget?.title}
-            </span>
-            ? This action cannot be undone.
-          </p>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <Button
-              variant="ghost"
-              colorScheme="cyan"
-              size="sm"
-              onClick={() => setDeleteTarget(null)}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="solid"
-              colorScheme="pink"
-              size="sm"
-              loading={isPending}
-              onClick={() => {
-                if (!deleteTarget) return;
-                startTransition(async () => {
-                  await deleteVideo(deleteTarget.id);
-                  setDeleteTarget(null);
-                  router.refresh();
-                });
-              }}
-            >
-              <LuTrash2 size={13} />
-              Delete
-            </Button>
-          </div>
-        </DialogBody>
-      </Dialog>
-    </>
-  );
-}
-
-function MetaRow({
-  icon,
-  label,
-  children,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
-          color: "rgba(255,255,255,0.35)",
-          fontSize: 11,
-          fontWeight: 600,
-          textTransform: "uppercase",
-          letterSpacing: "0.06em",
-          marginBottom: 4,
-        }}
-      >
-        {icon}
-        {label}
-      </div>
-      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>
-        {children}
-      </div>
     </>
   );
 }

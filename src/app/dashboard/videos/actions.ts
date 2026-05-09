@@ -10,4 +10,5 @@ export async function deleteVideo(id: string) {
 
   await softDeleteVideo(id);
   revalidatePath("/dashboard/videos");
+  revalidatePath("/dashboard/trainees", "layout");
 }

@@ -26,296 +26,233 @@ async function seed() {
       RESTART IDENTITY CASCADE
     `);
 
-    const [admin, morgan, sam] = await tx
+    const [admin, ming] = await tx
       .insert(users)
       .values([
         { email: "kevin.a.cunanan@gmail.com", name: "Kevin Cunanan" },
-        { email: "morgan@trainer.local", name: "Morgan Jones" },
-        { email: "sam@trainer.local", name: "Sam Rivera" },
+        { email: "iming.shieh@gmail.com", name: "Iming Shieh" },
       ])
       .returning({ id: users.id });
 
     await tx.insert(userRoles).values([
       { userId: admin.id, role: "admin" },
-      { userId: morgan.id, role: "trainee" },
-      { userId: sam.id, role: "trainee" },
+      { userId: ming.id, role: "trainer_manager" },
     ]);
 
-    const planDate1 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const planDate2 = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-
-    // ── Morgan's workout plans ────────────────────────────────────────────
-    const [morganPlan1, morganPlan2] = await tx
+    const [plan] = await tx
       .insert(workoutPlans)
-      .values([
-        {
-          traineeId: morgan.id,
-          name: "Lower Body Power",
-          occurredAt: planDate1,
-          comment: "Focus on lower body power. Rest 3 min between squat sets.",
-          createdBy: admin.id,
-          updatedBy: admin.id,
-        },
-        {
-          traineeId: morgan.id,
-          name: "Upper Body Pull",
-          occurredAt: planDate2,
-          comment: "Upper body pull day. Control the negative on rows.",
-          createdBy: admin.id,
-          updatedBy: admin.id,
-        },
-      ])
+      .values({
+        traineeId: admin.id,
+        name: "Full Body Strength",
+        occurredAt: new Date("2026-04-01T09:00:00Z"),
+        comment: "Foundational strength program",
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      })
       .returning({ id: workoutPlans.id });
 
-    const [mP1Ex1, mP1Ex2, mP1Ex3, mP1Ex4] = await tx
+    const insertedExercises = await tx
       .insert(exercises)
       .values([
         {
-          workoutPlanId: morganPlan1.id,
-          name: "Back Squat",
+          workoutPlanId: plan.id,
+          name: "Barbell Back Squat",
           type: "reps",
           sets: 4,
-          reps: 6,
-          weightLbs: 185,
-          comment: "Bar on traps, squat to parallel or below.",
-          createdBy: admin.id,
-          updatedBy: admin.id,
-        },
-        {
-          workoutPlanId: morganPlan1.id,
-          name: "Romanian Deadlift",
-          type: "reps",
-          sets: 3,
-          reps: 10,
+          reps: 8,
           weightLbs: 135,
           createdBy: admin.id,
           updatedBy: admin.id,
         },
         {
-          workoutPlanId: morganPlan1.id,
-          name: "Barbell Row",
+          workoutPlanId: plan.id,
+          name: "Bench Press",
           type: "reps",
-          sets: 3,
+          sets: 4,
           reps: 8,
           weightLbs: 115,
           createdBy: admin.id,
           updatedBy: admin.id,
         },
         {
-          workoutPlanId: morganPlan1.id,
+          workoutPlanId: plan.id,
+          name: "Deadlift",
+          type: "reps",
+          sets: 3,
+          reps: 5,
+          weightLbs: 185,
+          createdBy: admin.id,
+          updatedBy: admin.id,
+        },
+        {
+          workoutPlanId: plan.id,
+          name: "Pull-Ups",
+          type: "reps",
+          sets: 3,
+          reps: 10,
+          createdBy: admin.id,
+          updatedBy: admin.id,
+        },
+        {
+          workoutPlanId: plan.id,
           name: "Plank Hold",
           type: "duration",
           sets: 3,
           durationSeconds: 60,
-          comment: "Full tension throughout. No sagging hips.",
           createdBy: admin.id,
           updatedBy: admin.id,
         },
       ])
       .returning({ id: exercises.id });
 
-    await tx.insert(exercises).values([
-      {
-        workoutPlanId: morganPlan2.id,
-        name: "Pull-Ups",
-        type: "reps",
-        sets: 4,
-        reps: 8,
-        comment: "Full range of motion — dead hang to chin over bar.",
-        createdBy: admin.id,
-        updatedBy: admin.id,
-      },
-      {
-        workoutPlanId: morganPlan2.id,
-        name: "Barbell Row",
-        type: "reps",
-        sets: 3,
-        reps: 10,
-        weightLbs: 105,
-        createdBy: admin.id,
-        updatedBy: admin.id,
-      },
-      {
-        workoutPlanId: morganPlan2.id,
-        name: "Face Pulls",
-        type: "reps",
-        sets: 3,
-        reps: 15,
-        weightLbs: 30,
-        createdBy: admin.id,
-        updatedBy: admin.id,
-      },
-    ]);
+    const [squat, bench, deadlift, pullUp, plank] = insertedExercises;
 
-    // ── Sam's workout plans ───────────────────────────────────────────────
-    const [samPlan1] = await tx
-      .insert(workoutPlans)
-      .values([
-        {
-          traineeId: sam.id,
-          name: "Push Day",
-          occurredAt: planDate2,
-          comment: "Push day — keep scapula retracted on press movements.",
-          createdBy: admin.id,
-          updatedBy: admin.id,
-        },
-      ])
-      .returning({ id: workoutPlans.id });
-
-    const [sP1Ex1, sP1Ex2, sP1Ex3] = await tx
-      .insert(exercises)
-      .values([
-        {
-          workoutPlanId: samPlan1.id,
-          name: "Bench Press",
-          type: "reps",
-          sets: 4,
-          reps: 5,
-          weightLbs: 155,
-          createdBy: admin.id,
-          updatedBy: admin.id,
-        },
-        {
-          workoutPlanId: samPlan1.id,
-          name: "Overhead Press",
-          type: "reps",
-          sets: 3,
-          reps: 8,
-          weightLbs: 95,
-          createdBy: admin.id,
-          updatedBy: admin.id,
-        },
-        {
-          workoutPlanId: samPlan1.id,
-          name: "Lateral Raise Hold",
-          type: "duration",
-          sets: 3,
-          durationSeconds: 30,
-          weightLbs: 10,
-          comment: "Raise to shoulder height, hold for duration.",
-          createdBy: admin.id,
-          updatedBy: admin.id,
-        },
-      ])
-      .returning({ id: exercises.id });
-
-    // ── Completed workouts (history) ──────────────────────────────────────
-    const [morganWorkout] = await tx
+    const [workout1, workout2] = await tx
       .insert(workouts)
-      .values({
-        traineeId: morgan.id,
-        workoutPlanId: morganPlan1.id,
-        durationSeconds: 3120, // 52 minutes
-        painRating: 2,
-        energyRating: 8,
-        comment: "Felt strong today. Hit all sets on squats at 185lbs.",
-        createdBy: morgan.id,
-        updatedBy: morgan.id,
-      })
+      .values([
+        {
+          traineeId: admin.id,
+          workoutPlanId: plan.id,
+          durationSeconds: 3600,
+          energyRating: 8,
+          painRating: 2,
+          comment: "Felt strong today, hit all sets.",
+          createdBy: admin.id,
+          updatedBy: admin.id,
+        },
+        {
+          traineeId: admin.id,
+          workoutPlanId: plan.id,
+          durationSeconds: 3300,
+          energyRating: 6,
+          painRating: 3,
+          comment: "A bit tired but pushed through.",
+          createdBy: admin.id,
+          updatedBy: admin.id,
+        },
+      ])
       .returning({ id: workouts.id });
 
     await tx.insert(workoutExercises).values([
       {
-        workoutId: morganWorkout.id,
-        exerciseId: mP1Ex1.id,
-        createdBy: morgan.id,
-        updatedBy: morgan.id,
+        workoutId: workout1.id,
+        exerciseId: squat.id,
         setsData: [
-          { reps: 6, weightLbs: 185, completed: true },
-          { reps: 6, weightLbs: 185, completed: true },
-          { reps: 6, weightLbs: 185, completed: true },
-          { reps: 5, weightLbs: 185, completed: true },
-        ],
-      },
-      {
-        workoutId: morganWorkout.id,
-        exerciseId: mP1Ex2.id,
-        createdBy: morgan.id,
-        updatedBy: morgan.id,
-        setsData: [
-          { reps: 10, weightLbs: 135, completed: true },
-          { reps: 10, weightLbs: 135, completed: true },
+          { reps: 8, weightLbs: 135, completed: true },
+          { reps: 8, weightLbs: 135, completed: true },
+          { reps: 8, weightLbs: 135, completed: true },
           { reps: 8, weightLbs: 135, completed: true },
         ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
       },
       {
-        workoutId: morganWorkout.id,
-        exerciseId: mP1Ex3.id,
-        createdBy: morgan.id,
-        updatedBy: morgan.id,
+        workoutId: workout1.id,
+        exerciseId: bench.id,
         setsData: [
           { reps: 8, weightLbs: 115, completed: true },
           { reps: 8, weightLbs: 115, completed: true },
-          { reps: 7, weightLbs: 115, completed: true },
+          { reps: 8, weightLbs: 115, completed: true },
+          { reps: 8, weightLbs: 115, completed: true },
         ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
       },
       {
-        workoutId: morganWorkout.id,
-        exerciseId: mP1Ex4.id,
-        createdBy: morgan.id,
-        updatedBy: morgan.id,
+        workoutId: workout1.id,
+        exerciseId: deadlift.id,
+        setsData: [
+          { reps: 5, weightLbs: 185, completed: true },
+          { reps: 5, weightLbs: 185, completed: true },
+          { reps: 5, weightLbs: 185, completed: true },
+        ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      },
+      {
+        workoutId: workout1.id,
+        exerciseId: pullUp.id,
+        setsData: [
+          { reps: 10, completed: true },
+          { reps: 9, completed: true },
+          { reps: 8, completed: true },
+        ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      },
+      {
+        workoutId: workout1.id,
+        exerciseId: plank.id,
         setsData: [
           { durationSeconds: 60, completed: true },
           { durationSeconds: 60, completed: true },
           { durationSeconds: 45, completed: true },
         ],
-      },
-    ]);
-
-    const [samWorkout] = await tx
-      .insert(workouts)
-      .values({
-        traineeId: sam.id,
-        workoutPlanId: samPlan1.id,
-        durationSeconds: 2700, // 45 minutes
-        painRating: 1,
-        energyRating: 9,
-        comment: "PR on bench today! Hit 155x5.",
-        createdBy: sam.id,
-        updatedBy: sam.id,
-      })
-      .returning({ id: workouts.id });
-
-    await tx.insert(workoutExercises).values([
-      {
-        workoutId: samWorkout.id,
-        exerciseId: sP1Ex1.id,
-        createdBy: sam.id,
-        updatedBy: sam.id,
-        setsData: [
-          { reps: 5, weightLbs: 155, completed: true },
-          { reps: 5, weightLbs: 155, completed: true },
-          { reps: 5, weightLbs: 155, completed: true },
-          { reps: 5, weightLbs: 155, completed: true },
-        ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
       },
       {
-        workoutId: samWorkout.id,
-        exerciseId: sP1Ex2.id,
-        createdBy: sam.id,
-        updatedBy: sam.id,
+        workoutId: workout2.id,
+        exerciseId: squat.id,
         setsData: [
-          { reps: 8, weightLbs: 95, completed: true },
-          { reps: 8, weightLbs: 95, completed: true },
-          { reps: 7, weightLbs: 95, completed: true },
+          { reps: 8, weightLbs: 135, completed: true },
+          { reps: 8, weightLbs: 135, completed: true },
+          { reps: 7, weightLbs: 135, completed: true },
+          { reps: 6, weightLbs: 135, completed: false },
         ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
       },
       {
-        workoutId: samWorkout.id,
-        exerciseId: sP1Ex3.id,
-        createdBy: sam.id,
-        updatedBy: sam.id,
+        workoutId: workout2.id,
+        exerciseId: bench.id,
         setsData: [
-          { durationSeconds: 30, weightLbs: 10, completed: true },
-          { durationSeconds: 30, weightLbs: 10, completed: true },
-          { durationSeconds: 25, weightLbs: 10, completed: true },
+          { reps: 8, weightLbs: 115, completed: true },
+          { reps: 8, weightLbs: 115, completed: true },
+          { reps: 6, weightLbs: 115, completed: true },
+          { reps: 5, weightLbs: 115, completed: false },
         ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      },
+      {
+        workoutId: workout2.id,
+        exerciseId: deadlift.id,
+        setsData: [
+          { reps: 5, weightLbs: 185, completed: true },
+          { reps: 5, weightLbs: 185, completed: true },
+          { reps: 4, weightLbs: 185, completed: true },
+        ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      },
+      {
+        workoutId: workout2.id,
+        exerciseId: pullUp.id,
+        setsData: [
+          { reps: 9, completed: true },
+          { reps: 8, completed: true },
+          { reps: 7, completed: true },
+        ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      },
+      {
+        workoutId: workout2.id,
+        exerciseId: plank.id,
+        setsData: [
+          { durationSeconds: 60, completed: true },
+          { durationSeconds: 50, completed: true },
+          { durationSeconds: 40, completed: false },
+        ],
+        createdBy: admin.id,
+        updatedBy: admin.id,
       },
     ]);
   });
 
   console.log(
-    "Seeded: 3 users (1 admin + 2 trainees), 3 roles, 2 trainer assignments, 3 workout plans (2 for Morgan, 1 for Sam), 10 exercises, 2 completed workouts.",
+    "Seeded: 2 users (1 admin + 1 trainer_manager), 1 workout plan (5 exercises) for Kevin, 2 completed workouts.",
   );
 }
 

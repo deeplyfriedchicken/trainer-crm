@@ -8,6 +8,9 @@ import {
 import { workoutPlans } from "@/db/schema";
 import { getRequestUser } from "@/lib/request-auth";
 
+// @query traineeId: string (required)
+// @invokes db.query.workoutPlans.findMany({ where: traineeId, with: exercises, orderBy: occurredAt desc })
+// @errors 400 traineeId required | 401 unauthorized
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -33,6 +36,9 @@ export async function GET(request: NextRequest) {
   return Response.json({ data: plans });
 }
 
+// @body { traineeId: string; name: string; occurredAt?: string (ISO 8601); comment?: string; exercises?: ExerciseInput[] }
+// @invokes createWorkoutPlan({ traineeId, name, occurredAt, comment, createdBy, exerciseInputs })
+// @errors 400 traineeId and name required | 401 unauthorized | 201 created
 export async function POST(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });

@@ -1,6 +1,8 @@
 import type { NextRequest } from "next/server";
 import { getMobileUser } from "@/lib/mobile-auth";
 
+// @invokes getMobileUser(request)
+// @errors 401 unauthorized
 export async function GET(request: NextRequest) {
   const user = await getMobileUser(request);
   if (!user) {

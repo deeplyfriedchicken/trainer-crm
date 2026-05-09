@@ -13,9 +13,17 @@ export type HttpMethod =
   | "OPTIONS"
   | "HEAD";
 
+export type MethodDoc = {
+  body?: string;
+  queryParams?: string;
+  invokes?: string;
+  errors?: string;
+};
+
 export type RouteDoc = {
   urlPath: string;
   methods: HttpMethod[];
+  methodDocs: Partial<Record<HttpMethod, MethodDoc>>;
   auth: RouteAuth;
   roles: string[];
   sourcePath: string;
@@ -81,6 +89,45 @@ export function detectRoles(source: string): string[] {
   return [...roles];
 }
 
+export function detectMethodDocs(
+  source: string,
+): Partial<Record<HttpMethod, MethodDoc>> {
+  const lines = source.split("\n");
+  const docs: Partial<Record<HttpMethod, MethodDoc>> = {};
+  const pending: Record<string, string> = {};
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    const annotationMatch = trimmed.match(/^\/\/\s*@([\w-]+)\s+(.+)$/);
+    if (annotationMatch) {
+      pending[annotationMatch[1]] = annotationMatch[2].trim();
+      continue;
+    }
+
+    if (trimmed === "") continue;
+
+    const handlerMatch = trimmed.match(
+      /^export\s+(?:async\s+)?(?:function|const)\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\b/,
+    );
+    if (handlerMatch) {
+      const method = handlerMatch[1] as HttpMethod;
+      const doc: MethodDoc = {};
+      if (pending.body) doc.body = pending.body;
+      if (pending.query) doc.queryParams = pending.query;
+      if (pending.invokes) doc.invokes = pending.invokes;
+      if (pending.errors) doc.errors = pending.errors;
+      if (Object.keys(doc).length > 0) docs[method] = doc;
+      for (const k of Object.keys(pending)) delete pending[k];
+      continue;
+    }
+
+    for (const k of Object.keys(pending)) delete pending[k];
+  }
+
+  return docs;
+}
+
 export function parseRouteFile(
   source: string,
   urlPath: string,
@@ -89,6 +136,7 @@ export function parseRouteFile(
   return {
     urlPath,
     methods: detectMethods(source),
+    methodDocs: detectMethodDocs(source),
     auth: detectAuth(source),
     roles: detectRoles(source),
     sourcePath,

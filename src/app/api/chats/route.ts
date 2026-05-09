@@ -2,6 +2,8 @@ import type { NextRequest } from "next/server";
 import { getOrCreateChat, listChatsForUser } from "@/db/queries/chats";
 import { getRequestUser } from "@/lib/request-auth";
 
+// @invokes listChatsForUser(user.id)
+// @errors 401 unauthorized
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -10,6 +12,9 @@ export async function GET(request: NextRequest) {
   return Response.json({ data });
 }
 
+// @body { traineeId: string }
+// @invokes getOrCreateChat(traineeId)
+// @errors 400 traineeId required | 401 unauthorized | 403 forbidden | 201 created or returned existing
 export async function POST(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });

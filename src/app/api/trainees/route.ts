@@ -3,6 +3,9 @@ import { createTrainee, listTrainees } from "@/db/queries/trainees";
 import { parsePagination } from "@/lib/pagination";
 import { getRequestUser } from "@/lib/request-auth";
 
+// @query limit?: number; offset?: number
+// @invokes listTrainees({ limit, offset })
+// @errors 401 unauthorized
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,6 +16,9 @@ export async function GET(request: NextRequest) {
   return Response.json({ data, pagination: { limit, offset } });
 }
 
+// @body { name: string; email: string }
+// @invokes createTrainee({ name, email })
+// @errors 400 name and email required | 401 unauthorized | 403 forbidden
 export async function POST(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });

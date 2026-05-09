@@ -58,6 +58,12 @@
   letter-spacing: -0.01em;
 }
 
+.titleAction {
+  margin-left: auto;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
 .closeBtn {
   width: 32px;
   height: 32px;

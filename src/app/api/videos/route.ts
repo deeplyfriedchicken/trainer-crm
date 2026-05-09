@@ -5,6 +5,9 @@ import { getApiUser } from "@/lib/api-auth";
 import { parsePagination } from "@/lib/pagination";
 import { getPresignedGetUrl } from "@/lib/s3";
 
+// @query limit?: number; offset?: number; uploaderId?: string; traineeId?: string; status?: "uploading"|"processing"|"ready"|"failed"; q?: string
+// @invokes listVideos({ limit, offset, uploaderId, traineeId, status, search })
+// @errors 400 invalid status value | 401 unauthorized
 export async function GET(request: NextRequest) {
   // TODO(auth): apply role-based filtering once auth lands.
   const user = await getApiUser(request);

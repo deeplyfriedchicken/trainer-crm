@@ -1,4 +1,8 @@
-import type { QueryFileDoc, RouteDoc } from "@/lib/docs/parsers";
+import type {
+  HttpMethod,
+  QueryFileDoc,
+  RouteDoc,
+} from "@/lib/docs/parsers";
 import { getDocsBundle } from "@/lib/docs/registry";
 
 export const dynamic = "force-dynamic";
@@ -10,17 +14,37 @@ const AUTH_LABEL: Record<RouteDoc["auth"], string> = {
   public: "public",
 };
 
+const METHOD_ORDER: HttpMethod[] = [
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+  "HEAD",
+  "OPTIONS",
+];
+
 function formatRoutes(routes: RouteDoc[]): string {
   const lines: string[] = [];
   for (const r of routes) {
-    const methods = r.methods.length > 0 ? r.methods.join(",") : "—";
     const auth = AUTH_LABEL[r.auth];
-    const roles = r.roles.length > 0 ? ` roles=${r.roles.join("|")}` : "";
-    lines.push(
-      `- ${methods.padEnd(12)} ${r.urlPath.padEnd(38)} auth=${auth}${roles}  (${r.sourcePath})`,
-    );
+    const roles = r.roles.length > 0 ? `  roles=${r.roles.join("|")}` : "";
+    for (const method of METHOD_ORDER) {
+      if (!r.methods.includes(method)) continue;
+      lines.push(
+        `${method.padEnd(7)} ${r.urlPath.padEnd(40)} auth=${auth}${roles}  (${r.sourcePath})`,
+      );
+      const mdoc = r.methodDocs[method];
+      if (mdoc) {
+        if (mdoc.queryParams) lines.push(`  Query:   ${mdoc.queryParams}`);
+        if (mdoc.body) lines.push(`  Body:    ${mdoc.body}`);
+        if (mdoc.invokes) lines.push(`  Invokes: ${mdoc.invokes}`);
+        if (mdoc.errors) lines.push(`  Errors:  ${mdoc.errors}`);
+      }
+      lines.push("");
+    }
   }
-  return lines.join("\n");
+  return lines.join("\n").trimEnd();
 }
 
 function formatQueries(queries: QueryFileDoc[]): string {
@@ -46,8 +70,13 @@ A rendered version is at /docs/api.
 Conventions:
 - All API paths are rooted at /api/.
 - Path segments like ":id" are dynamic (Next.js [id]).
-- Auth values: session/bearer = cookie session OR Bearer JWT;
+- Auth values: session/bearer = cookie session OR Bearer token (Authorization: Bearer <token>);
   bearer = mobile Bearer-only; sns-signature = AWS SNS-signed; public = no auth.
+- Each route entry lists Query (GET params), Body (JSON request body), Invokes (DB helpers), Errors (status codes).
+- Errors field uses pipe-separated entries: "STATUS description | STATUS description".
+  204/201/202 entries in Errors mean the method returns that success code (not an error).
+- ExerciseInput type: { name: string; type: "reps"|"duration"; sets: number; reps?: number | null;
+  durationSeconds?: number | null; weightLbs?: number | null; comment?: string | null; videoIds?: string[] }
 
 ## API routes
 

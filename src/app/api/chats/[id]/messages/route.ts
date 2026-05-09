@@ -19,6 +19,8 @@ async function resolveChat(
   return isTrainee || isPrivileged ? chat : null;
 }
 
+// @invokes getChatById(id), getChatMessages(id)
+// @errors 401 unauthorized | 404 chat not found or access denied
 export async function GET(
   request: NextRequest,
   ctx: RouteContext<"/api/chats/[id]/messages">,
@@ -34,6 +36,9 @@ export async function GET(
   return Response.json({ data });
 }
 
+// @body { text: string }
+// @invokes getChatById(id), createMessage(id, user.id, {text})
+// @errors 400 text required | 401 unauthorized | 404 chat not found or access denied | 201 created
 export async function POST(
   request: NextRequest,
   ctx: RouteContext<"/api/chats/[id]/messages">,

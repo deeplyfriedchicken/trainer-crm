@@ -7,6 +7,9 @@ import { videos } from "@/db/schema";
 import { getApiUser } from "@/lib/api-auth";
 import { S3_BASE_URL, S3_BUCKET, s3 } from "@/lib/s3";
 
+// @body { fileName: string; mimeType: string; fileSizeBytes: number; traineeId?: string }
+// @invokes db.insert(videos), getSignedUrl(PutObjectCommand)
+// @errors 400 only video/* mimeType allowed | 401 unauthorized
 export async function POST(request: NextRequest) {
   const user = await getApiUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });

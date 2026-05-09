@@ -8,6 +8,8 @@ import {
 import { exercises, workoutPlans } from "@/db/schema";
 import { getRequestUser } from "@/lib/request-auth";
 
+// @invokes db.query.workoutPlans.findFirst({ with: exercises })
+// @errors 401 unauthorized | 404 plan not found
 export async function GET(
   request: NextRequest,
   ctx: RouteContext<"/api/workout-plans/[id]">,
@@ -30,6 +32,9 @@ export async function GET(
   return Response.json({ data: plan });
 }
 
+// @body { name: string; occurredAt?: string (ISO 8601); comment?: string; exercises?: ExerciseInput[] }
+// @invokes updateWorkoutPlan({ planId, name, occurredAt, comment, updatedBy, exerciseInputs })
+// @errors 400 name required | 401 unauthorized | 404 plan not found
 export async function PATCH(
   request: NextRequest,
   ctx: RouteContext<"/api/workout-plans/[id]">,
@@ -70,6 +75,8 @@ export async function PATCH(
   return Response.json({ data: plan });
 }
 
+// @invokes db.transaction(delete exercises WHERE workout_plan_id, delete workoutPlans WHERE id)
+// @errors 401 unauthorized | 204 no content
 export async function DELETE(
   request: NextRequest,
   ctx: RouteContext<"/api/workout-plans/[id]">,

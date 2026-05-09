@@ -16,6 +16,9 @@ function validateMessage(body: Record<string, unknown>): Promise<void> {
   });
 }
 
+// @body SNS notification envelope (SubscriptionConfirmation | Notification with MediaConvert event)
+// @invokes updateVideo(videoId, { status: "ready"|"failed" })
+// @errors 200 always (SNS requires 200 even on validation failure)
 export async function POST(request: NextRequest) {
   let body: Record<string, unknown>;
   try {

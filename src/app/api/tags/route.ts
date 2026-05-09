@@ -2,6 +2,8 @@ import type { NextRequest } from "next/server";
 import { listTags, upsertTag } from "@/db/queries/tags";
 import { getApiUser } from "@/lib/api-auth";
 
+// @invokes listTags()
+// @errors 401 unauthorized
 export async function GET(request: Request) {
   const user = await getApiUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -9,6 +11,9 @@ export async function GET(request: Request) {
   return Response.json({ data });
 }
 
+// @body { name: string }
+// @invokes upsertTag(name)
+// @errors 400 name required | 401 unauthorized | 201 created or returned existing
 export async function POST(request: NextRequest) {
   const user = await getApiUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });

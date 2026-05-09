@@ -86,17 +86,22 @@ export async function getVideoById(id: string) {
     where: eq(videos.id, id),
     with: {
       uploader: { columns: { id: true, name: true, email: true } },
+      trainee: { columns: { id: true, name: true } },
+      videoTags: { with: { tag: { columns: { id: true, name: true } } } },
       workoutPlanLinks: {
         with: {
           workoutPlan: {
-            columns: { id: true, traineeId: true, occurredAt: true },
+            columns: { id: true, name: true, traineeId: true },
           },
         },
       },
       exerciseLinks: {
         with: {
           exercise: {
-            columns: { id: true, workoutPlanId: true, name: true },
+            columns: { id: true, name: true, workoutPlanId: true },
+            with: {
+              workoutPlan: { columns: { id: true, name: true } },
+            },
           },
         },
       },

@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server";
 import { setVideoTags } from "@/db/queries/tags";
-import { getVideoById, updateVideo } from "@/db/queries/videos";
+import { getVideoById, softDeleteVideo, updateVideo } from "@/db/queries/videos";
 import { getApiUser } from "@/lib/api-auth";
+import { getRequestUser } from "@/lib/request-auth";
 import {
   getProcessedKey,
   getProcessedUrl,
@@ -9,11 +10,13 @@ import {
 } from "@/lib/mediaconvert";
 import { getPresignedGetUrl } from "@/lib/s3";
 
+// @invokes getVideoById(id), getPresignedGetUrl(video.fileKey, 3600)
+// @errors 401 unauthorized | 404 video not found
 export async function GET(
   request: NextRequest,
   ctx: RouteContext<"/api/videos/[id]">,
 ) {
-  const user = await getApiUser(request);
+  const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
 
@@ -26,6 +29,9 @@ export async function GET(
   });
 }
 
+// @body { title?: string; description?: string; traineeId?: string | null; tagIds?: string[] }
+// @invokes updateVideo(id, input), setVideoTags(id, tagIds), submitTranscodeJob(id, fileKey)
+// @errors 401 unauthorized | 404 video not found | 409 video not in uploading state | 202 transcoding submitted (production) | 200 ready immediately (SKIP_TRANSCODING)
 export async function PATCH(
   request: NextRequest,
   ctx: RouteContext<"/api/videos/[id]">,
@@ -84,4 +90,19 @@ export async function PATCH(
   await submitTranscodeJob(id, video.fileKey);
 
   return Response.json({ data: updated }, { status: 202 });
+}
+
+// @invokes softDeleteVideo(id)
+// @errors 401 unauthorized | 404 video not found | 204 no content
+export async function DELETE(
+  request: NextRequest,
+  ctx: RouteContext<"/api/videos/[id]">,
+) {
+  const user = await getApiUser(request);
+  if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const { id } = await ctx.params;
+
+  const video = await softDeleteVideo(id);
+  if (!video) return Response.json({ error: "Video not found" }, { status: 404 });
+  return new Response(null, { status: 204 });
 }

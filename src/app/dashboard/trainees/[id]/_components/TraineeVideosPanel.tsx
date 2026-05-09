@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import { Dialog } from "@/app/components/Dialog";
+import { deleteVideo } from "@/app/dashboard/videos/actions";
+import { VideoDetailModal } from "@/app/dashboard/_components/VideoDetailModal";
 
 export type TraineeVideoEntry = {
   id: string;
@@ -176,6 +178,7 @@ export function TraineeVideosPanel({
   videos: TraineeVideoEntry[];
   accentColor: string;
 }) {
+  const router = useRouter();
   const [selected, setSelected] = useState<TraineeVideoEntry | null>(null);
 
   if (videos.length === 0) return null;
@@ -227,33 +230,16 @@ export function TraineeVideosPanel({
       </div>
 
       {selected && (
-        <Dialog
-          isOpen
+        <VideoDetailModal
+          videoId={selected.id}
+          fileUrl={selected.url}
+          initialTitle={selected.title}
           onClose={() => setSelected(null)}
-          title={selected.title}
-          maxWidth={900}
-        >
-          <video
-            key={selected.id}
-            src={selected.url}
-            controls
-            autoPlay
-            style={{
-              width: "100%",
-              display: "block",
-              maxHeight: "60vh",
-              background: "#000",
-            }}
-          >
-            <track
-              kind="captions"
-              srcLang="en"
-              label="English"
-              src="data:text/vtt;charset=utf-8,WEBVTT"
-              default
-            />
-          </video>
-        </Dialog>
+          onDelete={async () => {
+            await deleteVideo(selected.id);
+            router.refresh();
+          }}
+        />
       )}
     </>
   );

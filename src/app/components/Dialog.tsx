@@ -23,12 +23,14 @@ export function Dialog({
   isOpen,
   onClose,
   title,
+  titleAction,
   maxWidth = 740,
   children,
 }: {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  titleAction?: ReactNode;
   maxWidth?: number;
   children: ReactNode;
 }) {
@@ -81,6 +83,7 @@ export function Dialog({
             <div id="dialog-title" className={styles.title}>
               {title}
             </div>
+            {titleAction && <div className={styles.titleAction}>{titleAction}</div>}
             <button
               type="button"
               className={styles.closeBtn}

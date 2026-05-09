@@ -6,6 +6,8 @@ import {
 } from "@/db/queries/trainees";
 import { getRequestUser } from "@/lib/request-auth";
 
+// @invokes getTraineeById(id)
+// @errors 401 unauthorized | 404 trainee not found
 export async function GET(
   request: NextRequest,
   ctx: RouteContext<"/api/trainees/[id]">,
@@ -20,6 +22,9 @@ export async function GET(
   return Response.json({ data: trainee });
 }
 
+// @body { name?: string; email?: string }
+// @invokes updateTrainee(id, { name, email })
+// @errors 401 unauthorized | 404 trainee not found
 export async function PATCH(
   request: NextRequest,
   ctx: RouteContext<"/api/trainees/[id]">,
@@ -35,6 +40,8 @@ export async function PATCH(
   return Response.json({ data: updated });
 }
 
+// @invokes deleteTrainee(id)
+// @errors 401 unauthorized | 403 forbidden | 204 no content
 export async function DELETE(
   request: NextRequest,
   ctx: RouteContext<"/api/trainees/[id]">,

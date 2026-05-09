@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { getOrCreateChat } from "@/db/queries/chats";
 import { getTraineeById } from "@/db/queries/trainees";
 import { getCurrentUser } from "@/lib/auth";
-import { encryptUserId } from "@/lib/client-token";
 import { getPresignedGetUrl } from "@/lib/s3";
 import { BackLink } from "./_components/BackLink";
 import { ClientPortalLink } from "./_components/ClientPortalLink";
@@ -63,7 +62,6 @@ export default async function TraineePage({
   const chat = await getOrCreateChat(trainee.id);
 
   const accentColor = colorFor(trainee.name);
-  const clientToken = encryptUserId(trainee.id);
   const memberSince = trainee.createdAt.toLocaleDateString("en-US", {
     month: "short",
     year: "numeric",
@@ -132,7 +130,7 @@ export default async function TraineePage({
         <BackLink href="/dashboard">Back to Dashboard</BackLink>
         <div style={{ display: "flex", gap: 8 }}>
           <ResetPinButton traineeId={trainee.id} />
-          <ClientPortalLink encryptedToken={clientToken} />
+          <ClientPortalLink traineeId={trainee.id} />
         </div>
       </div>
 

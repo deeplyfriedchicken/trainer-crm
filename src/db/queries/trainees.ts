@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { and, asc, count, desc, eq, isNull, max } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNull, max } from "drizzle-orm";
 import { db } from "@/db";
 import { userRoles, users, videos, workoutPlans } from "@/db/schema";
 
@@ -36,6 +36,9 @@ export async function listTrainees(options: ListTraineesOptions) {
     .offset(options.offset);
 }
 
+const activeVideoIds = () =>
+  db.select({ id: videos.id }).from(videos).where(isNull(videos.deletedAt));
+
 export async function getTraineeById(id: string) {
   const user = await db.query.users.findFirst({
     where: and(eq(users.id, id), isNull(users.deletedAt)),
@@ -45,6 +48,7 @@ export async function getTraineeById(id: string) {
         orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
           videoLinks: {
+            where: (vl) => inArray(vl.videoId, activeVideoIds()),
             with: {
               video: {
                 columns: {
@@ -61,6 +65,7 @@ export async function getTraineeById(id: string) {
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
             with: {
               videoLinks: {
+                where: (vl) => inArray(vl.videoId, activeVideoIds()),
                 with: {
                   video: {
                     columns: {
@@ -69,7 +74,6 @@ export async function getTraineeById(id: string) {
                       fileKey: true,
                       fileUrl: true,
                       durationSeconds: true,
-                      deletedAt: true,
                     },
                   },
                 },
@@ -83,6 +87,7 @@ export async function getTraineeById(id: string) {
         with: {
           workoutPlan: { columns: { id: true, name: true, occurredAt: true } },
           videoLinks: {
+            where: (vl) => inArray(vl.videoId, activeVideoIds()),
             with: {
               video: {
                 columns: {
@@ -137,13 +142,7 @@ export async function getTraineeById(id: string) {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     directVideos,
-    workoutPlans: user.workoutPlans.map((wp) => ({
-      ...wp,
-      exercises: wp.exercises.map((ex) => ({
-        ...ex,
-        videoLinks: ex.videoLinks.filter((l) => !l.video?.deletedAt),
-      })),
-    })),
+    workoutPlans: user.workoutPlans,
     workouts: user.workouts,
   };
 }

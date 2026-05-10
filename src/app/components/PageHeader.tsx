@@ -30,8 +30,7 @@ function PageHeaderComponent({
       <Box>
         <Text
           display="block"
-          fontFamily="var(--font-neon-display), sans-serif"
-          fontSize="26px"
+          variant="display-3xl"
           fontWeight={800}
           letterSpacing="-0.02em"
           color="var(--neon-text)"

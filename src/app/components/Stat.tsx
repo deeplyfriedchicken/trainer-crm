@@ -35,17 +35,11 @@ function StatBase({
       fontFamily="var(--font-neon-body), sans-serif"
       {...rest}
     >
-      <Text
-        fontSize="11px"
-        textTransform="uppercase"
-        letterSpacing="0.08em"
-        color="var(--neon-text-muted)"
-      >
+      <Text variant="label" color="var(--neon-text-muted)">
         {label}
       </Text>
       <Text
-        fontFamily="var(--font-neon-display), sans-serif"
-        fontSize="28px"
+        variant="display-3xl"
         fontWeight={800}
         color={color}
         letterSpacing="-0.02em"
@@ -55,7 +49,7 @@ function StatBase({
       </Text>
       {helpText && (
         <Text
-          fontSize="11px"
+          variant="body-xs"
           display="inline-flex"
           alignItems="center"
           gap="4px"

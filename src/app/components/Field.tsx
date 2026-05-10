@@ -51,7 +51,7 @@ function FieldBase({
       {children}
       {helperText && !invalid && (
         <ChakraField.HelperText
-          fontSize="11px"
+          fontSize="12px"
           color="var(--neon-text-dim)"
           fontFamily="var(--font-neon-body), sans-serif"
         >
@@ -60,7 +60,7 @@ function FieldBase({
       )}
       {invalid && errorText && (
         <ChakraField.ErrorText
-          fontSize="11px"
+          fontSize="12px"
           color="#ff5472"
           fontFamily="var(--font-neon-body), sans-serif"
         >

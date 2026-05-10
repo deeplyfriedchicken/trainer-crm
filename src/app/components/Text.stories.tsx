@@ -10,8 +10,8 @@ const meta: Meta<typeof Text> = {
     variant: {
       control: "select",
       options: [
-        "display-7xl", "display-6xl", "display-5xl", "display-4xl", "display-3xl", "display-2xl",
-        "body-lg", "body-md", "body-sm", "body-xs",
+        "display-7xl", "display-6xl", "display-5xl", "display-4xl", "display-3xl", "display-2xl", "display-xl",
+        "body-lg", "body-md", "body-sm", "body-xs", "body-3xs", "label",
         "mono-lg", "mono-md", "mono-sm",
       ] satisfies TextVariant[],
     },
@@ -34,6 +34,7 @@ export const DisplayScale: Story = {
       <Text variant="display-4xl">Display 4XL</Text>
       <Text variant="display-3xl">Display 3XL</Text>
       <Text variant="display-2xl">Display 2XL</Text>
+      <Text variant="display-xl">Display XL</Text>
     </VStack>
   ),
 };
@@ -45,6 +46,8 @@ export const BodyScale: Story = {
       <Text variant="body-md">Body Medium — The quick brown fox jumps over the lazy dog.</Text>
       <Text variant="body-sm">Body Small — The quick brown fox jumps over the lazy dog.</Text>
       <Text variant="body-xs">Body XS — The quick brown fox jumps over the lazy dog.</Text>
+      <Text variant="body-3xs">Body 3XS — The quick brown fox jumps over the lazy dog.</Text>
+      <Text variant="label">Label — Section Title</Text>
     </VStack>
   ),
 };

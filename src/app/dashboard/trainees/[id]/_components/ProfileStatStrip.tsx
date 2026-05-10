@@ -37,8 +37,8 @@ export function ProfileStatStrip({ stats }: { stats: StatEntry[] }) {
             {s.value}
           </Text>
           <Text
+            variant="body-3xs"
             display="block"
-            fontSize="10px"
             color="rgba(255,255,255,0.35)"
             textTransform="uppercase"
             letterSpacing="0.1em"

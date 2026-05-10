@@ -75,9 +75,7 @@ export function TrainerCard({
 
       {/* Name / email */}
       <Text
-        fontFamily="var(--font-neon-display), sans-serif"
-        fontSize="16px"
-        fontWeight={700}
+        variant="display-xl"
         color="var(--neon-text)"
         mb="4px"
         display="block"
@@ -106,15 +104,15 @@ export function TrainerCard({
         {[{ label: "Videos", value: videoCount }].map(({ label, value }) => (
           <Box key={label} textAlign="center">
             <Text
-              fontFamily="var(--font-neon-display), sans-serif"
-              fontSize="22px"
+              variant="display-3xl"
               fontWeight={800}
+              fontSize="22px"
               color={color}
               display="block"
             >
               {value}
             </Text>
-            <Text fontSize="11px" color="var(--neon-text-dim)" display="block">
+            <Text variant="body-xs" color="var(--neon-text-dim)" display="block">
               {label}
             </Text>
           </Box>

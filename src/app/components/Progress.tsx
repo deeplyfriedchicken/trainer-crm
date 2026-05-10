@@ -57,7 +57,7 @@ function ProgressBase({
           )}
           {showValueText && !indeterminate && (
             <ChakraProgress.ValueText
-              fontSize="11px"
+              fontSize="12px"
               color={color}
               fontFamily="var(--font-neon-mono), monospace"
             />

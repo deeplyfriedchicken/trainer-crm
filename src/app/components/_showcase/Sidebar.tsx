@@ -100,7 +100,7 @@ export function Sidebar() {
         >
           Neon UI
         </Text>
-        <Text as="p" fontSize="11px" color="rgba(255,255,255,0.27)" mt="3px">
+        <Text as="p" variant="body-xs" color="rgba(255,255,255,0.27)" mt="3px">
           Component Library v1.0
         </Text>
       </Box>
@@ -108,8 +108,8 @@ export function Sidebar() {
       {groups.map((group) => (
         <Box key={group.title}>
           <Text
+            variant="body-3xs"
             display="block"
-            fontSize="10px"
             fontWeight={700}
             textTransform="uppercase"
             letterSpacing="0.12em"

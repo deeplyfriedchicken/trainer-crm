@@ -946,6 +946,7 @@ const DISPLAY_VARIANTS: TextVariant[] = [
   "display-4xl",
   "display-3xl",
   "display-2xl",
+  "display-xl",
 ];
 
 const BODY_VARIANTS: TextVariant[] = [
@@ -953,6 +954,8 @@ const BODY_VARIANTS: TextVariant[] = [
   "body-md",
   "body-sm",
   "body-xs",
+  "body-3xs",
+  "label",
 ];
 
 const MONO_VARIANTS: TextVariant[] = ["mono-lg", "mono-md", "mono-sm"];

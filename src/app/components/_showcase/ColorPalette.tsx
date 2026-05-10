@@ -82,18 +82,16 @@ function Swatch({ name, hex }: { name: string; hex: string }) {
     >
       <Text
         display="block"
-        fontSize="11px"
+        variant="mono-sm"
         fontWeight={700}
-        fontFamily="var(--font-neon-mono), monospace"
         color={textColor}
       >
         {name}
       </Text>
       <Text
         display="block"
-        fontSize="10px"
+        variant="mono-sm"
         opacity={0.7}
-        fontFamily="var(--font-neon-mono), monospace"
         color={textColor}
       >
         {hex}
@@ -138,14 +136,11 @@ export function ColorPalette() {
                   <Text
                     as="th"
                     key={h}
+                    variant="label"
                     p="12px 16px"
                     textAlign="left"
-                    fontSize="11px"
-                    textTransform="uppercase"
-                    letterSpacing="0.08em"
                     color="var(--neon-text-muted)"
                     borderBottom="1px solid var(--neon-border)"
-                    fontWeight={600}
                   >
                     {h}
                   </Text>
@@ -178,8 +173,7 @@ export function ColorPalette() {
                         flexShrink={0}
                       />
                       <Text
-                        fontFamily="var(--font-neon-mono), monospace"
-                        fontSize="11px"
+                        variant="mono-sm"
                         color="rgba(255,255,255,0.55)"
                       >
                         {t.value}
@@ -216,9 +210,9 @@ export function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <Text
       as="h2"
-      fontFamily="var(--font-neon-display), sans-serif"
-      fontSize="28px"
+      variant="display-3xl"
       fontWeight={800}
+      fontSize="28px"
       mb="36px"
       letterSpacing="-0.02em"
       style={{

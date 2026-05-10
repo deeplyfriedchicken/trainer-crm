@@ -162,7 +162,11 @@ body::after {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
   padding: 2px;
   flex-shrink: 0;
 }
@@ -295,12 +299,22 @@ body::after {
   flex: 1;
 }
 .ex-tag {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 20px;
   background: rgba(52, 253, 254, 0.1);
   color: var(--color-secondary);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+.ex-weight {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: rgba(52, 253, 254, 0.1);
+  color: var(--color-tertiary);
   white-space: nowrap;
   font-family: var(--font-mono);
 }

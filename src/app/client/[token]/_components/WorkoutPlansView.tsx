@@ -64,6 +64,9 @@ function PlanCard({ plan, token }: { plan: Plan; token: string }) {
                   ? `${ex.sets}×${ex.durationSeconds}s`
                   : `${ex.sets}×${ex.reps}`}
               </span>
+              {ex.weightLbs && (
+                <span className="ex-weight">@ {ex.weightLbs}lbs</span>
+              )}
               <span className="ex-arrow">
                 <LuChevronRight size={14} />
               </span>

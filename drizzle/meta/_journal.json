@@ -64,6 +64,13 @@
       "when": 1778256000000,
       "tag": "0008_collapse_chats_per_trainee",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1778437325987,
+      "tag": "0009_common_winter_soldier",
+      "breakpoints": true
     }
   ]
 }

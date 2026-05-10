@@ -162,6 +162,7 @@ function ExerciseCard({
       <div className={styles.threeCol}>
         <div>
           <label
+            htmlFor={`exercise-${idx}-name`}
             className={`${styles.fieldLabel}${exErrors?.name ? ` ${styles.fieldLabelError}` : ""}`}
           >
             Name
@@ -173,14 +174,18 @@ function ExerciseCard({
             )}
           </label>
           <input
+            id={`exercise-${idx}-name`}
             {...register(`exercises.${idx}.name`)}
             placeholder="e.g. Squat"
             className={`${styles.input}${exErrors?.name ? ` ${styles.inputError}` : ""}`}
           />
         </div>
         <div>
-          <label className={styles.fieldLabel}>Sets</label>
+          <label htmlFor={`exercise-${idx}-sets`} className={styles.fieldLabel}>
+            Sets
+          </label>
           <input
+            id={`exercise-${idx}-sets`}
             type="number"
             min={1}
             {...register(`exercises.${idx}.sets`, {
@@ -193,8 +198,14 @@ function ExerciseCard({
         <div>
           {type === "reps" ? (
             <>
-              <label className={styles.fieldLabel}>Reps</label>
+              <label
+                htmlFor={`exercise-${idx}-reps`}
+                className={styles.fieldLabel}
+              >
+                Reps
+              </label>
               <input
+                id={`exercise-${idx}-reps`}
                 type="number"
                 min={1}
                 {...register(`exercises.${idx}.reps`, {
@@ -206,8 +217,14 @@ function ExerciseCard({
             </>
           ) : (
             <>
-              <label className={styles.fieldLabel}>Duration (sec)</label>
+              <label
+                htmlFor={`exercise-${idx}-duration`}
+                className={styles.fieldLabel}
+              >
+                Duration (sec)
+              </label>
               <input
+                id={`exercise-${idx}-duration`}
                 type="number"
                 min={1}
                 {...register(`exercises.${idx}.durationSeconds`, {
@@ -223,8 +240,11 @@ function ExerciseCard({
 
       {/* Weight (optional) */}
       <div style={{ marginBottom: 12 }}>
-        <label className={styles.fieldLabel}>Weight, lbs (optional)</label>
+        <label htmlFor={`exercise-${idx}-weight`} className={styles.fieldLabel}>
+          Weight, lbs (optional)
+        </label>
         <input
+          id={`exercise-${idx}-weight`}
           type="number"
           min={0}
           step={2.5}
@@ -240,7 +260,12 @@ function ExerciseCard({
 
       {/* Linked videos */}
       <div style={{ marginBottom: 10 }}>
-        <label className={styles.fieldLabel}>Videos (optional)</label>
+        <label
+          htmlFor={`exercise-${idx}-link-video`}
+          className={styles.fieldLabel}
+        >
+          Videos (optional)
+        </label>
         {linkedVideos.length > 0 && (
           <div className={styles.videoChips}>
             {linkedVideos.map((vid) => (
@@ -259,6 +284,7 @@ function ExerciseCard({
           </div>
         )}
         <button
+          id={`exercise-${idx}-link-video`}
           type="button"
           className={styles.linkVideoBtn}
           onClick={onPickVideo}
@@ -270,8 +296,11 @@ function ExerciseCard({
 
       {/* Exercise notes */}
       <div>
-        <label className={styles.fieldLabel}>Notes (optional)</label>
+        <label htmlFor={`exercise-${idx}-notes`} className={styles.fieldLabel}>
+          Notes (optional)
+        </label>
         <textarea
+          id={`exercise-${idx}-notes`}
           {...register(`exercises.${idx}.comment`)}
           rows={2}
           placeholder="Cues, modifications, notes for this exercise…"
@@ -459,6 +488,7 @@ export function SessionFormModal({
               <div className={styles.twoCol}>
                 <div>
                   <label
+                    htmlFor="session-plan-name"
                     className={`${styles.fieldLabel}${errors.name ? ` ${styles.fieldLabelError}` : ""}`}
                   >
                     Plan Name
@@ -470,6 +500,7 @@ export function SessionFormModal({
                     )}
                   </label>
                   <input
+                    id="session-plan-name"
                     {...register("name")}
                     placeholder="e.g. Lower Body Power"
                     className={`${styles.input}${errors.name ? ` ${styles.inputError}` : ""}`}
@@ -477,6 +508,7 @@ export function SessionFormModal({
                 </div>
                 <div>
                   <label
+                    htmlFor="session-plan-date"
                     className={`${styles.fieldLabel}${errors.occurredAt ? ` ${styles.fieldLabelError}` : ""}`}
                   >
                     Date
@@ -488,6 +520,7 @@ export function SessionFormModal({
                     )}
                   </label>
                   <input
+                    id="session-plan-date"
                     type="date"
                     {...register("occurredAt")}
                     className={`${styles.input}${errors.occurredAt ? ` ${styles.inputError}` : ""}`}
@@ -497,8 +530,14 @@ export function SessionFormModal({
               </div>
 
               <div style={{ marginTop: 12 }}>
-                <label className={styles.fieldLabel}>Notes (optional)</label>
+                <label
+                  htmlFor="session-plan-notes"
+                  className={styles.fieldLabel}
+                >
+                  Notes (optional)
+                </label>
                 <textarea
+                  id="session-plan-notes"
                   {...register("comment")}
                   rows={3}
                   placeholder="Trainer notes, focus areas, instructions…"

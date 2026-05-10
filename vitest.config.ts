@@ -14,8 +14,18 @@ export default defineConfig({
     projects: [{
       extends: true,
       test: {
+        name: "unit",
         environment: "node",
-        include: ["src/__tests__/**/*.test.ts"]
+        include: ["src/__tests__/routes/**/*.test.ts"]
+      }
+    }, {
+      extends: true,
+      test: {
+        name: "integration",
+        environment: "node",
+        include: ["src/__tests__/integration/**/*.test.ts"],
+        globalSetup: ["src/__tests__/setup/db.ts"],
+        testTimeout: 30000,
       }
     }, {
       extends: true,

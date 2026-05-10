@@ -1,6 +1,7 @@
 import { Box, Stack } from "@chakra-ui/react";
 import { Card, CardBody, CardHeader, CardTitle } from "@/app/components/Card";
 import { PageHeader } from "@/app/components/PageHeader";
+import { Text } from "@/app/components/Text";
 import { getDocsBundle } from "@/lib/docs/registry";
 import { RoutesTable } from "./_components/RoutesTable";
 
@@ -52,22 +53,22 @@ export default async function DocsApiPage() {
             <Stack gap="20px">
               {queries.map((qf) => (
                 <Box key={qf.file}>
-                  <Box
-                    fontFamily="var(--font-neon-mono), monospace"
-                    fontSize="12px"
+                  <Text
+                    variant="mono-sm"
                     color="var(--neon-text-muted)"
+                    display="block"
                     mb="6px"
                   >
                     {qf.file}
-                  </Box>
-                  <Box
+                  </Text>
+                  <Text
+                    variant="mono-sm"
                     as="pre"
+                    display="block"
                     p="12px 14px"
                     bg="var(--neon-surface-2)"
                     border="1px solid var(--neon-border)"
                     borderRadius="8px"
-                    fontFamily="var(--font-neon-mono), monospace"
-                    fontSize="12px"
                     lineHeight="1.6"
                     color="var(--neon-text)"
                     overflowX="auto"
@@ -78,7 +79,7 @@ export default async function DocsApiPage() {
                         (fn) => `${fn.isAsync ? "async " : ""}${fn.signature}`,
                       )
                       .join("\n")}
-                  </Box>
+                  </Text>
                 </Box>
               ))}
               {queries.length === 0 && (
@@ -93,21 +94,21 @@ export default async function DocsApiPage() {
             <CardTitle>Database schema</CardTitle>
           </CardHeader>
           <CardBody>
-            <Box
+            <Text
+              variant="mono-sm"
               as="pre"
+              display="block"
               p="16px 18px"
               bg="var(--neon-surface-2)"
               border="1px solid var(--neon-border)"
               borderRadius="8px"
-              fontFamily="var(--font-neon-mono), monospace"
-              fontSize="12px"
               lineHeight="1.55"
               color="var(--neon-text)"
               overflowX="auto"
               whiteSpace="pre"
             >
               {schemaMarkdown}
-            </Box>
+            </Text>
           </CardBody>
         </Card>
       </Stack>

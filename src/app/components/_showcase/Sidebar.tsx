@@ -23,6 +23,7 @@ const groups: NavGroup[] = [
   {
     title: "Components",
     items: [
+      { id: "text", label: "Text" },
       { id: "buttons", label: "Buttons" },
       { id: "forms", label: "Form Elements" },
       { id: "feedback", label: "Feedback" },

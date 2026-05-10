@@ -12,6 +12,7 @@ import {
   PageHeaderSection,
   SessionsPanelSection,
   TableSection,
+  TextSection,
 } from "./_showcase/sections";
 import { TypographyScale } from "./_showcase/TypographyScale";
 import { Toaster } from "./Toast";
@@ -24,6 +25,7 @@ export default function ComponentsShowcase() {
         <Hero />
         <ColorPalette />
         <TypographyScale />
+        <TextSection />
         <ButtonsSection />
         <FormsSection />
         <FeedbackSection />

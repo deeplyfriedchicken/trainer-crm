@@ -252,6 +252,19 @@ Indexes: `video_tags_tag_idx` on `tag_id`.
 
 # Component system
 
+## Storybook — check before building
+
+The project uses Storybook as the authoritative catalog of reusable UI components. Every component in `src/app/components/` has a corresponding `.stories.tsx` file. Run `pnpm build-storybook` to build the static docs, or `pnpm storybook` to start the live UI on port 6006.
+
+**Before writing any HTML, JSX, or new component, follow this workflow:**
+
+1. **Check Storybook first** — browse `src/app/components/*.stories.tsx` or the live Storybook UI to see if a component already covers your needs.
+2. **Use the existing component** — import it from `src/app/components/` and use it as documented in its story file.
+3. **If no match exists AND the element will be reused in 2+ places** — create a new component in `src/app/components/`, then immediately add a `.stories.tsx` file for it following the four-step process (component file → stories file → `page.tsx` → `Sidebar.tsx`).
+4. **If the element is one-off / page-specific** — build it in place using Chakra primitives; no stories file needed.
+
+Story files live alongside their component (`Alert.stories.tsx` next to `Alert.tsx`) and use Storybook CSF3 format with `@storybook/nextjs-vite`.
+
 ## Chakra UI + component library — use these first
 
 **Always reach for Chakra primitives and the shared component library before writing plain HTML or inline styles.**
@@ -491,5 +504,14 @@ Dashboard-specific layout, styles, and page components live here. The layout imp
 **Dashboard-local components** (things specific to the CRM and unlikely to be reused elsewhere) go in `src/app/dashboard/_components/`. These **may** use `.crm-*` classes and dashboard-only tokens like `--font-crm-display`.
 
 When a dashboard component becomes general enough to reuse (e.g. the `Table`), move it to `src/app/components/` and update the showcase.
+
+# Linear Workflow
+
+Follow these steps every time you work on a Linear ticket:
+
+1. **Move to In Progress** — as soon as you read a Linear issue and accept the work, update the ticket status to `In Progress`.
+2. **Comment with task list** — once you understand what needs to be done, post a comment on the ticket listing every task as an unchecked Markdown checklist (`- [ ] task`).
+3. **Check off tasks as you go** — after completing each task, update that comment to mark the item checked (`- [x] task`). Keep the checklist current so progress is visible in Linear.
+4. **Wrap up** — when all tasks are done, post a final comment summarising all the work completed, then move the ticket status to `In Review`.
 
 <!-- END:nextjs-agent-rules -->

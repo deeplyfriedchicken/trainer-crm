@@ -32,6 +32,7 @@ import { Stat } from "../Stat";
 import { Switch } from "../Switch";
 import { type ColumnDef, Table } from "../Table";
 import { Tag } from "../Tag";
+import { Text, type TextVariant } from "../Text";
 import { Textarea } from "../Textarea";
 import { toaster } from "../Toast";
 import { SectionTitle, SubSection } from "./ColorPalette";
@@ -638,14 +639,9 @@ export function TableSection() {
       <SubSection title="Sortable Data Table">
         <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
           Click any column header to sort. Click again to reverse. Pass a{" "}
-          <Box
-            as="code"
-            fontFamily="var(--font-neon-mono), monospace"
-            color="var(--neon-cyan)"
-            fontSize="12px"
-          >
+          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             render
-          </Box>{" "}
+          </Text>{" "}
           function on any column for custom cell content — sorting still uses
           the underlying key value.
         </Box>
@@ -801,32 +797,17 @@ export function ChatPanelSection() {
       <SubSection title="Message thread with live input">
         <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
           Pass{" "}
-          <Box
-            as="code"
-            fontFamily="var(--font-neon-mono), monospace"
-            color="var(--neon-cyan)"
-            fontSize="12px"
-          >
+          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             onSend
-          </Box>{" "}
+          </Text>{" "}
           as an async function that persists the message and returns the saved{" "}
-          <Box
-            as="code"
-            fontFamily="var(--font-neon-mono), monospace"
-            color="var(--neon-cyan)"
-            fontSize="12px"
-          >
+          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             ChatMessage
-          </Box>
+          </Text>
           . Messages from{" "}
-          <Box
-            as="code"
-            fontFamily="var(--font-neon-mono), monospace"
-            color="var(--neon-cyan)"
-            fontSize="12px"
-          >
+          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             currentUserId
-          </Box>{" "}
+          </Text>{" "}
           appear on the left; others on the right.
         </Box>
         <Box maxW="520px">
@@ -925,27 +906,109 @@ export function DialogSection() {
       <SubSection title="Modal overlay">
         <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
           Generic modal shell. Pass{" "}
-          <Box
-            as="code"
-            fontFamily="var(--font-neon-mono), monospace"
-            color="var(--neon-cyan)"
-            fontSize="12px"
-          >
+          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             title
-          </Box>{" "}
+          </Text>{" "}
           for the built-in header row, or omit it and render your own header
           inside{" "}
-          <Box
-            as="code"
-            fontFamily="var(--font-neon-mono), monospace"
-            color="var(--neon-cyan)"
-            fontSize="12px"
-          >
+          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             children
-          </Box>
+          </Text>
           . Backdrop click and Esc both close.
         </Box>
         <ShowcaseDialog />
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── Text showcase ────────────────────────────────────────────────────────────
+
+const DISPLAY_VARIANTS: TextVariant[] = [
+  "display-7xl",
+  "display-6xl",
+  "display-5xl",
+  "display-4xl",
+  "display-3xl",
+  "display-2xl",
+];
+
+const BODY_VARIANTS: TextVariant[] = [
+  "body-lg",
+  "body-md",
+  "body-sm",
+  "body-xs",
+];
+
+const MONO_VARIANTS: TextVariant[] = ["mono-lg", "mono-md", "mono-sm"];
+
+function VariantRow({ variant }: { variant: TextVariant }) {
+  const sample =
+    variant.startsWith("display") ? "The quick neon fox"
+    : variant.startsWith("mono") ? 'const color = "#FD6DBB";'
+    : "The quick brown fox jumps over the lazy dog.";
+  return (
+    <Box
+      display="flex"
+      alignItems="baseline"
+      gap="16px"
+      py="10px"
+      borderBottom="1px solid var(--neon-border)"
+    >
+      <Text
+        variant="mono-sm"
+        color="var(--neon-text-dim)"
+        w="120px"
+        flexShrink={0}
+      >
+        {variant}
+      </Text>
+      <Text variant={variant} color="var(--neon-text)" textWrap="pretty">
+        {sample}
+      </Text>
+    </Box>
+  );
+}
+
+export function TextSection() {
+  return (
+    <Box
+      as="section"
+      id="text"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--neon-border)"
+    >
+      <SectionTitle>Text</SectionTitle>
+      <Box color="var(--neon-text-muted)" fontSize="13px" mb="28px">
+        Use{" "}
+        <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          variant
+        </Text>{" "}
+        to select a type style. All Chakra style props pass through — override{" "}
+        <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          color
+        </Text>
+        ,{" "}
+        <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          as
+        </Text>
+        , or any other prop as needed.
+      </Box>
+      <SubSection title="Display — Syne">
+        {DISPLAY_VARIANTS.map((v) => (
+          <VariantRow key={v} variant={v} />
+        ))}
+      </SubSection>
+      <SubSection title="Body — Space Grotesk">
+        {BODY_VARIANTS.map((v) => (
+          <VariantRow key={v} variant={v} />
+        ))}
+      </SubSection>
+      <SubSection title="Mono — Space Mono">
+        {MONO_VARIANTS.map((v) => (
+          <VariantRow key={v} variant={v} />
+        ))}
       </SubSection>
     </Box>
   );

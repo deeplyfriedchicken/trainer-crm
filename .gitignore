@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local db backup seed (contains prod data)
 src/db/seed.backup.ts
+
+*storybook.log
+storybook-static

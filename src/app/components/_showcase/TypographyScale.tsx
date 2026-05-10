@@ -1,46 +1,41 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
+import { type TextVariant, Text } from "../Text";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
-interface Row {
-  name: string;
-  size: string;
-  weight: number;
-  lh?: string;
-}
-
-const displayScale: Row[] = [
-  { name: "7xl", size: "72px", weight: 800, lh: "1" },
-  { name: "6xl", size: "56px", weight: 800, lh: "1.05" },
-  { name: "5xl", size: "40px", weight: 700, lh: "1.1" },
-  { name: "4xl", size: "32px", weight: 700, lh: "1.15" },
-  { name: "3xl", size: "24px", weight: 700, lh: "1.2" },
-  { name: "2xl", size: "20px", weight: 600, lh: "1.3" },
+const displayVariants: { variant: TextVariant; size: string }[] = [
+  { variant: "display-7xl", size: "72px" },
+  { variant: "display-6xl", size: "56px" },
+  { variant: "display-5xl", size: "40px" },
+  { variant: "display-4xl", size: "32px" },
+  { variant: "display-3xl", size: "24px" },
+  { variant: "display-2xl", size: "20px" },
 ];
 
-const bodyScale: Row[] = [
-  { name: "lg", size: "18px", weight: 400 },
-  { name: "md", size: "16px", weight: 400 },
-  { name: "sm", size: "14px", weight: 400 },
-  { name: "xs", size: "12px", weight: 400 },
+const bodyVariants: { variant: TextVariant; size: string }[] = [
+  { variant: "body-lg", size: "18px" },
+  { variant: "body-md", size: "16px" },
+  { variant: "body-sm", size: "14px" },
+  { variant: "body-xs", size: "12px" },
 ];
 
-const monoScale: Row[] = [
-  { name: "lg", size: "16px", weight: 400 },
-  { name: "md", size: "14px", weight: 400 },
-  { name: "sm", size: "12px", weight: 400 },
+const monoVariants: { variant: TextVariant; size: string }[] = [
+  { variant: "mono-lg", size: "16px" },
+  { variant: "mono-md", size: "14px" },
+  { variant: "mono-sm", size: "12px" },
 ];
 
 function TypeRow({
-  row,
-  fontFamily,
+  variant,
+  size,
   sample,
 }: {
-  row: Row;
-  fontFamily: string;
+  variant: TextVariant;
+  size: string;
   sample: string;
 }) {
+  const name = variant.split("-").slice(1).join("-");
   return (
     <Box
       display="flex"
@@ -49,25 +44,17 @@ function TypeRow({
       py="12px"
       borderBottom="1px solid var(--neon-border)"
     >
-      <Box
-        fontSize="11px"
+      <Text
+        variant="mono-sm"
         color="var(--neon-text-dim)"
-        fontFamily="var(--font-neon-mono), monospace"
         w="100px"
         flexShrink={0}
       >
-        {row.name} · {row.size}
-      </Box>
-      <Box
-        fontFamily={fontFamily}
-        fontSize={row.size}
-        fontWeight={row.weight}
-        lineHeight={row.lh ?? "1.5"}
-        color="#fff"
-        textWrap="pretty"
-      >
+        {name} · {size}
+      </Text>
+      <Text variant={variant} color="#fff" textWrap="pretty">
         {sample}
-      </Box>
+      </Text>
     </Box>
   );
 }
@@ -83,31 +70,31 @@ export function TypographyScale() {
     >
       <SectionTitle>Typography</SectionTitle>
       <SubSection title="Display — Syne">
-        {displayScale.map((r) => (
+        {displayVariants.map((r) => (
           <TypeRow
-            key={r.name}
-            row={r}
-            fontFamily="var(--font-neon-display), sans-serif"
+            key={r.variant}
+            variant={r.variant}
+            size={r.size}
             sample="The quick neon fox"
           />
         ))}
       </SubSection>
       <SubSection title="Body — Space Grotesk">
-        {bodyScale.map((r) => (
+        {bodyVariants.map((r) => (
           <TypeRow
-            key={r.name}
-            row={r}
-            fontFamily="var(--font-neon-body), sans-serif"
+            key={r.variant}
+            variant={r.variant}
+            size={r.size}
             sample="The quick brown fox jumps over the lazy dog. Cyberpunk interfaces deserve beautiful typography."
           />
         ))}
       </SubSection>
       <SubSection title="Mono — Space Mono">
-        {monoScale.map((r) => (
+        {monoVariants.map((r) => (
           <TypeRow
-            key={r.name}
-            row={r}
-            fontFamily="var(--font-neon-mono), monospace"
+            key={r.variant}
+            variant={r.variant}
+            size={r.size}
             sample={'const color = "#FD6DBB"; // electric pink'}
           />
         ))}

@@ -15,7 +15,7 @@ export const toaster = createToaster({
 export type NeonToastType = "info" | "success" | "warning" | "error";
 
 const palette: Record<NeonToastType, { color: string; soft: string }> = {
-  info: { color: "var(--neon-cyan)", soft: "rgba(52,253,254,0.12)" },
+  info: { color: "var(--color-secondary)", soft: "rgba(52,253,254,0.12)" },
   success: { color: "#4ade80", soft: "rgba(74,222,128,0.12)" },
   warning: { color: "#fbbf24", soft: "rgba(251,191,36,0.12)" },
   error: { color: "#ff5472", soft: "rgba(255,84,114,0.12)" },
@@ -30,8 +30,8 @@ export function Toaster() {
         return (
           <Toast.Root
             w={{ base: "calc(100vw - 32px)", md: "360px" }}
-            bg="var(--neon-surface)"
-            color="var(--neon-text)"
+            bg="var(--color-surface)"
+            color="var(--color-text)"
             border="1px solid"
             borderColor={`${p.color}66`}
             borderRadius="12px"
@@ -40,7 +40,7 @@ export function Toaster() {
             display="flex"
             alignItems="flex-start"
             gap="12px"
-            fontFamily="var(--font-neon-body), sans-serif"
+            fontFamily="var(--font-body), sans-serif"
           >
             <div
               style={{
@@ -69,7 +69,7 @@ export function Toaster() {
               {toast.description && (
                 <Toast.Description
                   fontSize="12px"
-                  color="var(--neon-text-muted)"
+                  color="var(--color-text-muted)"
                   lineHeight="1.5"
                 >
                   {toast.description}
@@ -78,7 +78,7 @@ export function Toaster() {
             </div>
             <Toast.CloseTrigger
               bg="transparent"
-              color="var(--neon-text-muted)"
+              color="var(--color-text-muted)"
               border="none"
               cursor="pointer"
               fontSize="16px"
@@ -86,7 +86,7 @@ export function Toaster() {
               borderRadius="6px"
               _hover={{
                 bg: "rgba(255,255,255,0.06)",
-                color: "var(--neon-text)",
+                color: "var(--color-text)",
               }}
             >
               ×

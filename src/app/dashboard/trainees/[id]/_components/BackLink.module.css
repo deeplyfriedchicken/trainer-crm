@@ -4,9 +4,9 @@
   gap: 8px;
   background: transparent;
   border: none;
-  color: var(--neon-text-dim);
+  color: var(--color-text-dim);
   cursor: pointer;
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 13px;
   margin-bottom: 24px;
   padding: 0;

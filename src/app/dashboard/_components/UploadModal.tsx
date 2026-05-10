@@ -351,7 +351,7 @@ export function UploadModal({
                   background: "#4ade80",
                   border: "none",
                   color: "#001a0a",
-                  fontFamily: "var(--font-neon-body)",
+                  fontFamily: "var(--font-body)",
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: "pointer",
@@ -368,8 +368,8 @@ export function UploadModal({
                   borderRadius: 10,
                   background: "transparent",
                   border: "1px solid rgba(52,253,254,0.4)",
-                  color: "var(--neon-cyan)",
-                  fontFamily: "var(--font-neon-body)",
+                  color: "var(--color-secondary)",
+                  fontFamily: "var(--font-body)",
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: "pointer",
@@ -444,7 +444,7 @@ export function UploadModal({
               />
               <LuUpload
                 size={36}
-                color={dragging ? "var(--neon-cyan)" : "rgba(52,253,254,0.5)"}
+                color={dragging ? "var(--color-secondary)" : "rgba(52,253,254,0.5)"}
                 style={{ margin: "0 auto 10px" }}
               />
               <div
@@ -621,7 +621,7 @@ export function UploadModal({
                   background: "transparent",
                   border: "none",
                   color: "rgba(255,255,255,0.5)",
-                  fontFamily: "var(--font-neon-body)",
+                  fontFamily: "var(--font-body)",
                   fontSize: 13,
                   cursor: "pointer",
                 }}
@@ -637,10 +637,10 @@ export function UploadModal({
                   gap: 7,
                   padding: "9px 22px",
                   borderRadius: 10,
-                  background: "var(--neon-cyan)",
+                  background: "var(--color-secondary)",
                   border: "none",
                   color: "#001a1a",
-                  fontFamily: "var(--font-neon-body)",
+                  fontFamily: "var(--font-body)",
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: fields.length ? "pointer" : "not-allowed",

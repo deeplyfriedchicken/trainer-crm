@@ -7,43 +7,24 @@ import { BackLink } from "./_components/BackLink";
 import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
 import { ResetPinButton } from "./_components/ResetPinButton";
+import type { ColorVariant } from "@/app/components/SessionsPanel";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
 import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
 import { TraineeVideosPanel } from "./_components/TraineeVideosPanel";
 import { TraineeWorkoutsPanel } from "./_components/TraineeWorkoutsPanel";
 import "./page.css";
 
-const COLOR_MAP: Record<string, string> = {
-  A: "#FD6DBB",
-  B: "#34FDFE",
-  C: "#a78bfa",
-  D: "#4ade80",
-  E: "#fb923c",
-  F: "#FD6DBB",
-  G: "#34FDFE",
-  H: "#a78bfa",
-  I: "#4ade80",
-  J: "#FD6DBB",
-  K: "#34FDFE",
-  L: "#a78bfa",
-  M: "#4ade80",
-  N: "#fb923c",
-  O: "#FD6DBB",
-  P: "#34FDFE",
-  Q: "#a78bfa",
-  R: "#4ade80",
-  S: "#FD6DBB",
-  T: "#34FDFE",
-  U: "#a78bfa",
-  V: "#4ade80",
-  W: "#fb923c",
-  X: "#FD6DBB",
-  Y: "#34FDFE",
-  Z: "#a78bfa",
-};
-function colorFor(name: string) {
-  return COLOR_MAP[name[0]?.toUpperCase()] ?? "#FD6DBB";
+const VARIANT_CYCLE: ColorVariant[] = ["primary", "secondary", "tertiary"];
+function colorVariantFor(name: string): ColorVariant {
+  const idx = (name.toUpperCase().charCodeAt(0) - 65) % VARIANT_CYCLE.length;
+  return VARIANT_CYCLE[Math.max(0, idx)] ?? "primary";
 }
+
+const VARIANT_HEX: Record<ColorVariant, string> = {
+  primary: "#fd6dbb",
+  secondary: "#34fdfe",
+  tertiary: "#4ade80",
+};
 
 export default async function TraineePage({
   params,
@@ -61,7 +42,8 @@ export default async function TraineePage({
 
   const chat = await getOrCreateChat(trainee.id);
 
-  const accentColor = colorFor(trainee.name);
+  const colorVariant = colorVariantFor(trainee.name);
+  const accentColor = VARIANT_HEX[colorVariant];
   const memberSince = trainee.createdAt.toLocaleDateString("en-US", {
     month: "short",
     year: "numeric",
@@ -139,7 +121,7 @@ export default async function TraineePage({
         badge="Trainee"
         meta={trainee.email}
         accentColor={accentColor}
-        statusColor="#4ade80"
+        statusColor="var(--color-tertiary)"
         stats={[
           {
             label: "Plans",
@@ -159,7 +141,7 @@ export default async function TraineePage({
         <TraineeSessionsPanel
           traineeId={trainee.id}
           sessions={plans}
-          accentColor={accentColor}
+          colorVariant={colorVariant}
         />
         <TraineeChatPanel
           chatId={chat.id}

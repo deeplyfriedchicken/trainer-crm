@@ -26,7 +26,7 @@ export default async function DocsApiPage() {
             <code>src/db/queries/</code>. Also available as plaintext at{" "}
             <a
               href="/llms.txt"
-              style={{ color: "var(--neon-cyan)", textDecoration: "underline" }}
+              style={{ color: "var(--color-secondary)", textDecoration: "underline" }}
             >
               /llms.txt
             </a>
@@ -55,7 +55,7 @@ export default async function DocsApiPage() {
                 <Box key={qf.file}>
                   <Text
                     variant="mono-sm"
-                    color="var(--neon-text-muted)"
+                    color="var(--color-text-muted)"
                     display="block"
                     mb="6px"
                   >
@@ -66,11 +66,11 @@ export default async function DocsApiPage() {
                     as="pre"
                     display="block"
                     p="12px 14px"
-                    bg="var(--neon-surface-2)"
-                    border="1px solid var(--neon-border)"
+                    bg="var(--color-surface-2)"
+                    border="1px solid var(--color-border)"
                     borderRadius="8px"
                     lineHeight="1.6"
-                    color="var(--neon-text)"
+                    color="var(--color-text)"
                     overflowX="auto"
                     whiteSpace="pre"
                   >
@@ -83,7 +83,7 @@ export default async function DocsApiPage() {
                 </Box>
               ))}
               {queries.length === 0 && (
-                <Text color="var(--neon-text-dim)">No query files found.</Text>
+                <Text color="var(--color-text-dim)">No query files found.</Text>
               )}
             </Stack>
           </CardBody>
@@ -99,11 +99,11 @@ export default async function DocsApiPage() {
               as="pre"
               display="block"
               p="16px 18px"
-              bg="var(--neon-surface-2)"
-              border="1px solid var(--neon-border)"
+              bg="var(--color-surface-2)"
+              border="1px solid var(--color-border)"
               borderRadius="8px"
               lineHeight="1.55"
-              color="var(--neon-text)"
+              color="var(--color-text)"
               overflowX="auto"
               whiteSpace="pre"
             >

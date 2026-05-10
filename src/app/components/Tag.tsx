@@ -16,7 +16,7 @@ function TagBase({
   onRemove,
   ...rest
 }: NeonTagProps) {
-  const color = `var(--neon-${colorScheme})`;
+  const color = `var(--color-${colorScheme})`;
   return (
     <Box
       as="span"
@@ -32,7 +32,7 @@ function TagBase({
       color={color}
       fontSize="12px"
       fontWeight={600}
-      fontFamily="var(--font-neon-body), sans-serif"
+      fontFamily="var(--font-body), sans-serif"
       {...rest}
     >
       {children}

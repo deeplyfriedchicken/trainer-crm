@@ -12,7 +12,7 @@ export function Hero() {
       px="60px"
       pt="80px"
       pb="60px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
       position="relative"
       overflow="hidden"
     >
@@ -41,28 +41,28 @@ export function Hero() {
           px="14px"
           py="5px"
           fontWeight={600}
-          color="var(--neon-pink)"
+          color="var(--color-primary)"
           mb="20px"
         >
           ✦ Chakra-inspired · Neon Aesthetic
         </Text>
         <Box
           as="h1"
-          fontFamily="var(--font-neon-display), sans-serif"
+          fontFamily="var(--font-display), sans-serif"
           fontSize="64px"
           fontWeight={800}
           lineHeight="1"
           letterSpacing="-0.03em"
           mb="16px"
         >
-          <span className="neon-grad-pink">Neon</span>
+          <span className="grad-primary">Neon</span>
           <br />
-          <span className="neon-grad-cyan">UI Kit</span>
+          <span className="grad-secondary">UI Kit</span>
         </Box>
         <Text
           variant="body-md"
           as="p"
-          color="var(--neon-text-muted)"
+          color="var(--color-text-muted)"
           maxW="520px"
           lineHeight="1.6"
           mb="32px"
@@ -83,7 +83,7 @@ export function Hero() {
           gap="40px"
           mt="40px"
           pt="32px"
-          borderTop="1px solid var(--neon-border)"
+          borderTop="1px solid var(--color-border)"
         >
           <Stat label="Components" value="18" />
           <Stat label="Primary Colors" value="2" accent="cyan" />

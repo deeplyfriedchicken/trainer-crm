@@ -5,19 +5,19 @@ import "./neon.css";
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-neon-display",
+  variable: "--font-display",
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-neon-body",
+  variable: "--font-body",
 });
 
 const spaceMono = Space_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
-  variable: "--font-neon-mono",
+  variable: "--font-mono",
 });
 
 export default function ComponentsLayout({
@@ -27,7 +27,7 @@ export default function ComponentsLayout({
 }) {
   return (
     <div
-      className={`neon ${barlowCondensed.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
+      className={`showcase ${barlowCondensed.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
     >
       {children}
     </div>

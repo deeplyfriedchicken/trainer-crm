@@ -42,11 +42,11 @@ function TypeRow({
       alignItems="baseline"
       gap="20px"
       py="12px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <Text
         variant="mono-sm"
-        color="var(--neon-text-dim)"
+        color="var(--color-text-dim)"
         w="100px"
         flexShrink={0}
       >
@@ -66,7 +66,7 @@ export function TypographyScale() {
       id="typography"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Typography</SectionTitle>
       <SubSection title="Display — Syne">

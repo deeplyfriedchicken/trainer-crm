@@ -6,7 +6,7 @@ import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { LuDumbbell, LuLink, LuPlus, LuX } from "react-icons/lu";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
-import type { SessionEntry } from "@/app/components/SessionsPanel";
+import type { ColorVariant, SessionEntry } from "@/app/components/SessionsPanel";
 import { createPlan, updatePlan } from "../trainees/[id]/actions";
 import styles from "./SessionFormModal.module.css";
 import { type PickedVideo, VideoPickerModal } from "./VideoPickerModal";
@@ -138,14 +138,14 @@ function ExerciseCard({
               fontSize: 13,
               fontWeight: 500,
               cursor: "pointer",
-              color: type === t ? "var(--neon-pink)" : "rgba(255,255,255,0.5)",
+              color: type === t ? "var(--color-primary)" : "rgba(255,255,255,0.5)",
             }}
           >
             <input
               type="radio"
               value={t}
               {...register(`exercises.${idx}.type`)}
-              style={{ accentColor: "var(--neon-pink)" }}
+              style={{ accentColor: "var(--color-primary)" }}
             />
             {t === "reps" ? "Reps-based" : "Duration-based"}
           </label>
@@ -284,14 +284,14 @@ export function SessionFormModal({
   onSuccess,
   traineeId,
   initialData,
-  accentColor = "#FD6DBB",
+  colorVariant = "primary" as ColorVariant,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
   traineeId: string;
   initialData?: SessionEntry | null;
-  accentColor?: string;
+  colorVariant?: ColorVariant;
 }) {
   const isEdit = !!initialData;
 
@@ -549,9 +549,9 @@ export function SessionFormModal({
               disabled={isSubmitting}
               className={styles.saveBtn}
               style={{
-                background: accentColor,
+                background: `var(--color-${colorVariant})`,
                 color: "#0a0a1a",
-                boxShadow: `0 0 16px ${accentColor}55`,
+                boxShadow: `0 0 16px var(--color-${colorVariant})`,
               }}
             >
               <LuDumbbell size={14} />

@@ -42,12 +42,12 @@ const SelectBase = forwardRef<HTMLSelectElement, NeonSelectProps>(
     },
     ref,
   ) {
-    const color = `var(--neon-${colorScheme})`;
+    const color = `var(--color-${colorScheme})`;
     const s = sizeMap[size];
     return (
       <NativeSelect.Root
         size={size}
-        borderRadius="var(--neon-radius)"
+        borderRadius="var(--radius)"
         w="full"
         className={className}
         style={style}
@@ -57,12 +57,12 @@ const SelectBase = forwardRef<HTMLSelectElement, NeonSelectProps>(
           h={s.h}
           px={s.px}
           fontSize={s.fontSize}
-          fontFamily="var(--font-neon-body), sans-serif"
-          bg="var(--neon-surface-2)"
-          color="var(--neon-text)"
+          fontFamily="var(--font-body), sans-serif"
+          bg="var(--color-surface-2)"
+          color="var(--color-text)"
           border="1px solid"
-          borderColor={invalid ? "#ff5472" : "var(--neon-border-strong)"}
-          borderRadius="var(--neon-radius)"
+          borderColor={invalid ? "#ff5472" : "var(--color-border-strong)"}
+          borderRadius="var(--radius)"
           transition="all 0.15s"
           _hover={{ borderColor: `${color}66` }}
           _focus={{

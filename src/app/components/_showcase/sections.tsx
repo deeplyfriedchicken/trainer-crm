@@ -52,7 +52,7 @@ export function ButtonsSection() {
       id="buttons"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Buttons</SectionTitle>
 
@@ -146,7 +146,7 @@ export function FormsSection() {
       id="forms"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Form Elements</SectionTitle>
 
@@ -238,7 +238,7 @@ export function FeedbackSection() {
       id="feedback"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Feedback</SectionTitle>
 
@@ -398,7 +398,7 @@ export function CardsSection() {
       id="cards"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Cards & Layout</SectionTitle>
 
@@ -586,7 +586,7 @@ const MEMBER_COLS: ColumnDef<ShowcaseMember>[] = [
     label: "Sessions",
     render: (row) => (
       <span
-        style={{ fontFamily: "var(--font-neon-mono), monospace", fontSize: 12 }}
+        style={{ fontFamily: "var(--font-mono), monospace", fontSize: 12 }}
       >
         {row.sessions}
       </span>
@@ -632,7 +632,7 @@ export function TableSection() {
       id="tables"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Table</SectionTitle>
 
@@ -640,11 +640,11 @@ export function TableSection() {
         <Text
           variant="body-sm"
           display="block"
-          color="var(--neon-text-muted)"
+          color="var(--color-text-muted)"
           mb="20px"
         >
           Click any column header to sort. Click again to reverse. Pass a{" "}
-          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
             render
           </Text>{" "}
           function on any column for custom cell content — sorting still uses
@@ -704,12 +704,12 @@ export function SessionsPanelSection() {
       id="sessions-panel"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Sessions Panel</SectionTitle>
       <SubSection title="Accordion session list">
         <Box maxW="520px">
-          <SessionsPanel sessions={SHOWCASE_SESSIONS} accentColor="#FD6DBB" />
+          <SessionsPanel sessions={SHOWCASE_SESSIONS} colorVariant="primary" />
         </Box>
       </SubSection>
     </Box>
@@ -796,26 +796,26 @@ export function ChatPanelSection() {
       id="chat-panel"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Chat Panel</SectionTitle>
       <SubSection title="Message thread with live input">
         <Text
           variant="body-sm"
           display="block"
-          color="var(--neon-text-muted)"
+          color="var(--color-text-muted)"
           mb="20px"
         >
           Pass{" "}
-          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
             onSend
           </Text>{" "}
           as an async function that persists the message and returns the saved{" "}
-          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
             ChatMessage
           </Text>
           . Messages from{" "}
-          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
             currentUserId
           </Text>{" "}
           appear on the left; others on the right.
@@ -845,7 +845,7 @@ function ShowcaseDialog() {
           <Box display="flex" flexDirection="column" gap="16px">
             <Box
               fontSize="14px"
-              color="var(--neon-text-muted)"
+              color="var(--color-text-muted)"
               lineHeight="1.6"
             >
               This is a reusable dialog shell. Drop any content inside — forms,
@@ -876,7 +876,7 @@ export function PageHeaderSection() {
       id="page-header"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Page Header</SectionTitle>
       <SubSection title="Title only">
@@ -910,23 +910,23 @@ export function DialogSection() {
       id="dialog"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Dialog</SectionTitle>
       <SubSection title="Modal overlay">
         <Text
           variant="body-sm"
           display="block"
-          color="var(--neon-text-muted)"
+          color="var(--color-text-muted)"
           mb="20px"
         >
           Generic modal shell. Pass{" "}
-          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
             title
           </Text>{" "}
           for the built-in header row, or omit it and render your own header
           inside{" "}
-          <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
             children
           </Text>
           . Backdrop click and Esc both close.
@@ -972,17 +972,17 @@ function VariantRow({ variant }: { variant: TextVariant }) {
       alignItems="baseline"
       gap="16px"
       py="10px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <Text
         variant="mono-sm"
-        color="var(--neon-text-dim)"
+        color="var(--color-text-dim)"
         w="120px"
         flexShrink={0}
       >
         {variant}
       </Text>
-      <Text variant={variant} color="var(--neon-text)" textWrap="pretty">
+      <Text variant={variant} color="var(--color-text)" textWrap="pretty">
         {sample}
       </Text>
     </Box>
@@ -996,25 +996,25 @@ export function TextSection() {
       id="text"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Text</SectionTitle>
       <Text
         variant="body-sm"
         display="block"
-        color="var(--neon-text-muted)"
+        color="var(--color-text-muted)"
         mb="28px"
       >
         Use{" "}
-        <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+        <Text variant="mono-sm" as="code" color="var(--color-secondary)">
           variant
         </Text>{" "}
         to select a type style. All Chakra style props pass through — override{" "}
-        <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+        <Text variant="mono-sm" as="code" color="var(--color-secondary)">
           color
         </Text>
         ,{" "}
-        <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
+        <Text variant="mono-sm" as="code" color="var(--color-secondary)">
           as
         </Text>
         , or any other prop as needed.

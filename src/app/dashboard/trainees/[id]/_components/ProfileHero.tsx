@@ -21,7 +21,7 @@ export function ProfileHero({
     <div
       className={styles.hero}
       style={{
-        background: "var(--neon-surface)",
+        background: "var(--color-surface)",
         border: `1px solid ${accentColor}33`,
       }}
     >

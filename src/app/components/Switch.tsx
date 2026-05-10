@@ -28,7 +28,7 @@ const SwitchBase = forwardRef<HTMLLabelElement, NeonSwitchProps>(
     },
     ref,
   ) {
-    const color = `var(--neon-${colorScheme})`;
+    const color = `var(--color-${colorScheme})`;
     return (
       <ChakraSwitch.Root
         ref={ref}
@@ -47,8 +47,8 @@ const SwitchBase = forwardRef<HTMLLabelElement, NeonSwitchProps>(
           h="20px"
           p="2px"
           borderRadius="999px"
-          bg="var(--neon-surface-2)"
-          border="1px solid var(--neon-border-strong)"
+          bg="var(--color-surface-2)"
+          border="1px solid var(--color-border-strong)"
           transition="all 0.15s"
           _checked={{
             bg: color,
@@ -68,8 +68,8 @@ const SwitchBase = forwardRef<HTMLLabelElement, NeonSwitchProps>(
         {children && (
           <ChakraSwitch.Label
             fontSize="13px"
-            fontFamily="var(--font-neon-body), sans-serif"
-            color="var(--neon-text)"
+            fontFamily="var(--font-body), sans-serif"
+            color="var(--color-text)"
           >
             {children}
           </ChakraSwitch.Label>

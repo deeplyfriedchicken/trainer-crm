@@ -15,8 +15,8 @@
 /* ─── Video card ─── */
 .videoCard {
   appearance: none;
-  background: var(--neon-surface);
-  border: 1px solid var(--neon-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   color: inherit;
   font: inherit;
@@ -85,7 +85,7 @@
   border-radius: 5px;
   padding: 3px 7px;
   font-size: 11px;
-  font-family: var(--font-neon-mono), "Space Mono", monospace;
+  font-family: var(--font-mono), "Space Mono", monospace;
   color: #fff;
   z-index: 1;
 }
@@ -150,13 +150,13 @@
   font-size: 10px;
   font-weight: 700;
   border: 1px solid;
-  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-family: var(--font-display), "Barlow Condensed", sans-serif;
 }
 
 .videoDate {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.3);
-  font-family: var(--font-neon-mono), "Space Mono", monospace;
+  font-family: var(--font-mono), "Space Mono", monospace;
 }
 
 /* ─── Tag filter pills ─── */
@@ -177,12 +177,12 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.45);
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
 }
 .tagPill.active {
   background: rgba(52, 253, 254, 0.1);
   border-color: rgba(52, 253, 254, 0.4);
-  color: var(--neon-cyan);
+  color: var(--color-secondary);
 }
 .tagPill:hover:not(.active) {
   border-color: rgba(255, 255, 255, 0.25);

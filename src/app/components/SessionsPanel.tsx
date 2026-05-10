@@ -40,6 +40,16 @@ export type SessionEntry = {
   exercises: SessionExercise[];
 };
 
+// ── Types ─────────────────────────────────────────────────────────────────
+
+export type ColorVariant = "primary" | "secondary" | "tertiary";
+
+const VARIANT_HEX: Record<ColorVariant, string> = {
+  primary: "#fd6dbb",
+  secondary: "#34fdfe",
+  tertiary: "#4ade80",
+};
+
 // ── Sub-components ────────────────────────────────────────────────────────
 
 function StarGroup({
@@ -80,14 +90,15 @@ function formatDate(d: Date) {
 
 function ExerciseVideoModal({
   exercise,
-  accentColor,
+  colorVariant,
   onClose,
 }: {
   exercise: SessionExercise;
-  accentColor: string;
+  colorVariant: ColorVariant;
   onClose: () => void;
 }) {
   const [idx, setIdx] = useState(0);
+  const accentHex = VARIANT_HEX[colorVariant];
   const videos = exercise.videos;
   const current = videos[idx];
   const total = videos.length;
@@ -128,7 +139,7 @@ function ExerciseVideoModal({
                   key={i}
                   type="button"
                   className={`${styles.slideDot}${i === idx ? ` ${styles.slideDotActive}` : ""}`}
-                  style={{ "--dot-color": accentColor } as React.CSSProperties}
+                  style={{ "--dot-color": accentHex } as React.CSSProperties}
                   onClick={() => setIdx(i)}
                   aria-label={`Video ${i + 1}`}
                 />
@@ -165,7 +176,8 @@ function ExerciseVideoModal({
           <div
             style={{
               fontSize: 12,
-              color: "rgba(52,253,254,0.7)",
+              color: "var(--color-secondary)",
+              opacity: 0.7,
               marginBottom: 14,
             }}
           >
@@ -185,9 +197,9 @@ function ExerciseVideoModal({
             style={{
               fontSize: 12,
               fontWeight: 700,
-              color: accentColor,
-              background: `${accentColor}15`,
-              border: `1px solid ${accentColor}30`,
+              color: accentHex,
+              background: `${accentHex}15`,
+              border: `1px solid ${accentHex}30`,
               borderRadius: 6,
               padding: "3px 10px",
             }}
@@ -252,15 +264,16 @@ function ExerciseVideoModal({
 
 export function SessionsPanel({
   sessions,
-  accentColor = "var(--neon-pink)",
+  colorVariant = "primary",
   onNewSession,
   onEditSession,
 }: {
   sessions: SessionEntry[];
-  accentColor?: string;
+  colorVariant?: ColorVariant;
   onNewSession?: () => void;
   onEditSession?: (session: SessionEntry) => void;
 }) {
+  const accentHex = VARIANT_HEX[colorVariant];
   const sorted = [...sessions].sort(
     (a, b) =>
       new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
@@ -292,9 +305,9 @@ export function SessionsPanel({
               type="button"
               className={styles.newBtn}
               style={{
-                background: `${accentColor}1e`,
-                border: `1px solid ${accentColor}55`,
-                color: accentColor,
+                background: `${accentHex}1e`,
+                border: `1px solid ${accentHex}55`,
+                color: accentHex,
               }}
               onClick={onNewSession}
             >
@@ -334,13 +347,13 @@ export function SessionsPanel({
                         width: 36,
                         height: 36,
                         borderRadius: 10,
-                        background: `${accentColor}18`,
-                        border: `1px solid ${accentColor}33`,
+                        background: `${accentHex}18`,
+                        border: `1px solid ${accentHex}33`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
-                        color: accentColor,
+                        color: accentHex,
                       }}
                     >
                       <LuCalendar size={14} />
@@ -372,7 +385,7 @@ export function SessionsPanel({
                         <StarGroup
                           rating={s.energyRating}
                           label="Energy"
-                          color={accentColor}
+                          color={accentHex}
                         />
                         <div className={styles.divider} />
                       </>
@@ -436,13 +449,13 @@ export function SessionsPanel({
                                   width: 28,
                                   height: 28,
                                   borderRadius: 6,
-                                  background: `${accentColor}18`,
-                                  border: `1px solid ${accentColor}33`,
+                                  background: `${accentHex}18`,
+                                  border: `1px solid ${accentHex}33`,
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
                                   flexShrink: 0,
-                                  color: accentColor,
+                                  color: accentHex,
                                 }}
                               >
                                 <LuDumbbell size={12} />
@@ -476,9 +489,9 @@ export function SessionsPanel({
                                   style={{
                                     fontSize: 11,
                                     fontWeight: 700,
-                                    color: accentColor,
-                                    background: `${accentColor}15`,
-                                    border: `1px solid ${accentColor}30`,
+                                    color: accentHex,
+                                    background: `${accentHex}15`,
+                                    border: `1px solid ${accentHex}30`,
                                     borderRadius: 5,
                                     padding: "2px 7px",
                                   }}
@@ -550,7 +563,7 @@ export function SessionsPanel({
                       <p
                         style={{
                           fontSize: 13,
-                          color: "var(--neon-text-dim)",
+                          color: "var(--color-text-dim)",
                           margin: "12px 0 4px",
                           fontStyle: "italic",
                         }}
@@ -569,7 +582,7 @@ export function SessionsPanel({
       {videoExercise && (
         <ExerciseVideoModal
           exercise={videoExercise}
-          accentColor={accentColor}
+          colorVariant={colorVariant}
           onClose={() => setVideoExercise(null)}
         />
       )}

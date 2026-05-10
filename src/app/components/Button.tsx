@@ -29,13 +29,13 @@ function stylesFor(
   scheme: NeonColorScheme,
   variant: NeonVariant,
 ): ChakraButtonProps {
-  const color = `var(--neon-${scheme})`;
-  const colorSoft = `var(--neon-${scheme}-soft)`;
+  const color = `var(--color-${scheme})`;
+  const colorSoft = `var(--color-${scheme}-soft)`;
   const base: ChakraButtonProps = {
-    fontFamily: "var(--font-neon-body), sans-serif",
+    fontFamily: "var(--font-body), sans-serif",
     fontWeight: 600,
     letterSpacing: "0.01em",
-    borderRadius: "var(--neon-radius)",
+    borderRadius: "var(--radius)",
     transition: "all 0.15s",
     _focusVisible: {
       outline: "2px solid",

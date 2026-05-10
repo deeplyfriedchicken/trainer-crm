@@ -45,7 +45,7 @@
 }
 
 .name {
-  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-family: var(--font-display), "Barlow Condensed", sans-serif;
   font-size: 34px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -65,7 +65,7 @@
 
 .meta {
   font-size: 13px;
-  color: var(--neon-text-dim);
+  color: var(--color-text-dim);
   margin-top: 4px;
 }
 

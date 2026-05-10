@@ -24,7 +24,7 @@ function ProgressBase({
   label,
   ...rest
 }: NeonProgressProps) {
-  const color = `var(--neon-${colorScheme})`;
+  const color = `var(--color-${colorScheme})`;
   const indeterminate = value === null;
   return (
     <ChakraProgress.Root
@@ -47,10 +47,10 @@ function ProgressBase({
           {label && (
             <ChakraProgress.Label
               fontSize="11px"
-              color="var(--neon-text-muted)"
+              color="var(--color-text-muted)"
               textTransform="uppercase"
               letterSpacing="0.08em"
-              fontFamily="var(--font-neon-body), sans-serif"
+              fontFamily="var(--font-body), sans-serif"
             >
               {label}
             </ChakraProgress.Label>
@@ -59,14 +59,14 @@ function ProgressBase({
             <ChakraProgress.ValueText
               fontSize="12px"
               color={color}
-              fontFamily="var(--font-neon-mono), monospace"
+              fontFamily="var(--font-mono), monospace"
             />
           )}
         </div>
       )}
       <ChakraProgress.Track
         h="6px"
-        bg="var(--neon-surface-2)"
+        bg="var(--color-surface-2)"
         borderRadius="999px"
         overflow="hidden"
         position="relative"

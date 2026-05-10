@@ -1,0 +1,17 @@
+:root {
+  --color-primary: #fd6dbb;
+  --color-primary-soft: #ff9de4;
+  --color-secondary: #34fdfe;
+  --color-secondary-soft: #a0fffe;
+  --color-tertiary: #4ade80;
+  --color-bg: #070712;
+  --color-surface: #0f0f1e;
+  --color-surface-2: #141428;
+  --color-surface-3: #1a1a2e;
+  --color-border: rgba(255, 255, 255, 0.07);
+  --color-border-strong: rgba(255, 255, 255, 0.15);
+  --color-text: #fff;
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+  --color-text-dim: rgba(255, 255, 255, 0.33);
+  --radius: 10px;
+}

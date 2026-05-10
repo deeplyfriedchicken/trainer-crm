@@ -1,6 +1,10 @@
 "use client";
 
-import { type ChatMessage, ChatPanel } from "@/app/components/ChatPanel";
+import {
+  type ChatMessage,
+  type ColorVariant,
+  ChatPanel,
+} from "@/app/components/ChatPanel";
 import { sendMessage } from "../actions";
 
 type Props = {
@@ -8,6 +12,7 @@ type Props = {
   initialMessages: ChatMessage[];
   currentUserId: string;
   participant: { id: string; name: string; email: string };
+  colorVariant?: ColorVariant;
 };
 
 export function TraineeChatPanel({ chatId, ...rest }: Props) {

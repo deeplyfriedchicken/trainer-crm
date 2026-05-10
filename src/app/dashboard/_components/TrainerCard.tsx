@@ -28,8 +28,8 @@ export function TrainerCard({
 }: TrainerCardProps) {
   return (
     <Box
-      bg="var(--neon-surface)"
-      border="1px solid var(--neon-border)"
+      bg="var(--color-surface)"
+      border="1px solid var(--color-border)"
       borderRadius="16px"
       p="24px 20px"
       textAlign="center"
@@ -52,7 +52,7 @@ export function TrainerCard({
         display="flex"
         alignItems="center"
         justifyContent="center"
-        fontFamily="var(--font-neon-display), sans-serif"
+        fontFamily="var(--font-display), sans-serif"
         fontSize="26px"
         fontWeight={800}
         position="relative"
@@ -69,20 +69,20 @@ export function TrainerCard({
           h="14px"
           borderRadius="50%"
           bg="#4ade80"
-          border="2px solid var(--neon-bg)"
+          border="2px solid var(--color-bg)"
         />
       </Box>
 
       {/* Name / email */}
       <Text
         variant="display-xl"
-        color="var(--neon-text)"
+        color="var(--color-text)"
         mb="4px"
         display="block"
       >
         {name}
       </Text>
-      <Text variant="body-xs" color="var(--neon-text-dim)" mb="10px" display="block">
+      <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">
         {email}
       </Text>
 
@@ -112,7 +112,7 @@ export function TrainerCard({
             >
               {value}
             </Text>
-            <Text variant="body-xs" color="var(--neon-text-dim)" display="block">
+            <Text variant="body-xs" color="var(--color-text-dim)" display="block">
               {label}
             </Text>
           </Box>

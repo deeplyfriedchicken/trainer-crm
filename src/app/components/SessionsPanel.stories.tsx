@@ -91,7 +91,7 @@ export const Empty: Story = {
 export const CyanAccent: Story = {
   render: () => (
     <div style={{ maxWidth: 700 }}>
-      <SessionsPanel sessions={sampleSessions} accentColor="#34FDFE" />
+      <SessionsPanel sessions={sampleSessions} colorVariant="secondary" />
     </div>
   ),
 };

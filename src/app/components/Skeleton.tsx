@@ -14,11 +14,11 @@ const SkeletonBase = forwardRef<HTMLDivElement, NeonSkeletonProps>(
     return (
       <ChakraSkeleton
         ref={ref}
-        bg="var(--neon-surface-2)"
+        bg="var(--color-surface-2)"
         borderRadius="8px"
         css={{
-          "--start-color": "var(--neon-surface-2)",
-          "--end-color": "var(--neon-surface-3)",
+          "--start-color": "var(--color-surface-2)",
+          "--end-color": "var(--color-surface-3)",
         }}
         {...props}
       />

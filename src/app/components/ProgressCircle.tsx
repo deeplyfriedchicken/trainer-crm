@@ -34,7 +34,7 @@ function ProgressCircleBase({
   showValueText = true,
   ...rest
 }: NeonProgressCircleProps) {
-  const color = `var(--neon-${colorScheme})`;
+  const color = `var(--color-${colorScheme})`;
   const s = sizeMap[size];
   return (
     <ChakraProgressCircle.Root
@@ -48,7 +48,7 @@ function ProgressCircleBase({
       {...rest}
     >
       <ChakraProgressCircle.Circle css={{ width: s.box, height: s.box }}>
-        <ChakraProgressCircle.Track stroke="var(--neon-surface-2)" />
+        <ChakraProgressCircle.Track stroke="var(--color-surface-2)" />
         <ChakraProgressCircle.Range
           stroke={color}
           css={{ filter: `drop-shadow(0 0 6px ${color})` }}
@@ -59,7 +59,7 @@ function ProgressCircleBase({
           fontSize={s.font}
           fontWeight={700}
           color={color}
-          fontFamily="var(--font-neon-mono), monospace"
+          fontFamily="var(--font-mono), monospace"
         />
       )}
     </ChakraProgressCircle.Root>

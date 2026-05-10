@@ -447,7 +447,7 @@ export function VideoDetailModal({
                           <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", width: 64, flexShrink: 0 }}>Trainee</span>
                           <Link
                             href={`/dashboard/trainees/${trainee.id}`}
-                            style={{ color: "var(--neon-cyan)", display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
+                            style={{ color: "var(--color-secondary)", display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
                             onClick={onClose}
                           >
                             {trainee.name}

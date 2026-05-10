@@ -39,12 +39,12 @@ function FieldBase({
           fontWeight={600}
           textTransform="uppercase"
           letterSpacing="0.08em"
-          color="var(--neon-text-muted)"
-          fontFamily="var(--font-neon-body), sans-serif"
+          color="var(--color-text-muted)"
+          fontFamily="var(--font-body), sans-serif"
         >
           {label}
           {required && (
-            <ChakraField.RequiredIndicator color="var(--neon-pink)" ml="2px" />
+            <ChakraField.RequiredIndicator color="var(--color-primary)" ml="2px" />
           )}
         </ChakraField.Label>
       )}
@@ -52,8 +52,8 @@ function FieldBase({
       {helperText && !invalid && (
         <ChakraField.HelperText
           fontSize="12px"
-          color="var(--neon-text-dim)"
-          fontFamily="var(--font-neon-body), sans-serif"
+          color="var(--color-text-dim)"
+          fontFamily="var(--font-body), sans-serif"
         >
           {helperText}
         </ChakraField.HelperText>
@@ -62,7 +62,7 @@ function FieldBase({
         <ChakraField.ErrorText
           fontSize="12px"
           color="#ff5472"
-          fontFamily="var(--font-neon-body), sans-serif"
+          fontFamily="var(--font-body), sans-serif"
         >
           {errorText}
         </ChakraField.ErrorText>

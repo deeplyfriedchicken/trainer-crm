@@ -1,30 +1,12 @@
-/* CRM design tokens + layout styles — self-contained under .crm scope */
+/* CRM layout styles — color tokens sourced from theme.css */
 .crm {
-  /* Shared neon tokens (duplicated so this route is standalone from .neon) */
-  --neon-pink: #fd6dbb;
-  --neon-pink-soft: #ff9de4;
-  --neon-cyan: #34fdfe;
-  --neon-cyan-soft: #a0fffe;
-  --neon-bg: #070712;
-  --neon-surface: #0f0f1e;
-  --neon-surface-2: #141428;
-  --neon-surface-3: #1a1a2e;
-  --neon-border: rgba(255, 255, 255, 0.07);
-  --neon-border-strong: rgba(255, 255, 255, 0.15);
-  --neon-text: #ffffff;
-  --neon-text-muted: rgba(255, 255, 255, 0.5);
-  --neon-text-dim: rgba(255, 255, 255, 0.33);
-  --neon-radius: 10px;
-
   --crm-sidebar-w: 260px;
   --crm-topbar-h: 64px;
-  --font-neon-display: var(
-    --font-crm-display
-  ); /* alias so component library components resolve correctly */
+  --font-display: var(--font-crm-display); /* alias so component library components resolve correctly */
 
-  background: var(--neon-bg);
+  background: var(--color-bg);
   color: #fff;
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   height: 100vh;
   display: flex;
   overflow: hidden;
@@ -60,7 +42,7 @@
   width: var(--crm-sidebar-w);
   height: 100vh;
   background: rgba(8, 8, 20, 0.95);
-  border-right: 1px solid var(--neon-border);
+  border-right: 1px solid var(--color-border);
   backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
@@ -71,7 +53,7 @@
 
 .crm-sidebar-top {
   padding: 28px 20px 24px;
-  border-bottom: 1px solid var(--neon-border);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,7 +64,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--neon-pink), var(--neon-cyan));
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   padding: 2px;
   cursor: pointer;
   position: relative;
@@ -91,14 +73,14 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: var(--neon-surface-2);
+  background: var(--color-surface-2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-crm-display), "Barlow Condensed", sans-serif;
   font-size: 22px;
   font-weight: 800;
-  color: var(--neon-pink);
+  color: var(--color-primary);
   letter-spacing: -0.02em;
 }
 .crm-profile-status {
@@ -108,9 +90,9 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #4ade80;
-  border: 2px solid var(--neon-bg);
-  box-shadow: 0 0 8px #4ade80;
+  background: var(--color-tertiary);
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 0 8px var(--color-tertiary);
 }
 .crm-profile-name {
   font-size: 15px;
@@ -122,7 +104,7 @@
   font-size: 11px;
   color: rgba(255, 255, 255, 0.4);
   text-align: center;
-  font-family: var(--font-neon-mono), "Space Mono", monospace;
+  font-family: var(--font-mono), "Space Mono", monospace;
 }
 
 .crm-nav-section {
@@ -162,7 +144,7 @@
 .crm-nav-item.active {
   background: rgba(253, 109, 187, 0.1);
   border-color: rgba(253, 109, 187, 0.2);
-  color: var(--neon-pink);
+  color: var(--color-primary);
 }
 .crm-nav-item .crm-nav-icon {
   width: 18px;
@@ -171,8 +153,8 @@
   opacity: 0.8;
 }
 .crm-nav-item.active .crm-nav-icon {
-  color: var(--neon-pink);
-  filter: drop-shadow(0 0 6px var(--neon-pink));
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 6px var(--color-primary));
   opacity: 1;
 }
 .crm-nav-item-badge {
@@ -202,7 +184,7 @@
 .crm-topbar {
   height: var(--crm-topbar-h);
   background: rgba(7, 7, 18, 0.8);
-  border-bottom: 1px solid var(--neon-border);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   padding: 0 32px;
@@ -219,7 +201,7 @@
   letter-spacing: -0.02em;
 }
 .crm-topbar-title-accent {
-  color: var(--neon-pink);
+  color: var(--color-primary);
 }
 
 .crm-topbar-search {
@@ -254,9 +236,9 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--neon-pink);
-  box-shadow: 0 0 8px var(--neon-pink);
-  border: 2px solid var(--neon-bg);
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+  border: 2px solid var(--color-bg);
   pointer-events: none;
 }
 
@@ -309,8 +291,8 @@
     height: 38px;
     flex-shrink: 0;
     border-radius: 10px;
-    background: var(--neon-surface);
-    border: 1px solid var(--neon-border);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     color: rgba(255, 255, 255, 0.6);
     cursor: pointer;
     transition: all 0.15s;

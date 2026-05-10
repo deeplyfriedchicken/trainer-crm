@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
+  type ColorVariant,
   type SessionEntry,
   SessionsPanel,
 } from "@/app/components/SessionsPanel";
@@ -11,11 +12,11 @@ import { SessionFormModal } from "@/app/dashboard/_components/SessionFormModal";
 export function TraineeSessionsPanel({
   traineeId,
   sessions,
-  accentColor,
+  colorVariant,
 }: {
   traineeId: string;
   sessions: SessionEntry[];
-  accentColor: string;
+  colorVariant: ColorVariant;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +46,7 @@ export function TraineeSessionsPanel({
     <>
       <SessionsPanel
         sessions={sessions}
-        accentColor={accentColor}
+        colorVariant={colorVariant}
         onNewSession={openNew}
         onEditSession={openEdit}
       />
@@ -55,7 +56,7 @@ export function TraineeSessionsPanel({
         onSuccess={handleSuccess}
         traineeId={traineeId}
         initialData={editing}
-        accentColor={accentColor}
+        colorVariant={colorVariant}
       />
     </>
   );

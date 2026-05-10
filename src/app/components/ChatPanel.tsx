@@ -13,7 +13,15 @@ export type ChatMessage = {
 
 export type ChatParticipant = { id: string; name: string; email: string };
 
-const COLOR_MAP: Record<string, string> = {
+export type ColorVariant = "primary" | "secondary" | "tertiary";
+
+const VARIANT_HEX: Record<ColorVariant, string> = {
+  primary: "#fd6dbb",
+  secondary: "#34fdfe",
+  tertiary: "#4ade80",
+};
+
+const AVATAR_COLOR_MAP: Record<string, string> = {
   A: "#FD6DBB",
   B: "#34FDFE",
   C: "#a78bfa",
@@ -41,8 +49,8 @@ const COLOR_MAP: Record<string, string> = {
   Y: "#34FDFE",
   Z: "#a78bfa",
 };
-function colorFor(name: string) {
-  return COLOR_MAP[name[0]?.toUpperCase()] ?? "#FD6DBB";
+function avatarColor(name: string) {
+  return AVATAR_COLOR_MAP[name[0]?.toUpperCase()] ?? "#FD6DBB";
 }
 
 function formatTime(d: Date) {
@@ -56,18 +64,21 @@ export function ChatPanel({
   initialMessages,
   currentUserId,
   participant,
+  colorVariant = "primary",
   onSend,
 }: {
   initialMessages: ChatMessage[];
   currentUserId: string;
   participant: ChatParticipant;
+  colorVariant?: ColorVariant;
   onSend: (text: string) => Promise<ChatMessage>;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const participantColor = colorFor(participant.name);
+  const primaryHex = VARIANT_HEX[colorVariant];
+  const participantColor = avatarColor(participant.name);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -122,8 +133,8 @@ export function ChatPanel({
                 width: 5,
                 height: 5,
                 borderRadius: "50%",
-                background: "#4ade80",
-                boxShadow: "0 0 5px #4ade80",
+                background: "var(--color-tertiary)",
+                boxShadow: "0 0 5px var(--color-tertiary)",
               }}
             />
             Online
@@ -139,9 +150,7 @@ export function ChatPanel({
 
         {messages.map((m) => {
           const isMe = m.sender.id === currentUserId;
-          const senderColor = isMe
-            ? "var(--neon-pink)"
-            : colorFor(m.sender.name);
+          const senderHex = isMe ? primaryHex : avatarColor(m.sender.name);
 
           return (
             <div
@@ -158,16 +167,14 @@ export function ChatPanel({
                   width: 26,
                   height: 26,
                   borderRadius: "50%",
-                  background: isMe
-                    ? "rgba(253,109,187,0.15)"
-                    : `${colorFor(m.sender.name)}22`,
-                  border: `1.5px solid ${senderColor}55`,
+                  background: `${senderHex}22`,
+                  border: `1.5px solid ${senderHex}55`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: 10,
                   fontWeight: 700,
-                  color: senderColor,
+                  color: senderHex,
                   flexShrink: 0,
                 }}
               >
@@ -182,10 +189,8 @@ export function ChatPanel({
                 </div>
                 <div
                   style={{
-                    background: isMe
-                      ? "rgba(253,109,187,0.1)"
-                      : `${colorFor(m.sender.name)}18`,
-                    border: `1px solid ${isMe ? "rgba(253,109,187,0.3)" : `${colorFor(m.sender.name)}33`}`,
+                    background: `${senderHex}1a`,
+                    border: `1px solid ${senderHex}4d`,
                     borderRadius: isMe
                       ? "4px 12px 12px 12px"
                       : "12px 4px 12px 12px",
@@ -216,15 +221,15 @@ export function ChatPanel({
                 width: 26,
                 height: 26,
                 borderRadius: "50%",
-                background: "rgba(253,109,187,0.15)",
-                border: "1.5px solid rgba(253,109,187,0.55)",
+                background: `${primaryHex}26`,
+                border: `1.5px solid ${primaryHex}8c`,
                 flexShrink: 0,
               }}
             />
             <div
               style={{
-                background: "rgba(253,109,187,0.08)",
-                border: "1px solid rgba(253,109,187,0.2)",
+                background: `${primaryHex}14`,
+                border: `1px solid ${primaryHex}33`,
                 borderRadius: "4px 12px 12px 12px",
                 padding: "9px 14px",
                 color: "rgba(255,255,255,0.3)",

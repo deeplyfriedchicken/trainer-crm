@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-family: var(--font-display), "Barlow Condensed", sans-serif;
   font-size: 32px;
   font-weight: 800;
   position: relative;
@@ -19,5 +19,5 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid var(--neon-bg);
+  border: 2px solid var(--color-bg);
 }

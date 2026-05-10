@@ -3,18 +3,11 @@
 }
 
 .page {
-  --pink: #fd6dbb;
-  --cyan: #34fdfe;
-  --bg: #070712;
-  --surface: #0f0f1e;
-  --surface2: #141428;
-  --border: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.12);
   --font-display: var(--barlow-condensed), sans-serif;
   --font-body: var(--space-grotesk), sans-serif;
   --font-mono: var(--space-mono), monospace;
 
-  background: var(--bg);
+  background: var(--color-bg);
   color: #fff;
   font-family: var(--font-body);
   min-height: 100vh;
@@ -47,7 +40,7 @@
   top: 0;
   z-index: 100;
   background: rgba(7, 7, 18, 0.88);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
 }
@@ -75,7 +68,7 @@
 }
 
 .dot {
-  color: var(--pink);
+  color: var(--color-primary);
 }
 
 .navLinks {
@@ -107,8 +100,8 @@
 
 .navMobileToggle {
   display: none;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
@@ -122,7 +115,7 @@
   display: flex;
   flex-direction: column;
   padding: 16px 24px 20px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--color-border);
   gap: 16px;
 }
 
@@ -140,7 +133,7 @@
 
 .btnGhost {
   padding: 8px 18px;
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
   background: transparent;
   color: rgba(255, 255, 255, 0.7);
@@ -156,12 +149,12 @@
 
 .btnGhost:hover {
   border-color: rgba(253, 109, 187, 0.5);
-  color: var(--pink);
+  color: var(--color-primary);
 }
 
 .btnPrimary {
   padding: 8px 20px;
-  background: var(--pink);
+  background: var(--color-primary);
   border: none;
   border-radius: 8px;
   color: #1a0010;
@@ -206,7 +199,7 @@
   padding: 5px 14px 5px 10px;
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--pink);
+  color: var(--color-primary);
   margin-bottom: 32px;
   letter-spacing: 0.04em;
 }
@@ -215,8 +208,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--pink);
-  box-shadow: 0 0 8px var(--pink);
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
   flex-shrink: 0;
   display: inline-block;
 }
@@ -232,10 +225,10 @@
 }
 
 .accentPink {
-  color: var(--pink);
+  color: var(--color-primary);
 }
 .accentCyan {
-  color: var(--cyan);
+  color: var(--color-secondary);
 }
 
 .heroSub {
@@ -257,7 +250,7 @@
 
 .btnHero {
   padding: 14px 32px;
-  background: var(--pink);
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
   color: #1a0010;
@@ -280,7 +273,7 @@
 
 .btnHeroGhost {
   padding: 14px 32px;
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
   background: transparent;
   color: rgba(255, 255, 255, 0.7);
@@ -297,7 +290,7 @@
 
 .btnHeroGhost:hover {
   border-color: rgba(52, 253, 254, 0.4);
-  color: var(--cyan);
+  color: var(--color-secondary);
 }
 
 .heroStats {
@@ -307,7 +300,7 @@
   gap: 40px;
   margin-top: 64px;
   padding-top: 48px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--color-border);
   flex-wrap: wrap;
 }
 
@@ -329,14 +322,14 @@
 .heroStatDivider {
   width: 1px;
   height: 48px;
-  background: var(--border-strong);
+  background: var(--color-border-strong);
 }
 
 .colorPink {
-  color: var(--pink);
+  color: var(--color-primary);
 }
 .colorCyan {
-  color: var(--cyan);
+  color: var(--color-secondary);
 }
 .colorGreen {
   color: #4ade80;
@@ -352,8 +345,8 @@
 }
 
 .previewFrame {
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
   border-radius: 16px;
   overflow: hidden;
   box-shadow:
@@ -363,8 +356,8 @@
 }
 
 .previewTopbar {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border);
   padding: 12px 20px;
   display: flex;
   align-items: center;
@@ -397,8 +390,8 @@
 }
 
 .previewCard {
-  background: var(--surface2);
-  border: 1px solid var(--border);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 18px;
 }
@@ -454,8 +447,8 @@
 
 .previewWideCard {
   grid-column: 1 / -1;
-  background: var(--surface2);
-  border: 1px solid var(--border);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 18px;
 }
@@ -474,7 +467,7 @@
   align-items: center;
   gap: 14px;
   padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .previewClientRow:last-child {
@@ -516,12 +509,12 @@
 
 .statusRehab {
   background: rgba(52, 253, 254, 0.1);
-  color: var(--cyan);
+  color: var(--color-secondary);
 }
 
 .statusNew {
   background: rgba(253, 109, 187, 0.1);
-  color: var(--pink);
+  color: var(--color-primary);
 }
 
 .previewProgress {
@@ -571,7 +564,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--pink);
+  color: var(--color-primary);
   margin-bottom: 12px;
 }
 
@@ -596,20 +589,20 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   overflow: hidden;
 }
 
 .featureCard {
-  background: var(--surface);
+  background: var(--color-surface);
   padding: 36px 32px;
   transition: background 0.2s;
 }
 
 .featureCard:hover {
-  background: var(--surface2);
+  background: var(--color-surface-2);
 }
 
 .featureIcon {
@@ -624,12 +617,12 @@
 
 .iconPink {
   background: rgba(253, 109, 187, 0.12);
-  color: var(--pink);
+  color: var(--color-primary);
 }
 
 .iconCyan {
   background: rgba(52, 253, 254, 0.12);
-  color: var(--cyan);
+  color: var(--color-secondary);
 }
 
 .iconGreen {
@@ -719,7 +712,7 @@
   height: 18px;
   border-radius: 50%;
   background: rgba(52, 253, 254, 0.15);
-  color: var(--cyan);
+  color: var(--color-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -729,8 +722,8 @@
 
 /* Phone mockup */
 .phoneMockup {
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
   border-radius: 40px;
   overflow: hidden;
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
@@ -739,12 +732,12 @@
 }
 
 .phoneNotch {
-  background: var(--surface2);
+  background: var(--color-surface-2);
   height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .phoneNotchPill {
@@ -759,8 +752,8 @@
 }
 
 .phoneCard {
-  background: var(--surface2);
-  border: 1px solid var(--border);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 10px;
@@ -790,7 +783,7 @@
 .phoneProgressPct {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--cyan);
+  color: var(--color-secondary);
 }
 
 .phoneBar {
@@ -804,7 +797,7 @@
 .phoneBarFill {
   height: 100%;
   border-radius: 3px;
-  background: linear-gradient(90deg, var(--cyan), rgba(52, 253, 254, 0.5));
+  background: linear-gradient(90deg, var(--color-secondary), rgba(52, 253, 254, 0.5));
 }
 
 .phoneExerciseRow {
@@ -812,7 +805,7 @@
   align-items: center;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .phoneExerciseRow:last-child {
@@ -844,28 +837,28 @@
 
 /* Trainer panel */
 .trainerPanel {
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
 }
 
 .trainerPanelTopbar {
-  background: var(--surface2);
+  background: var(--color-surface-2);
   padding: 14px 20px;
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .trainerPanelDot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--pink);
-  box-shadow: 0 0 8px var(--pink);
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
   flex-shrink: 0;
 }
 
@@ -877,7 +870,7 @@
 }
 
 .trainerPanelTitle span {
-  color: var(--pink);
+  color: var(--color-primary);
 }
 
 .trainerPanelBody {
@@ -889,8 +882,8 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   margin-bottom: 10px;
   cursor: pointer;
@@ -941,8 +934,8 @@
 .tpProg {
   margin-top: 16px;
   padding: 14px;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 }
 
@@ -965,7 +958,7 @@
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
-  color: var(--pink);
+  color: var(--color-primary);
 }
 
 .tpProgBar {
@@ -978,7 +971,7 @@
 .tpProgFill {
   height: 100%;
   border-radius: 4px;
-  background: linear-gradient(90deg, var(--pink), rgba(253, 109, 187, 0.5));
+  background: linear-gradient(90deg, var(--color-primary), rgba(253, 109, 187, 0.5));
 }
 
 /* ── Progress / metrics ── */
@@ -998,8 +991,8 @@
 }
 
 .metricCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 28px;
   position: relative;
@@ -1024,10 +1017,10 @@
 }
 
 .mPink::before {
-  background: linear-gradient(90deg, var(--pink), transparent);
+  background: linear-gradient(90deg, var(--color-primary), transparent);
 }
 .mCyan::before {
-  background: linear-gradient(90deg, var(--cyan), transparent);
+  background: linear-gradient(90deg, var(--color-secondary), transparent);
 }
 .mGreen::before {
   background: linear-gradient(90deg, #4ade80, transparent);
@@ -1094,8 +1087,8 @@
 }
 
 .testimonialCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 28px;
 }
@@ -1104,7 +1097,7 @@
   display: flex;
   gap: 4px;
   margin-bottom: 16px;
-  color: var(--pink);
+  color: var(--color-primary);
   font-size: 14px;
 }
 
@@ -1156,8 +1149,8 @@
 }
 
 .ctaInner {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 24px;
   padding: 80px 48px;
   text-align: center;
@@ -1213,7 +1206,7 @@
 
 /* ── Footer ── */
 .footer {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--color-border);
   padding: 40px 24px;
   position: relative;
   z-index: 1;
@@ -1238,7 +1231,7 @@
 }
 
 .footerLogo span {
-  color: var(--pink);
+  color: var(--color-primary);
 }
 
 .footerCopy {

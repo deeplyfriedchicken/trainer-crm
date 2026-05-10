@@ -52,7 +52,7 @@ export function Sidebar() {
       h="100vh"
       overflowY="auto"
       bg="rgba(10,10,22,0.9)"
-      borderRight="1px solid var(--neon-border)"
+      borderRight="1px solid var(--color-border)"
       backdropFilter="blur(20px)"
       zIndex={100}
       display="flex"
@@ -71,7 +71,7 @@ export function Sidebar() {
       <Box
         px="24px"
         pb="24px"
-        borderBottom="1px solid var(--neon-border)"
+        borderBottom="1px solid var(--color-border)"
         mb="16px"
       >
         <Box display="flex" alignItems="center" gap="6px" mb="6px">
@@ -79,20 +79,20 @@ export function Sidebar() {
             w="10px"
             h="10px"
             borderRadius="50%"
-            bg="var(--neon-pink)"
-            boxShadow="0 0 10px var(--neon-pink)"
+            bg="var(--color-primary)"
+            boxShadow="0 0 10px var(--color-primary)"
           />
           <Box
             w="10px"
             h="10px"
             borderRadius="50%"
-            bg="var(--neon-cyan)"
-            boxShadow="0 0 10px var(--neon-cyan)"
+            bg="var(--color-secondary)"
+            boxShadow="0 0 10px var(--color-secondary)"
           />
         </Box>
         <Text
           as="h1"
-          fontFamily="var(--font-neon-display), sans-serif"
+          fontFamily="var(--font-display), sans-serif"
           fontSize="18px"
           fontWeight={800}
           letterSpacing="-0.02em"
@@ -124,7 +124,7 @@ export function Sidebar() {
             <Box key={item.id} asChild>
               <a
                 href={`#${item.id}`}
-                className="neon-sidebar-link"
+                className="sidebar-link"
                 style={{ textDecoration: "none" }}
               >
                 <Box
@@ -144,7 +144,7 @@ export function Sidebar() {
         mt="auto"
         pt="20px"
         px="24px"
-        borderTop="1px solid var(--neon-border)"
+        borderTop="1px solid var(--color-border)"
       >
         <Box
           display="inline-flex"
@@ -157,15 +157,15 @@ export function Sidebar() {
           py="4px"
           fontSize="11px"
           fontWeight={600}
-          color="var(--neon-cyan)"
-          fontFamily="var(--font-neon-mono), monospace"
+          color="var(--color-secondary)"
+          fontFamily="var(--font-mono), monospace"
         >
           <Box
             w="6px"
             h="6px"
             borderRadius="50%"
-            bg="var(--neon-cyan)"
-            boxShadow="0 0 6px var(--neon-cyan)"
+            bg="var(--color-secondary)"
+            boxShadow="0 0 6px var(--color-secondary)"
           />
           v1.0.0 · stable
         </Box>

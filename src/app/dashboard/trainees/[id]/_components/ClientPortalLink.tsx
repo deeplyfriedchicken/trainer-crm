@@ -49,12 +49,12 @@ export function ClientPortalLink({ traineeId }: Props) {
             : "rgba(255,255,255,0.05)",
         border: `1px solid ${isCopied ? "rgba(52,253,254,0.3)" : isError ? "rgba(248,113,113,0.3)" : "rgba(255,255,255,0.1)"}`,
         color: isCopied
-          ? "var(--neon-cyan)"
+          ? "var(--color-secondary)"
           : isError
             ? "#f87171"
             : "rgba(255,255,255,0.6)",
         fontSize: 12,
-        fontFamily: "var(--font-neon-body)",
+        fontFamily: "var(--font-body)",
         fontWeight: 500,
         cursor: isLoading ? "default" : "pointer",
         opacity: isLoading ? 0.6 : 1,

@@ -8,7 +8,7 @@
   flex-shrink: 0;
 }
 .headerTitle {
-  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-family: var(--font-display), "Barlow Condensed", sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: #fff;
@@ -98,7 +98,7 @@
   border-radius: 9px;
   padding: 9px 12px;
   color: #fff;
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
@@ -242,7 +242,7 @@
   border: 1px dashed rgba(52, 253, 254, 0.3);
   background: transparent;
   color: rgba(52, 253, 254, 0.6);
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -250,7 +250,7 @@
 }
 .linkVideoBtn:hover {
   border-color: rgba(52, 253, 254, 0.6);
-  color: var(--neon-cyan, #34fdfe);
+  color: var(--color-secondary);
 }
 
 /* ── Add exercise button ── */
@@ -265,7 +265,7 @@
   background: transparent;
   color: rgba(52, 253, 254, 0.55);
   cursor: pointer;
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s;
@@ -273,7 +273,7 @@
 }
 .addExBtn:hover {
   border-color: rgba(52, 253, 254, 0.5);
-  color: var(--neon-cyan, #34fdfe);
+  color: var(--color-secondary);
 }
 
 /* ── Error banner ── */
@@ -304,7 +304,7 @@
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 13px;
   cursor: pointer;
 }
@@ -319,7 +319,7 @@
   padding: 9px 22px;
   border-radius: 10px;
   border: none;
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;

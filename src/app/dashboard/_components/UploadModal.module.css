@@ -30,7 +30,7 @@
 }
 .dropZone:hover,
 .dropZoneDragging {
-  border-color: var(--neon-cyan);
+  border-color: var(--color-secondary);
   background: rgba(52, 253, 254, 0.05);
 }
 .dropZoneHasFiles {
@@ -44,7 +44,7 @@
   margin-bottom: 4px;
 }
 .dropLabelActive {
-  color: var(--neon-cyan);
+  color: var(--color-secondary);
 }
 
 .dropSub {
@@ -52,7 +52,7 @@
   color: rgba(255, 255, 255, 0.3);
 }
 .dropBrowseLink {
-  color: var(--neon-cyan);
+  color: var(--color-secondary);
   text-decoration: underline;
 }
 
@@ -111,7 +111,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--neon-cyan);
+  color: var(--color-secondary);
 }
 .fileInfo {
   flex: 1;
@@ -186,7 +186,7 @@
   border-radius: 9px;
   padding: 9px 12px;
   color: #fff;
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
@@ -219,7 +219,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: transparent;
   color: rgba(255, 255, 255, 0.45);
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -228,7 +228,7 @@
 .tagPillSelected {
   border-color: rgba(52, 253, 254, 0.5);
   background: rgba(52, 253, 254, 0.12);
-  color: var(--neon-cyan);
+  color: var(--color-secondary);
   box-shadow: 0 0 8px rgba(52, 253, 254, 0.25);
 }
 .tagPillError {
@@ -243,7 +243,7 @@
   border-radius: 20px;
   padding: 4px 10px;
   color: rgba(52, 253, 254, 0.7);
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 11px;
   font-weight: 600;
   outline: none;
@@ -252,7 +252,7 @@
 }
 .newTagInput:focus {
   border-color: rgba(52, 253, 254, 0.6);
-  color: var(--neon-cyan);
+  color: var(--color-secondary);
 }
 .newTagInput::placeholder {
   color: rgba(52, 253, 254, 0.4);
@@ -270,14 +270,14 @@
   background: transparent;
   color: rgba(52, 253, 254, 0.55);
   cursor: pointer;
-  font-family: var(--font-neon-body), "Space Grotesk", sans-serif;
+  font-family: var(--font-body), "Space Grotesk", sans-serif;
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s;
 }
 .addMoreBtn:hover {
   border-color: rgba(52, 253, 254, 0.5);
-  color: var(--neon-cyan);
+  color: var(--color-secondary);
 }
 
 /* ── Footer ── */
@@ -333,14 +333,14 @@
 .progressBar {
   height: 100%;
   border-radius: 4px;
-  background: var(--neon-cyan);
-  box-shadow: 0 0 8px var(--neon-cyan);
+  background: var(--color-secondary);
+  box-shadow: 0 0 8px var(--color-secondary);
   transition: width 0.15s linear;
 }
 .uploadPercent {
   font-size: 12px;
-  font-family: var(--font-neon-mono), "Space Mono", monospace;
-  color: var(--neon-cyan);
+  font-family: var(--font-mono), "Space Mono", monospace;
+  color: var(--color-secondary);
   flex-shrink: 0;
 }
 
@@ -366,7 +366,7 @@
   box-shadow: 0 0 30px rgba(74, 222, 128, 0.2);
 }
 .successTitle {
-  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-family: var(--font-display), "Barlow Condensed", sans-serif;
   font-size: 24px;
   font-weight: 800;
   color: #fff;
@@ -392,7 +392,7 @@
   flex-shrink: 0;
 }
 .customHeaderTitle {
-  font-family: var(--font-neon-display), "Barlow Condensed", sans-serif;
+  font-family: var(--font-display), "Barlow Condensed", sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: #fff;

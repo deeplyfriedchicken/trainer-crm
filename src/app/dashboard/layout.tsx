@@ -18,13 +18,13 @@ const barlow = Barlow_Condensed({
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-neon-body",
+  variable: "--font-body",
 });
 
 const spaceMono = Space_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
-  variable: "--font-neon-mono",
+  variable: "--font-mono",
 });
 
 export default async function DashboardLayout({

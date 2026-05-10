@@ -18,7 +18,7 @@ export interface NeonAlertProps
 }
 
 const palette: Record<NeonAlertStatus, { color: string; soft: string }> = {
-  info: { color: "var(--neon-cyan)", soft: "rgba(52, 253, 254, 0.08)" },
+  info: { color: "var(--color-secondary)", soft: "rgba(52, 253, 254, 0.08)" },
   success: { color: "#4ade80", soft: "rgba(74, 222, 128, 0.08)" },
   warning: { color: "#fbbf24", soft: "rgba(251, 191, 36, 0.08)" },
   error: { color: "#ff5472", soft: "rgba(255, 84, 114, 0.08)" },
@@ -48,8 +48,8 @@ function AlertBase({
       bg={p.soft}
       border="1px solid"
       borderColor={`${p.color}55`}
-      borderRadius="var(--neon-radius)"
-      color="var(--neon-text)"
+      borderRadius="var(--radius)"
+      color="var(--color-text)"
       {...rest}
     >
       <ChakraAlert.Indicator
@@ -78,8 +78,8 @@ function AlertBase({
           <ChakraAlert.Title
             fontSize="13px"
             fontWeight={700}
-            color="var(--neon-text)"
-            fontFamily="var(--font-neon-body), sans-serif"
+            color="var(--color-text)"
+            fontFamily="var(--font-body), sans-serif"
           >
             {title}
           </ChakraAlert.Title>
@@ -87,8 +87,8 @@ function AlertBase({
         {children && (
           <ChakraAlert.Description
             fontSize="12px"
-            color="var(--neon-text-muted)"
-            fontFamily="var(--font-neon-body), sans-serif"
+            color="var(--color-text-muted)"
+            fontFamily="var(--font-body), sans-serif"
             lineHeight="1.5"
           >
             {children}

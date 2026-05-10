@@ -1,25 +1,9 @@
 @import "tailwindcss";
+@import "./theme.css";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-
-  /* Neon design tokens — defined at root so portal-rendered components
-     (Dialog, etc.) resolve them outside of any .crm / .neon scope. */
-  --neon-pink: #fd6dbb;
-  --neon-pink-soft: #ff9de4;
-  --neon-cyan: #34fdfe;
-  --neon-cyan-soft: #a0fffe;
-  --neon-bg: #070712;
-  --neon-surface: #0f0f1e;
-  --neon-surface-2: #141428;
-  --neon-surface-3: #1a1a2e;
-  --neon-border: rgba(255, 255, 255, 0.07);
-  --neon-border-strong: rgba(255, 255, 255, 0.15);
-  --neon-text: #fff;
-  --neon-text-muted: rgba(255, 255, 255, 0.5);
-  --neon-text-dim: rgba(255, 255, 255, 0.33);
-  --neon-radius: 10px;
 }
 
 @theme inline {

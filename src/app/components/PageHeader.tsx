@@ -33,7 +33,7 @@ function PageHeaderComponent({
           variant="display-3xl"
           fontWeight={800}
           letterSpacing="-0.02em"
-          color="var(--neon-text)"
+          color="var(--color-text)"
           lineHeight="1.1"
         >
           {title}
@@ -42,7 +42,7 @@ function PageHeaderComponent({
           <Text
             variant="body-sm"
             display="block"
-            color="var(--neon-text-dim)"
+            color="var(--color-text-dim)"
             mt="4px"
           >
             {subtitle}

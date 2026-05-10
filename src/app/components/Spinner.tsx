@@ -22,7 +22,7 @@ function SpinnerBase({
   label = "Loading",
   ...rest
 }: NeonSpinnerProps) {
-  const color = `var(--neon-${colorScheme})`;
+  const color = `var(--color-${colorScheme})`;
   const s = sizeMap[size];
   return (
     <Box

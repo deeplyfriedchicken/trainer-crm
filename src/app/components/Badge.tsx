@@ -20,7 +20,7 @@ const BadgeBase = forwardRef<HTMLSpanElement, NeonBadgeProps>(function Badge(
   { colorScheme = "pink", variant = "subtle", children, ...rest },
   ref,
 ) {
-  const color = `var(--neon-${colorScheme})`;
+  const color = `var(--color-${colorScheme})`;
   const chrome =
     variant === "solid"
       ? {
@@ -54,7 +54,7 @@ const BadgeBase = forwardRef<HTMLSpanElement, NeonBadgeProps>(function Badge(
       fontWeight={700}
       textTransform="uppercase"
       letterSpacing="0.06em"
-      fontFamily="var(--font-neon-mono), monospace"
+      fontFamily="var(--font-mono), monospace"
       borderRadius="999px"
       {...chrome}
       {...rest}

@@ -13,10 +13,10 @@ export interface NeonSeparatorProps extends SeparatorProps {
 function SeparatorBase({ accent = "none", ...rest }: NeonSeparatorProps) {
   const color =
     accent === "pink"
-      ? "var(--neon-pink)"
+      ? "var(--color-primary)"
       : accent === "cyan"
-        ? "var(--neon-cyan)"
-        : "var(--neon-border)";
+        ? "var(--color-secondary)"
+        : "var(--color-border)";
   return (
     <ChakraSeparator
       borderColor={color}

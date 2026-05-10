@@ -27,7 +27,7 @@ const IconButtonBase = forwardRef<HTMLButtonElement, NeonIconButtonProps>(
     { colorScheme = "pink", variant = "solid", size = "md", children, ...rest },
     ref,
   ) {
-    const color = `var(--neon-${colorScheme})`;
+    const color = `var(--color-${colorScheme})`;
     const s = sizeMap[size];
     const chrome =
       variant === "solid"
@@ -58,7 +58,7 @@ const IconButtonBase = forwardRef<HTMLButtonElement, NeonIconButtonProps>(
         w={s.box}
         h={s.box}
         fontSize={s.fontSize}
-        borderRadius="var(--neon-radius)"
+        borderRadius="var(--radius)"
         transition="all 0.15s"
         {...chrome}
         {...rest}

@@ -30,7 +30,7 @@ function RadioBase({
   colorScheme = "pink",
   ...rest
 }: NeonRadioGroupProps) {
-  const color = `var(--neon-${colorScheme})`;
+  const color = `var(--color-${colorScheme})`;
   return (
     <RadioGroup.Root
       value={value}
@@ -57,8 +57,8 @@ function RadioBase({
             h="18px"
             minW="18px"
             borderRadius="50%"
-            bg="var(--neon-surface-2)"
-            border="1.5px solid var(--neon-border-strong)"
+            bg="var(--color-surface-2)"
+            border="1.5px solid var(--color-border-strong)"
             transition="all 0.15s"
             _checked={{
               borderColor: color,
@@ -75,8 +75,8 @@ function RadioBase({
           </RadioGroup.ItemControl>
           <RadioGroup.ItemText
             fontSize="13px"
-            fontFamily="var(--font-neon-body), sans-serif"
-            color="var(--neon-text)"
+            fontFamily="var(--font-body), sans-serif"
+            color="var(--color-text)"
           >
             {opt.label}
           </RadioGroup.ItemText>

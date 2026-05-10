@@ -474,7 +474,7 @@ export function VideoPickerModal({
                   <LuUpload
                     size={uploadFiles.length > 0 ? 22 : 30}
                     color={
-                      dragging ? "var(--neon-cyan)" : "rgba(52,253,254,0.5)"
+                      dragging ? "var(--color-secondary)" : "rgba(52,253,254,0.5)"
                     }
                     style={{ margin: "0 auto 8px" }}
                   />

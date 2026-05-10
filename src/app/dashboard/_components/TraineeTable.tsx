@@ -124,7 +124,7 @@ export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
         subtitle={`${trainees.length} total · click any row to view profile`}
         action={
           <HStack>
-            <LuSearch size={13} color="var(--neon-text-dim)" />
+            <LuSearch size={13} color="var(--color-text-dim)" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}

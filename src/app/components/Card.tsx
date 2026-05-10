@@ -18,31 +18,31 @@ const CardBase = forwardRef<HTMLDivElement, NeonCardProps>(function Card(
   { variant = "solid", glowColor = "pink", children, ...rest },
   ref,
 ) {
-  const color = `var(--neon-${glowColor})`;
+  const color = `var(--color-${glowColor})`;
   const chrome =
     variant === "outlined"
       ? {
           bg: "transparent",
-          border: "1px solid var(--neon-border)",
+          border: "1px solid var(--color-border)",
         }
       : variant === "glow"
         ? {
-            bg: "var(--neon-surface)",
+            bg: "var(--color-surface)",
             border: "1px solid",
             borderColor: `${color}55`,
             boxShadow: `0 0 32px ${color}1a, 0 10px 40px rgba(0,0,0,0.4)`,
           }
         : {
-            bg: "var(--neon-surface)",
-            border: "1px solid var(--neon-border)",
+            bg: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
           };
 
   return (
     <ChakraCard.Root
       ref={ref}
       borderRadius="14px"
-      color="var(--neon-text)"
-      fontFamily="var(--font-neon-body), sans-serif"
+      color="var(--color-text)"
+      fontFamily="var(--font-body), sans-serif"
       overflow="hidden"
       {...chrome}
       {...rest}
@@ -62,7 +62,7 @@ const CardHeaderBase = forwardRef<
     <ChakraCard.Header
       ref={ref}
       p="20px 22px 12px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
       {...props}
     />
   );
@@ -77,11 +77,11 @@ const CardTitleBase = forwardRef<
   return (
     <ChakraCard.Title
       ref={ref}
-      fontFamily="var(--font-neon-display), sans-serif"
+      fontFamily="var(--font-display), sans-serif"
       fontSize="18px"
       fontWeight={700}
       letterSpacing="-0.01em"
-      color="var(--neon-text)"
+      color="var(--color-text)"
       {...props}
     />
   );
@@ -97,7 +97,7 @@ const CardDescriptionBase = forwardRef<
     <ChakraCard.Description
       ref={ref}
       fontSize="12px"
-      color="var(--neon-text-muted)"
+      color="var(--color-text-muted)"
       mt="4px"
       {...props}
     />
@@ -115,7 +115,7 @@ const CardBodyBase = forwardRef<
       ref={ref}
       p="18px 22px"
       fontSize="13px"
-      color="var(--neon-text)"
+      color="var(--color-text)"
       {...props}
     />
   );
@@ -131,7 +131,7 @@ const CardFooterBase = forwardRef<
     <ChakraCard.Footer
       ref={ref}
       p="14px 22px 18px"
-      borderTop="1px solid var(--neon-border)"
+      borderTop="1px solid var(--color-border)"
       display="flex"
       gap="10px"
       {...props}

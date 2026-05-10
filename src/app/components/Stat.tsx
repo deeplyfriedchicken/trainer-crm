@@ -20,7 +20,7 @@ function StatBase({
   accent = "pink",
   ...rest
 }: NeonStatProps) {
-  const color = `var(--neon-${accent})`;
+  const color = `var(--color-${accent})`;
   const indicatorColor =
     indicator === "up"
       ? "#4ade80"
@@ -32,10 +32,10 @@ function StatBase({
       display="flex"
       flexDirection="column"
       gap="4px"
-      fontFamily="var(--font-neon-body), sans-serif"
+      fontFamily="var(--font-body), sans-serif"
       {...rest}
     >
-      <Text variant="label" color="var(--neon-text-muted)">
+      <Text variant="label" color="var(--color-text-muted)">
         {label}
       </Text>
       <Text
@@ -53,7 +53,7 @@ function StatBase({
           display="inline-flex"
           alignItems="center"
           gap="4px"
-          color={indicatorColor ?? "var(--neon-text-dim)"}
+          color={indicatorColor ?? "var(--color-text-dim)"}
         >
           {indicator === "up" && <span>▲</span>}
           {indicator === "down" && <span>▼</span>}

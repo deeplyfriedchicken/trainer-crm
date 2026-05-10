@@ -60,7 +60,7 @@ export function RoutesTable({ routes }: { routes: RouteDoc[] }) {
       key: "path",
       label: "Path",
       render: (row) => (
-        <span style={{ fontFamily: "var(--font-neon-mono), monospace" }}>
+        <span style={{ fontFamily: "var(--font-mono), monospace" }}>
           {row.path}
         </span>
       ),
@@ -69,7 +69,7 @@ export function RoutesTable({ routes }: { routes: RouteDoc[] }) {
       key: "auth",
       label: "Auth",
       render: (row) => (
-        <span style={{ color: "var(--neon-text-muted)" }}>
+        <span style={{ color: "var(--color-text-muted)" }}>
           {AUTH_LABEL[row.auth]}
         </span>
       ),
@@ -82,9 +82,9 @@ export function RoutesTable({ routes }: { routes: RouteDoc[] }) {
           style={{
             color:
               row.roles === "—"
-                ? "var(--neon-text-dim)"
-                : "var(--neon-text-muted)",
-            fontFamily: "var(--font-neon-mono), monospace",
+                ? "var(--color-text-dim)"
+                : "var(--color-text-muted)",
+            fontFamily: "var(--font-mono), monospace",
             fontSize: 12,
           }}
         >
@@ -98,8 +98,8 @@ export function RoutesTable({ routes }: { routes: RouteDoc[] }) {
       render: (row) => (
         <span
           style={{
-            color: "var(--neon-text-dim)",
-            fontFamily: "var(--font-neon-mono), monospace",
+            color: "var(--color-text-dim)",
+            fontFamily: "var(--font-mono), monospace",
             fontSize: 11,
           }}
         >

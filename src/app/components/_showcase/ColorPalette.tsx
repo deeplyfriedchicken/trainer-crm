@@ -28,38 +28,44 @@ const swatches = [
 
 const tokens = [
   {
-    token: "--neon-pink",
-    value: "#FD6DBB",
+    token: "--color-primary",
+    value: "#fd6dbb",
     role: "Primary / Brand",
     use: "CTAs, highlights, active states",
   },
   {
-    token: "--neon-cyan",
-    value: "#34FDFE",
+    token: "--color-secondary",
+    value: "#34fdfe",
     role: "Secondary / Accent",
     use: "Links, progress, info states",
   },
   {
-    token: "--neon-bg",
+    token: "--color-tertiary",
+    value: "#4ade80",
+    role: "Tertiary / Success",
+    use: "Online status, success states",
+  },
+  {
+    token: "--color-bg",
     value: "#070712",
     role: "Page Background",
     use: "App background",
   },
   {
-    token: "--neon-surface",
+    token: "--color-surface",
     value: "#0f0f1e",
     role: "Surface / Card",
     use: "Cards, modals, panels",
   },
   {
-    token: "--neon-surface-2",
+    token: "--color-surface-2",
     value: "#141428",
     role: "Surface Raised",
     use: "Inputs, dropdowns",
   },
   {
-    token: "--neon-border",
-    value: "rgba(255,255,255,0.08)",
+    token: "--color-border",
+    value: "rgba(255,255,255,0.07)",
     role: "Border",
     use: "Dividers, outlines",
   },
@@ -107,7 +113,7 @@ export function ColorPalette() {
       id="colors"
       px="60px"
       py="56px"
-      borderBottom="1px solid var(--neon-border)"
+      borderBottom="1px solid var(--color-border)"
     >
       <SectionTitle>Color System</SectionTitle>
 
@@ -127,7 +133,7 @@ export function ColorPalette() {
         <Box
           borderRadius="12px"
           overflow="hidden"
-          border="1px solid var(--neon-border)"
+          border="1px solid var(--color-border)"
         >
           <Box as="table" w="full" style={{ borderCollapse: "collapse" }}>
             <Box as="thead" bg="rgba(255,255,255,0.03)">
@@ -139,8 +145,8 @@ export function ColorPalette() {
                     variant="label"
                     p="12px 16px"
                     textAlign="left"
-                    color="var(--neon-text-muted)"
-                    borderBottom="1px solid var(--neon-border)"
+                    color="var(--color-text-muted)"
+                    borderBottom="1px solid var(--color-border)"
                   >
                     {h}
                   </Text>
@@ -158,7 +164,7 @@ export function ColorPalette() {
                     variant="mono-sm"
                     as="td"
                     p="12px 16px"
-                    color="var(--neon-pink)"
+                    color="var(--color-primary)"
                   >
                     {t.token}
                   </Text>
@@ -192,7 +198,7 @@ export function ColorPalette() {
                     variant="body-sm"
                     as="td"
                     p="12px 16px"
-                    color="var(--neon-text-muted)"
+                    color="var(--color-text-muted)"
                   >
                     {t.use}
                   </Text>
@@ -242,7 +248,7 @@ export function SubSection({
         fontWeight={700}
         textTransform="uppercase"
         letterSpacing="0.1em"
-        color="var(--neon-text-dim)"
+        color="var(--color-text-dim)"
         mb="16px"
       >
         {title}

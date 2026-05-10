@@ -38,7 +38,7 @@ function RatingBadge({
         background: `${color}18`,
         color,
         border: `1px solid ${color}33`,
-        fontFamily: "var(--font-neon-mono)",
+        fontFamily: "var(--font-mono)",
       }}
     >
       {label} {value}/10
@@ -67,8 +67,8 @@ export function TraineeWorkoutsPanel({
   return (
     <div
       style={{
-        background: "var(--neon-surface)",
-        border: "1px solid var(--neon-border)",
+        background: "var(--color-surface)",
+        border: "1px solid var(--color-border)",
         borderRadius: 14,
         overflow: "hidden",
       }}
@@ -76,7 +76,7 @@ export function TraineeWorkoutsPanel({
       <div
         style={{
           padding: "14px 18px",
-          borderBottom: "1px solid var(--neon-border)",
+          borderBottom: "1px solid var(--color-border)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -95,7 +95,7 @@ export function TraineeWorkoutsPanel({
         return (
           <div
             key={w.id}
-            style={{ borderBottom: "1px solid var(--neon-border)" }}
+            style={{ borderBottom: "1px solid var(--color-border)" }}
           >
             <div
               role="button"
@@ -216,7 +216,7 @@ export function TraineeWorkoutsPanel({
               <div
                 style={{
                   padding: "0 18px 14px 18px",
-                  borderTop: "1px solid var(--neon-border)",
+                  borderTop: "1px solid var(--color-border)",
                   background: "rgba(255,255,255,0.02)",
                 }}
               >
@@ -259,7 +259,7 @@ export function TraineeWorkoutsPanel({
                             color: "#fff",
                             padding: "7px 12px",
                             borderBottom: "1px solid rgba(255,255,255,0.06)",
-                            fontFamily: "var(--font-neon-display)",
+                            fontFamily: "var(--font-display)",
                             textTransform: "uppercase",
                             letterSpacing: "0.03em",
                           }}
@@ -284,7 +284,7 @@ export function TraineeWorkoutsPanel({
                                         ? "1px solid rgba(255,255,255,0.04)"
                                         : "none",
                                     opacity: s.completed ? 1 : 0.35,
-                                    fontFamily: "var(--font-neon-mono)",
+                                    fontFamily: "var(--font-mono)",
                                   }}
                                 >
                                   <span
@@ -345,7 +345,7 @@ export function TraineeWorkoutsPanel({
                                 alignItems: "center",
                                 gap: 8,
                                 padding: "5px 12px",
-                                fontFamily: "var(--font-neon-mono)",
+                                fontFamily: "var(--font-mono)",
                               }}
                             >
                               <span

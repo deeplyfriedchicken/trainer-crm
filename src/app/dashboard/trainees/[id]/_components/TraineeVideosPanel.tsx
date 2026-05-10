@@ -65,8 +65,8 @@ function VideoCard({
       onClick={onSelect}
       style={{
         appearance: "none",
-        background: "var(--neon-surface-2)",
-        border: "1px solid var(--neon-border)",
+        background: "var(--color-surface-2)",
+        border: "1px solid var(--color-border)",
         borderRadius: 12,
         overflow: "hidden",
         padding: 0,
@@ -84,7 +84,7 @@ function VideoCard({
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget;
-        el.style.borderColor = "var(--neon-border)";
+        el.style.borderColor = "var(--color-border)";
         el.style.transform = "";
         el.style.boxShadow = "";
       }}
@@ -143,7 +143,7 @@ function VideoCard({
               borderRadius: 5,
               padding: "2px 7px",
               fontSize: 11,
-              fontFamily: "var(--font-neon-mono)",
+              fontFamily: "var(--font-mono)",
               color: "#fff",
               zIndex: 1,
             }}
@@ -187,8 +187,8 @@ export function TraineeVideosPanel({
     <>
       <div
         style={{
-          background: "var(--neon-surface)",
-          border: "1px solid var(--neon-border)",
+          background: "var(--color-surface)",
+          border: "1px solid var(--color-border)",
           borderRadius: 14,
           overflow: "hidden",
         }}
@@ -196,7 +196,7 @@ export function TraineeVideosPanel({
         <div
           style={{
             padding: "14px 18px",
-            borderBottom: "1px solid var(--neon-border)",
+            borderBottom: "1px solid var(--color-border)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",

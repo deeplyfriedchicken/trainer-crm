@@ -56,7 +56,7 @@ function NumericStepper({
           step={step}
           onChange={(e) => {
             const n = parseFloat(e.target.value);
-            onChange(isNaN(n) ? min : Math.max(min, n));
+            onChange(Number.isNaN(n) ? min : Math.max(min, n));
           }}
         />
         <span className="log-stepper-unit">{unit}</span>
@@ -278,11 +278,7 @@ export function LogWorkoutClient({ token, plan }: Props) {
             onClick={() => setPaused((p) => !p)}
             title={paused ? "Resume" : "Pause"}
           >
-            {paused ? (
-              <FaPlay size={16} />
-            ) : (
-              <LuPause size={16} />
-            )}
+            {paused ? <FaPlay size={16} /> : <LuPause size={16} />}
           </button>
           <button
             type="button"

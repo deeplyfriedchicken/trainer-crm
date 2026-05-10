@@ -5,7 +5,7 @@ import {
   type ExerciseInput,
   updateWorkoutPlan,
 } from "@/db/queries/workout-plans";
-import { exercises, workoutPlans } from "@/db/schema";
+import { workoutPlans } from "@/db/schema";
 import { getRequestUser } from "@/lib/request-auth";
 
 // @invokes db.query.workoutPlans.findFirst({ with: exercises })
@@ -23,6 +23,7 @@ export async function GET(
     where: eq(workoutPlans.id, id),
     with: {
       exercises: {
+        where: (ex, { isNull }) => isNull(ex.deletedAt),
         orderBy: (ex, { asc }) => [asc(ex.createdAt)],
       },
     },
@@ -75,7 +76,7 @@ export async function PATCH(
   return Response.json({ data: plan });
 }
 
-// @invokes db.transaction(delete exercises WHERE workout_plan_id, delete workoutPlans WHERE id)
+// @invokes db.update(workoutPlans).set({ deletedAt }) WHERE id — soft delete, preserves exercises and workout history
 // @errors 401 unauthorized | 204 no content
 export async function DELETE(
   request: NextRequest,
@@ -86,10 +87,10 @@ export async function DELETE(
 
   const { id } = await ctx.params;
 
-  await db.transaction(async (tx) => {
-    await tx.delete(exercises).where(eq(exercises.workoutPlanId, id));
-    await tx.delete(workoutPlans).where(eq(workoutPlans.id, id));
-  });
+  await db
+    .update(workoutPlans)
+    .set({ deletedAt: new Date() })
+    .where(eq(workoutPlans.id, id));
 
   return new Response(null, { status: 204 });
 }

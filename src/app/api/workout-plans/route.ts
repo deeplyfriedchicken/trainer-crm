@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { db } from "@/db";
 import {
@@ -24,10 +24,11 @@ export async function GET(request: NextRequest) {
   }
 
   const plans = await db.query.workoutPlans.findMany({
-    where: eq(workoutPlans.traineeId, traineeId),
+    where: and(eq(workoutPlans.traineeId, traineeId), isNull(workoutPlans.deletedAt)),
     orderBy: [desc(workoutPlans.occurredAt)],
     with: {
       exercises: {
+        where: (ex, { isNull }) => isNull(ex.deletedAt),
         orderBy: (ex, { asc }) => [asc(ex.createdAt)],
       },
     },

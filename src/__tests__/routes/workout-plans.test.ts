@@ -13,6 +13,7 @@ const {
   mockFindMany,
   mockFindFirst,
   mockTransaction,
+  mockUpdate,
 } = vi.hoisted(() => ({
   mockGetRequestUser: vi.fn(),
   mockCreateWorkoutPlan: vi.fn(),
@@ -20,6 +21,7 @@ const {
   mockFindMany: vi.fn(),
   mockFindFirst: vi.fn(),
   mockTransaction: vi.fn(),
+  mockUpdate: vi.fn().mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn() }) }),
 }));
 
 vi.mock("@/lib/request-auth", () => ({
@@ -40,6 +42,7 @@ vi.mock("@/db", () => ({
       },
     },
     transaction: mockTransaction,
+    update: mockUpdate,
   },
 }));
 
@@ -88,6 +91,14 @@ const mockPlan = {
 };
 
 const mockExerciseInput = {
+  name: "Bench Press",
+  type: "reps" as const,
+  sets: 3,
+  reps: 10,
+};
+
+const mockExerciseInputWithId = {
+  id: "ex_1",
   name: "Bench Press",
   type: "reps" as const,
   sets: 3,
@@ -277,6 +288,27 @@ describe("PATCH /api/workout-plans/[id]", () => {
       }),
     );
   });
+
+  it("forwards exercise ids to updateWorkoutPlan so existing exercises are updated in place", async () => {
+    mockGetRequestUser.mockResolvedValue(trainerUser);
+    const existingPlan = { ...mockPlan, occurredAt: new Date("2025-01-01") };
+    mockFindFirst.mockResolvedValue(existingPlan);
+    mockUpdateWorkoutPlan.mockResolvedValue(mockPlan);
+    const req = nextRequest({
+      method: "PATCH",
+      body: {
+        name: "Upper Body",
+        exercises: [mockExerciseInputWithId],
+      },
+    });
+    const res = await PATCH(req as never, dynamicCtx("plan_1"));
+    expect(res.status).toBe(200);
+    expect(mockUpdateWorkoutPlan).toHaveBeenCalledWith(
+      expect.objectContaining({
+        exerciseInputs: [mockExerciseInputWithId],
+      }),
+    );
+  });
 });
 
 describe("DELETE /api/workout-plans/[id]", () => {
@@ -291,16 +323,15 @@ describe("DELETE /api/workout-plans/[id]", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 204 on successful deletion", async () => {
+  it("returns 204 and soft-deletes the plan", async () => {
     mockGetRequestUser.mockResolvedValue(trainerUser);
-    mockTransaction.mockImplementation(
-      async (fn: (tx: unknown) => Promise<void>) => {
-        await fn({ delete: vi.fn().mockReturnValue({ where: vi.fn() }) });
-      },
-    );
+    const mockWhere = vi.fn();
+    const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
+    mockUpdate.mockReturnValue({ set: mockSet });
     const req = nextRequest();
     const res = await DELETE(req as never, dynamicCtx("plan_1"));
     expect(res.status).toBe(204);
-    expect(mockTransaction).toHaveBeenCalled();
+    expect(mockUpdate).toHaveBeenCalled();
+    expect(mockSet).toHaveBeenCalledWith(expect.objectContaining({ deletedAt: expect.any(Date) }));
   });
 });

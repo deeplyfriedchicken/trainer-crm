@@ -13,9 +13,11 @@ export async function getClientData(traineeId: string) {
     },
     with: {
       workoutPlans: {
+        where: (wp, { isNull }) => isNull(wp.deletedAt),
         orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
           exercises: {
+            where: (ex, { isNull }) => isNull(ex.deletedAt),
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
             with: {
               videoLinks: {
@@ -123,6 +125,7 @@ export async function getPlanForLog(planId: string, traineeId: string) {
     },
     with: {
       exercises: {
+        where: (ex, { isNull }) => isNull(ex.deletedAt),
         orderBy: (ex, { asc }) => [asc(ex.createdAt)],
         columns: {
           id: true,

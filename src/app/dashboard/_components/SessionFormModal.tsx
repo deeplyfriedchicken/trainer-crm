@@ -6,7 +6,10 @@ import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { LuDumbbell, LuLink, LuPlus, LuX } from "react-icons/lu";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
-import type { ColorVariant, SessionEntry } from "@/app/components/SessionsPanel";
+import type {
+  ColorVariant,
+  SessionEntry,
+} from "@/app/components/SessionsPanel";
 import { createPlan, updatePlan } from "../trainees/[id]/actions";
 import styles from "./SessionFormModal.module.css";
 import { type PickedVideo, VideoPickerModal } from "./VideoPickerModal";
@@ -15,6 +18,7 @@ import { type PickedVideo, VideoPickerModal } from "./VideoPickerModal";
 
 const exerciseSchema = z
   .object({
+    exerciseId: z.string().optional(),
     name: z.string().min(1, "Name required"),
     type: z.enum(["reps", "duration"]),
     sets: z.number().int().min(1, "Min 1"),
@@ -70,6 +74,7 @@ function buildDefaults(session?: SessionEntry | null): FormValues {
     occurredAt: toDateInput(session.occurredAt),
     comment: session.comment ?? "",
     exercises: session.exercises.map((ex) => ({
+      exerciseId: ex.id,
       name: ex.name,
       type: ex.type ?? "reps",
       sets: ex.sets,
@@ -138,7 +143,8 @@ function ExerciseCard({
               fontSize: 13,
               fontWeight: 500,
               cursor: "pointer",
-              color: type === t ? "var(--color-primary)" : "rgba(255,255,255,0.5)",
+              color:
+                type === t ? "var(--color-primary)" : "rgba(255,255,255,0.5)",
             }}
           >
             <input
@@ -361,6 +367,7 @@ export function SessionFormModal({
 
   async function onSubmit(values: FormValues) {
     const exList = values.exercises.map((ex, idx) => ({
+      id: ex.exerciseId,
       name: ex.name,
       type: ex.type,
       sets: Number(ex.sets),

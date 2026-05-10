@@ -22,7 +22,13 @@ export async function listTrainees(options: ListTraineesOptions) {
       lastPlanAt: max(workoutPlans.occurredAt),
     })
     .from(users)
-    .leftJoin(workoutPlans, eq(workoutPlans.traineeId, users.id))
+    .leftJoin(
+      workoutPlans,
+      and(
+        eq(workoutPlans.traineeId, users.id),
+        isNull(workoutPlans.deletedAt),
+      ),
+    )
     .where(isNull(users.deletedAt))
     .groupBy(
       users.id,
@@ -45,6 +51,7 @@ export async function getTraineeById(id: string) {
     with: {
       roles: true,
       workoutPlans: {
+        where: (wp, { isNull }) => isNull(wp.deletedAt),
         orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
           videoLinks: {
@@ -62,6 +69,7 @@ export async function getTraineeById(id: string) {
             },
           },
           exercises: {
+            where: (ex, { isNull }) => isNull(ex.deletedAt),
             orderBy: (ex, { asc }) => [asc(ex.createdAt)],
             with: {
               videoLinks: {

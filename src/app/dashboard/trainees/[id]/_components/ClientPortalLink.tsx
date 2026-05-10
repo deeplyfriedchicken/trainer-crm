@@ -18,7 +18,7 @@ export function ClientPortalLink({ traineeId }: Props) {
     try {
       const res = await fetch(`/api/trainees/${traineeId}/portal-link`);
       if (!res.ok) throw new Error("Failed to generate link");
-      const { data } = (await res.json()) as { data: { url: string } };
+      const { data } = await res.json();
       await navigator.clipboard.writeText(data.url);
       setState("copied");
       setTimeout(() => setState("idle"), 2000);
@@ -64,7 +64,13 @@ export function ClientPortalLink({ traineeId }: Props) {
       type="button"
     >
       <LuLink size={13} />
-      {isCopied ? "Copied!" : isError ? "Failed" : isLoading ? "Generating…" : "Client Portal Link"}
+      {isCopied
+        ? "Copied!"
+        : isError
+          ? "Failed"
+          : isLoading
+            ? "Generating…"
+            : "Client Portal Link"}
     </button>
   );
 }

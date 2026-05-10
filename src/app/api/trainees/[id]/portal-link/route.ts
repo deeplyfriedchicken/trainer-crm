@@ -25,7 +25,7 @@ export async function GET(
     return Response.json({ error: "Trainee not found" }, { status: 404 });
 
   const token = encryptUserId(trainee.id);
-  const baseUrl = process.env.CLIENT_PORTAL_BASE_URL;
+  const baseUrl = process.env.APP_URL;
   const url = `${baseUrl}/client/${token}`;
   const expiresAt = new Date(Date.now() + TOKEN_TTL_MS).toISOString();
 

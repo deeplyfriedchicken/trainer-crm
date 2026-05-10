@@ -4,6 +4,17 @@ import { Barlow_Condensed, Space_Grotesk, Space_Mono } from "next/font/google";
 import Link from "next/link";
 import { useState } from "react";
 import { CiCircleCheck } from "react-icons/ci";
+import {
+  LuArrowRight,
+  LuCircleCheck,
+  LuClock,
+  LuMenu,
+  LuMonitor,
+  LuStar,
+  LuSquareCheck,
+  LuTrendingUp,
+  LuUser,
+} from "react-icons/lu";
 import s from "./page.module.css";
 
 const barlowCondensed = Barlow_Condensed({
@@ -59,26 +70,14 @@ export default function Home() {
               aria-label="Menu"
               onClick={() => setMobileNavOpen((v) => !v)}
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <rect y="2" width="18" height="2" rx="1" fill="currentColor" />
-                <rect y="8" width="18" height="2" rx="1" fill="currentColor" />
-                <rect y="14" width="18" height="2" rx="1" fill="currentColor" />
-              </svg>
+              <LuMenu size={18} />
             </button>
             <Link href="/login" className={s.btnGhost}>
               Sign In
             </Link>
             <Link href="/login" className={s.btnPrimary}>
               Get Started
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path
-                  d="M3 7h8M7 3l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <LuArrowRight size={14} />
             </Link>
           </div>
         </div>
@@ -122,33 +121,10 @@ export default function Home() {
           <div className={s.heroCta}>
             <Link href="/login" className={s.btnHero}>
               Start for free
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M3 8h10M9 4l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <LuArrowRight size={16} />
             </Link>
             <a href="#features" className={s.btnHeroGhost}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle
-                  cx="8"
-                  cy="8"
-                  r="6.5"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                />
-                <path
-                  d="M6 8l2 2 3-3"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <LuCircleCheck size={16} />
               See how it works
             </a>
           </div>
@@ -317,21 +293,7 @@ export default function Home() {
           <div className={s.featuresGrid}>
             <div className={s.featureCard}>
               <div className={`${s.featureIcon} ${s.iconPink}`}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <circle
-                    cx="10"
-                    cy="7"
-                    r="3.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <LuUser size={20} />
               </div>
               <div className={s.featureTitle}>Client Roster</div>
               <p className={s.featureDesc}>
@@ -341,16 +303,7 @@ export default function Home() {
             </div>
             <div className={s.featureCard}>
               <div className={`${s.featureIcon} ${s.iconCyan}`}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <polyline
-                    points="3,14 7,9 11,12 17,5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <circle cx="17" cy="5" r="1.5" fill="currentColor" />
-                </svg>
+                <LuTrendingUp size={20} />
               </div>
               <div className={s.featureTitle}>Progress Tracking</div>
               <p className={s.featureDesc}>
@@ -360,24 +313,7 @@ export default function Home() {
             </div>
             <div className={s.featureCard}>
               <div className={`${s.featureIcon} ${s.iconGreen}`}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <rect
-                    x="3"
-                    y="3"
-                    width="14"
-                    height="14"
-                    rx="3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M7 10l2 2 4-4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <LuSquareCheck size={20} />
               </div>
               <div className={s.featureTitle}>Program Builder</div>
               <p className={s.featureDesc}>
@@ -387,14 +323,7 @@ export default function Home() {
             </div>
             <div className={s.featureCard}>
               <div className={`${s.featureIcon} ${s.iconPink}`}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M10 2L12.5 8H18L13.5 11.5L15.5 17.5L10 14L4.5 17.5L6.5 11.5L2 8H7.5L10 2Z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <LuStar size={20} />
               </div>
               <div className={s.featureTitle}>Rehab Protocols</div>
               <p className={s.featureDesc}>
@@ -404,19 +333,7 @@ export default function Home() {
             </div>
             <div className={s.featureCard}>
               <div className={`${s.featureIcon} ${s.iconCyan}`}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M4 4h12v8a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M8 17h4M10 14v3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <LuMonitor size={20} />
               </div>
               <div className={s.featureTitle}>Session Notes</div>
               <p className={s.featureDesc}>
@@ -426,21 +343,7 @@ export default function Home() {
             </div>
             <div className={s.featureCard}>
               <div className={`${s.featureIcon} ${s.iconGreen}`}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <circle
-                    cx="10"
-                    cy="10"
-                    r="7"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M10 6v4l3 2"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <LuClock size={20} />
               </div>
               <div className={s.featureTitle}>Scheduling</div>
               <p className={s.featureDesc}>

@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { LuFilm, LuUpload } from "react-icons/lu";
+import { LuCheck, LuCircleAlert, LuFilm, LuPlus, LuUpload } from "react-icons/lu";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
 import styles from "./UploadModal.module.css";
@@ -281,6 +281,7 @@ export function UploadModal({
               tagIds: entry.tagIds,
             }),
           });
+          await fetch(`/api/videos/${videoId}/process`, { method: "POST" });
         }),
       );
       setPhase("success");
@@ -329,17 +330,7 @@ export function UploadModal({
         >
           <div className={styles.success}>
             <div className={styles.successIcon}>
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#4ade80"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              >
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
+              <LuCheck size={32} color="#4ade80" />
             </div>
             <div>
               <div className={styles.successTitle}>
@@ -470,18 +461,7 @@ export function UploadModal({
             {/* Error banner */}
             {hasErrors && (
               <div className={styles.errorBanner}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#f87171"
-                  strokeWidth="2"
-                  style={{ flexShrink: 0, marginTop: 1 }}
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 8v4M12 16h.01" />
-                </svg>
+                <LuCircleAlert size={16} color="#f87171" style={{ flexShrink: 0, marginTop: 1 }} />
                 <div>
                   <div className={styles.errorBannerTitle}>
                     Please fix the errors below before uploading.
@@ -618,17 +598,7 @@ export function UploadModal({
                   className={styles.addMoreBtn}
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  >
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
+                  <LuPlus size={14} />
                   Add more videos
                 </button>
               </div>

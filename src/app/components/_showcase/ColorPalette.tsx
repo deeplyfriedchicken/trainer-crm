@@ -1,6 +1,7 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
+import { Text } from "../Text";
 
 const swatches = [
   { name: "Pink 50", hex: "#fff0f8" },
@@ -79,22 +80,24 @@ function Swatch({ name, hex }: { name: string; hex: string }) {
       transition="transform 0.2s"
       _hover={{ transform: "scale(1.02)" }}
     >
-      <Box
+      <Text
+        display="block"
         fontSize="11px"
         fontWeight={700}
         fontFamily="var(--font-neon-mono), monospace"
         color={textColor}
       >
         {name}
-      </Box>
-      <Box
+      </Text>
+      <Text
+        display="block"
         fontSize="10px"
         opacity={0.7}
         fontFamily="var(--font-neon-mono), monospace"
         color={textColor}
       >
         {hex}
-      </Box>
+      </Text>
     </Box>
   );
 }
@@ -132,7 +135,7 @@ export function ColorPalette() {
             <Box as="thead" bg="rgba(255,255,255,0.03)">
               <Box as="tr">
                 {["Token", "Value", "Role", "Usage"].map((h) => (
-                  <Box
+                  <Text
                     as="th"
                     key={h}
                     p="12px 16px"
@@ -145,7 +148,7 @@ export function ColorPalette() {
                     fontWeight={600}
                   >
                     {h}
-                  </Box>
+                  </Text>
                 ))}
               </Box>
             </Box>
@@ -156,15 +159,14 @@ export function ColorPalette() {
                   key={t.token}
                   borderBottom="1px solid rgba(255,255,255,0.03)"
                 >
-                  <Box
+                  <Text
+                    variant="mono-sm"
                     as="td"
                     p="12px 16px"
-                    fontFamily="var(--font-neon-mono), monospace"
-                    fontSize="12px"
                     color="var(--neon-pink)"
                   >
                     {t.token}
-                  </Box>
+                  </Text>
                   <Box as="td" p="12px 16px">
                     <Box display="flex" alignItems="center" gap="8px">
                       <Box
@@ -175,32 +177,31 @@ export function ColorPalette() {
                         border="1px solid rgba(255,255,255,0.2)"
                         flexShrink={0}
                       />
-                      <Box
-                        as="span"
+                      <Text
                         fontFamily="var(--font-neon-mono), monospace"
                         fontSize="11px"
                         color="rgba(255,255,255,0.55)"
                       >
                         {t.value}
-                      </Box>
+                      </Text>
                     </Box>
                   </Box>
-                  <Box
+                  <Text
+                    variant="body-sm"
                     as="td"
                     p="12px 16px"
                     color="rgba(255,255,255,0.7)"
-                    fontSize="13px"
                   >
                     {t.role}
-                  </Box>
-                  <Box
+                  </Text>
+                  <Text
+                    variant="body-sm"
                     as="td"
                     p="12px 16px"
                     color="var(--neon-text-muted)"
-                    fontSize="13px"
                   >
                     {t.use}
-                  </Box>
+                  </Text>
                 </Box>
               ))}
             </Box>
@@ -213,7 +214,7 @@ export function ColorPalette() {
 
 export function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <Box
+    <Text
       as="h2"
       fontFamily="var(--font-neon-display), sans-serif"
       fontSize="28px"
@@ -228,7 +229,7 @@ export function SectionTitle({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-    </Box>
+    </Text>
   );
 }
 
@@ -241,9 +242,9 @@ export function SubSection({
 }) {
   return (
     <Box mb="36px" _last={{ mb: 0 }}>
-      <Box
+      <Text
+        variant="body-xs"
         as="h3"
-        fontSize="12px"
         fontWeight={700}
         textTransform="uppercase"
         letterSpacing="0.1em"
@@ -251,7 +252,7 @@ export function SubSection({
         mb="16px"
       >
         {title}
-      </Box>
+      </Text>
       {children}
     </Box>
   );

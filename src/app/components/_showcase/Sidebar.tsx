@@ -1,6 +1,7 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
+import { Text } from "../Text";
 
 interface NavItem {
   id: string;
@@ -89,7 +90,7 @@ export function Sidebar() {
             boxShadow="0 0 10px var(--neon-cyan)"
           />
         </Box>
-        <Box
+        <Text
           as="h1"
           fontFamily="var(--font-neon-display), sans-serif"
           fontSize="18px"
@@ -98,15 +99,16 @@ export function Sidebar() {
           color="#fff"
         >
           Neon UI
-        </Box>
-        <Box as="p" fontSize="11px" color="rgba(255,255,255,0.27)" mt="3px">
+        </Text>
+        <Text as="p" fontSize="11px" color="rgba(255,255,255,0.27)" mt="3px">
           Component Library v1.0
-        </Box>
+        </Text>
       </Box>
 
       {groups.map((group) => (
         <Box key={group.title}>
-          <Box
+          <Text
+            display="block"
             fontSize="10px"
             fontWeight={700}
             textTransform="uppercase"
@@ -117,7 +119,7 @@ export function Sidebar() {
             pb="6px"
           >
             {group.title}
-          </Box>
+          </Text>
           {group.items.map((item) => (
             <Box key={item.id} asChild>
               <a

@@ -1,13 +1,12 @@
 import type { NextRequest } from "next/server";
 import { setVideoTags } from "@/db/queries/tags";
-import { getVideoById, softDeleteVideo, updateVideo } from "@/db/queries/videos";
+import {
+  getVideoById,
+  softDeleteVideo,
+  updateVideo,
+} from "@/db/queries/videos";
 import { getApiUser } from "@/lib/api-auth";
 import { getRequestUser } from "@/lib/request-auth";
-import {
-  getProcessedKey,
-  getProcessedUrl,
-  submitTranscodeJob,
-} from "@/lib/mediaconvert";
 import { getPresignedGetUrl } from "@/lib/s3";
 
 // @invokes getVideoById(id), getPresignedGetUrl(video.fileKey, 3600)
@@ -29,9 +28,9 @@ export async function GET(
   });
 }
 
-// @body { title?: string; description?: string; traineeId?: string | null; tagIds?: string[] }
-// @invokes updateVideo(id, input), setVideoTags(id, tagIds), submitTranscodeJob(id, fileKey)
-// @errors 401 unauthorized | 404 video not found | 409 video not in uploading state | 202 transcoding submitted (production) | 200 ready immediately (SKIP_TRANSCODING)
+// @body { title?: string; description?: string | null; traineeId?: string | null; tagIds?: string[] }
+// @invokes updateVideo(id, input), setVideoTags(id, tagIds)
+// @errors 400 validation | 401 unauthorized | 403 forbidden | 404 not found
 export async function PATCH(
   request: NextRequest,
   ctx: RouteContext<"/api/videos/[id]">,
@@ -45,51 +44,36 @@ export async function PATCH(
     return Response.json({ error: "Video not found" }, { status: 404 });
   }
 
-  if (video.status !== "uploading") {
-    return Response.json(
-      { error: "Video is not in uploading state" },
-      { status: 409 },
-    );
+  const isOwner = video.uploader.id === user.id;
+  const isPrivileged =
+    user.roles.includes("admin") || user.roles.includes("trainer_manager");
+  if (!isOwner && !isPrivileged) {
+    return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const body = await request.json();
   const { title, description, traineeId, tagIds } = body as {
     title?: string;
-    description?: string;
+    description?: string | null;
     traineeId?: string | null;
     tagIds?: string[];
   };
+
+  if (title !== undefined && title.trim() === "") {
+    return Response.json({ error: "Title cannot be empty" }, { status: 400 });
+  }
 
   if (tagIds !== undefined) {
     await setVideoTags(id, tagIds);
   }
 
-  // Local dev: skip transcoding and mark ready immediately
-  if (process.env.SKIP_TRANSCODING === "true") {
-    const updated = await updateVideo(id, {
-      ...(title !== undefined && { title }),
-      ...(description !== undefined && { description }),
-      ...(traineeId !== undefined && { traineeId }),
-      status: "ready",
-    });
-    return Response.json({ data: updated });
-  }
-
-  // Production: submit transcoding job and transition to processing
   const updated = await updateVideo(id, {
-    ...(title !== undefined && { title }),
+    ...(title !== undefined && { title: title.trim() }),
     ...(description !== undefined && { description }),
     ...(traineeId !== undefined && { traineeId }),
-    status: "processing",
-    originalFileKey: video.fileKey,
-    // Pre-set the processed key/url so the unique index won't conflict on completion
-    fileKey: getProcessedKey(id),
-    fileUrl: getProcessedUrl(id),
   });
 
-  await submitTranscodeJob(id, video.fileKey);
-
-  return Response.json({ data: updated }, { status: 202 });
+  return Response.json({ data: updated });
 }
 
 // @invokes softDeleteVideo(id)
@@ -103,6 +87,7 @@ export async function DELETE(
   const { id } = await ctx.params;
 
   const video = await softDeleteVideo(id);
-  if (!video) return Response.json({ error: "Video not found" }, { status: 404 });
+  if (!video)
+    return Response.json({ error: "Video not found" }, { status: 404 });
   return new Response(null, { status: 204 });
 }

@@ -2,6 +2,7 @@
 
 import { Box, chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
+import { Text } from "./Text";
 
 export interface NeonStatProps extends React.HTMLAttributes<HTMLElement> {
   label: ReactNode;
@@ -34,17 +35,15 @@ function StatBase({
       fontFamily="var(--font-neon-body), sans-serif"
       {...rest}
     >
-      <Box
-        as="span"
+      <Text
         fontSize="11px"
         textTransform="uppercase"
         letterSpacing="0.08em"
         color="var(--neon-text-muted)"
       >
         {label}
-      </Box>
-      <Box
-        as="span"
+      </Text>
+      <Text
         fontFamily="var(--font-neon-display), sans-serif"
         fontSize="28px"
         fontWeight={800}
@@ -53,10 +52,9 @@ function StatBase({
         lineHeight="1"
       >
         {value}
-      </Box>
+      </Text>
       {helpText && (
-        <Box
-          as="span"
+        <Text
           fontSize="11px"
           display="inline-flex"
           alignItems="center"
@@ -66,7 +64,7 @@ function StatBase({
           {indicator === "up" && <span>▲</span>}
           {indicator === "down" && <span>▼</span>}
           {helpText}
-        </Box>
+        </Text>
       )}
     </Box>
   );

@@ -83,7 +83,7 @@ export default async function DocsApiPage() {
                 </Box>
               ))}
               {queries.length === 0 && (
-                <Box color="var(--neon-text-dim)">No query files found.</Box>
+                <Text color="var(--neon-text-dim)">No query files found.</Text>
               )}
             </Stack>
           </CardBody>

@@ -1,44 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { LuChevronLeft, LuVideo } from "react-icons/lu";
 import { getExerciseForClient } from "@/db/queries/client";
 import { getClientSession } from "@/lib/client-session";
 import { decryptUserId } from "@/lib/client-token";
 import { getPresignedGetUrl } from "@/lib/s3";
-
-function ArrowLeft() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M11 14L6 9l5-5" />
-    </svg>
-  );
-}
-
-function VideoIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 14 14"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="1" y="2.5" width="9" height="9" rx="1.5" />
-      <path d="M10 5.5l3-2v7l-3-2" />
-    </svg>
-  );
-}
 
 export default async function ExerciseDetailPage({
   params,
@@ -78,7 +44,7 @@ export default async function ExerciseDetailPage({
       <div className="client-topbar">
         <div className="client-topbar-inner">
           <Link href={`/client/${token}`} className="client-back-btn">
-            <ArrowLeft /> Back
+            <LuChevronLeft size={18} /> Back
           </Link>
         </div>
       </div>
@@ -88,7 +54,7 @@ export default async function ExerciseDetailPage({
           <div className="ex-detail-badges">
             {exercise.videoLinks.length > 0 && (
               <span className="ex-badge pink">
-                <VideoIcon /> Video
+                <LuVideo size={12} /> Video
               </span>
             )}
           </div>

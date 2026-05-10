@@ -1,5 +1,6 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import { PageHeader } from "@/app/components/PageHeader";
+import { Text } from "@/app/components/Text";
 import { listTrainers } from "@/db/queries/trainers";
 import { getCurrentUser } from "@/lib/auth";
 import { AddTrainerButton } from "../_components/AddTrainerButton";
@@ -58,7 +59,7 @@ export default async function TrainersPage() {
       />
 
       {trainers.length === 0 ? (
-        <Box className="crm-table-empty">No trainers found.</Box>
+        <Text className="crm-table-empty">No trainers found.</Text>
       ) : (
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap="20px">
           {trainers.map((t) => (

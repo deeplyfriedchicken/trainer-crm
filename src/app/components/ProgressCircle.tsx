@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ProgressCircle as ChakraProgressCircle,
-  chakra,
-} from "@chakra-ui/react";
+import { ProgressCircle as ChakraProgressCircle } from "@chakra-ui/react";
 import type { NeonColorScheme, NeonSize } from "./Button";
 
 // Omit defaultValue/defaultChecked — HTMLAttributes types conflict with ProgressCircleRootProps
@@ -69,5 +66,4 @@ function ProgressCircleBase({
   );
 }
 
-// chakra() strips "size" via PatchHtmlProps — cast back to preserve it alongside style props
-export const ProgressCircle = chakra(ProgressCircleBase);
+export const ProgressCircle = ProgressCircleBase;

@@ -1,5 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { Badge } from "@/app/components/Badge";
+import { Text } from "@/app/components/Text";
 
 const ROLE_LABEL: Record<string, string> = {
   trainer: "Trainer",
@@ -73,18 +74,19 @@ export function TrainerCard({
       </Box>
 
       {/* Name / email */}
-      <Box
+      <Text
         fontFamily="var(--font-neon-display), sans-serif"
         fontSize="16px"
         fontWeight={700}
         color="var(--neon-text)"
         mb="4px"
+        display="block"
       >
         {name}
-      </Box>
-      <Box fontSize="12px" color="var(--neon-text-dim)" mb="10px">
+      </Text>
+      <Text variant="body-xs" color="var(--neon-text-dim)" mb="10px" display="block">
         {email}
-      </Box>
+      </Text>
 
       {/* Roles */}
       <Flex justify="center" gap="6px" flexWrap="wrap" mb="16px">
@@ -103,23 +105,25 @@ export function TrainerCard({
       <Flex justify="center" gap="24px" mb="20px">
         {[{ label: "Videos", value: videoCount }].map(({ label, value }) => (
           <Box key={label} textAlign="center">
-            <Box
+            <Text
               fontFamily="var(--font-neon-display), sans-serif"
               fontSize="22px"
               fontWeight={800}
               color={color}
+              display="block"
             >
               {value}
-            </Box>
-            <Box fontSize="11px" color="var(--neon-text-dim)">
+            </Text>
+            <Text fontSize="11px" color="var(--neon-text-dim)" display="block">
               {label}
-            </Box>
+            </Text>
           </Box>
         ))}
       </Flex>
 
       {/* Action */}
-      <Box
+      <Text
+        variant="body-xs"
         as="button"
         w="full"
         py="7px"
@@ -127,15 +131,13 @@ export function TrainerCard({
         border={`1px solid ${color}55`}
         color={color}
         bg="transparent"
-        fontSize="12px"
-        fontFamily="var(--font-neon-body), sans-serif"
         fontWeight={600}
         cursor="pointer"
         transition="all 0.15s"
         _hover={{ bg: `${color}14` }}
       >
         View Profile
-      </Box>
+      </Text>
     </Box>
   );
 }

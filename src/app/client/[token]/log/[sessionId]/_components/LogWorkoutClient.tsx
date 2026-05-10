@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { FaPlay } from "react-icons/fa6";
+import { LuCheck, LuChevronLeft, LuPause, LuVideo } from "react-icons/lu";
 import type { PlanForLog } from "@/db/queries/client";
 import { FeedbackModal } from "./FeedbackModal";
 
@@ -17,58 +19,6 @@ function fmtDuration(secs: number): string {
   const m = Math.floor(secs / 60);
   const s = secs % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
-}
-
-function ArrowLeft() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M11 14L6 9l5-5" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      stroke="#070712"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2.5 7l3.5 3.5 5.5-6" />
-    </svg>
-  );
-}
-
-function PlayIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="1" y="2.5" width="9" height="9" rx="1.5" />
-      <path d="M10 5.5l3-2v7l-3-2" />
-    </svg>
-  );
 }
 
 function NumericStepper({
@@ -221,7 +171,7 @@ export function LogWorkoutClient({ token, plan }: Props) {
       <div className="client-topbar">
         <div className="client-topbar-inner">
           <Link href={`/client/${token}`} className="client-back-btn">
-            <ArrowLeft /> Cancel
+            <LuChevronLeft size={18} /> Cancel
           </Link>
         </div>
       </div>
@@ -262,7 +212,7 @@ export function LogWorkoutClient({ token, plan }: Props) {
                     }}
                     title="Watch video"
                   >
-                    <PlayIcon />
+                    <LuVideo size={14} />
                   </button>
                 )}
                 <div className="log-ex-note">
@@ -301,7 +251,7 @@ export function LogWorkoutClient({ token, plan }: Props) {
                         className={`log-check${set.completed ? " checked" : ""}`}
                         onClick={() => !isDisabled && toggleSet(exIdx, setIdx)}
                       >
-                        {set.completed && <CheckIcon />}
+                        {set.completed && <LuCheck size={14} color="#070712" />}
                       </div>
                     </div>
                   );
@@ -329,24 +279,9 @@ export function LogWorkoutClient({ token, plan }: Props) {
             title={paused ? "Resume" : "Pause"}
           >
             {paused ? (
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-              >
-                <polygon points="4,2 14,8 4,14" />
-              </svg>
+              <FaPlay size={16} />
             ) : (
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-              >
-                <rect x="3" y="2" width="4" height="12" rx="1" />
-                <rect x="9" y="2" width="4" height="12" rx="1" />
-              </svg>
+              <LuPause size={16} />
             )}
           </button>
           <button

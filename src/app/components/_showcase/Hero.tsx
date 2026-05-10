@@ -3,6 +3,7 @@
 import { Box } from "@chakra-ui/react";
 import { Button } from "../Button";
 import { Stat } from "../Stat";
+import { Text } from "../Text";
 
 export function Hero() {
   return (
@@ -29,7 +30,8 @@ export function Hero() {
         aria-hidden
       />
       <Box position="relative" zIndex={1}>
-        <Box
+        <Text
+          variant="mono-sm"
           display="inline-flex"
           alignItems="center"
           gap="8px"
@@ -38,14 +40,12 @@ export function Hero() {
           borderRadius="20px"
           px="14px"
           py="5px"
-          fontSize="12px"
           fontWeight={600}
           color="var(--neon-pink)"
-          fontFamily="var(--font-neon-mono), monospace"
           mb="20px"
         >
           ✦ Chakra-inspired · Neon Aesthetic
-        </Box>
+        </Text>
         <Box
           as="h1"
           fontFamily="var(--font-neon-display), sans-serif"
@@ -59,9 +59,9 @@ export function Hero() {
           <br />
           <span className="neon-grad-cyan">UI Kit</span>
         </Box>
-        <Box
+        <Text
+          variant="body-md"
           as="p"
-          fontSize="16px"
           color="var(--neon-text-muted)"
           maxW="520px"
           lineHeight="1.6"
@@ -69,7 +69,7 @@ export function Hero() {
         >
           A cyberpunk-themed component library built around electric pink and
           cyan. Every component glows, every interaction pulses.
-        </Box>
+        </Text>
         <Box display="flex" gap="12px" flexWrap="wrap">
           <Button colorScheme="pink" size="lg">
             Get Started

@@ -119,3 +119,33 @@ const TextBase = forwardRef<HTMLElement, TextProps>(function Text(
 
 // chakra() strips "variant" via PatchHtmlProps — cast back to restore it
 export const Text = chakra(TextBase) as unknown as typeof TextBase;
+
+/*
+ * PROPOSED VARIANTS — patterns found in the codebase that still require
+ * hardcoded font props because no variant covers them:
+ *
+ * "display-xl"   — display font · 16px · w700 · lh1.3
+ *                  Used for: card names (TrainerCard), minor UI headings.
+ *                  Would close the gap between body-lg (18px body) and display-2xl (20px display).
+ *
+ * "display-3xl"  — current variant is w700; a w800 sibling is needed.
+ *                  Affected: SectionTitle (28px/w800), PageHeader title (26px/w800),
+ *                  Stat value (28px/w800), TrainerCard stat (22px/w800).
+ *                  All use display font at w800 in the 20–32px range with no matching variant.
+ *
+ * "body-2xs"     — body font · 11px · w400 · lh1.5
+ *                  Used for: Stat label, TrainerCard stat label, Sidebar version text,
+ *                  ProfileStatStrip label. Smaller than body-xs (12px) but still body font.
+ *
+ * "body-3xs"     — body font · 10px · w400 · lh1.5
+ *                  Used for: ProfileStatStrip label, Sidebar nav group labels.
+ *
+ * "label"        — body font · 11px · w600 · uppercase · letterSpacing 0.08em · lh1.5
+ *                  Used for: Stat label, table th headers, overline-style section labels.
+ *                  A semantic variant (not just a size) that bundles the uppercase+tracking
+ *                  pattern so callers don't repeat textTransform + letterSpacing.
+ *
+ * "mono-xs"      — mono font · 11px · w400 · lh1.5
+ *                  Used for: ColorPalette swatch labels, token value column.
+ *                  Smaller than mono-sm (12px) needed for dense data display.
+ */

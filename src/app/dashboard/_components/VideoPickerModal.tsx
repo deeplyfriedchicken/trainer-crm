@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import { LuFilm, LuSearch, LuUpload, LuX } from "react-icons/lu";
+import { LuCheck, LuFilm, LuSearch, LuUpload, LuX } from "react-icons/lu";
 import { Dialog } from "@/app/components/Dialog";
 import styles from "./VideoPickerModal.module.css";
 
@@ -251,6 +251,7 @@ export function VideoPickerModal({
               title: uploadTitles[i]?.trim() || uploadFiles[i]?.name,
             }),
           });
+          await fetch(`/api/videos/${videoId}/process`, { method: "POST" });
         }),
       );
       setUploadPhase("done");
@@ -429,17 +430,7 @@ export function VideoPickerModal({
             <div className={styles.uploadBody}>
               <div className={styles.successBox}>
                 <div className={styles.successIcon}>
-                  <svg
-                    width="26"
-                    height="26"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#4ade80"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  >
-                    <path d="M20 6L9 17l-5-5" />
-                  </svg>
+                  <LuCheck size={26} color="#4ade80" />
                 </div>
                 <div className={styles.successTitle}>
                   {uploadFiles.length} Video

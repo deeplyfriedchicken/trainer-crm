@@ -2,6 +2,7 @@
 
 import { Box, chakra, Flex } from "@chakra-ui/react";
 import type { ReactNode } from "react";
+import { Text } from "./Text";
 
 // Omit "title" — HTMLAttributes.title is string, but our title is ReactNode
 export interface PageHeaderProps
@@ -27,7 +28,8 @@ function PageHeaderComponent({
       {...rest}
     >
       <Box>
-        <Box
+        <Text
+          display="block"
           fontFamily="var(--font-neon-display), sans-serif"
           fontSize="26px"
           fontWeight={800}
@@ -36,11 +38,16 @@ function PageHeaderComponent({
           lineHeight="1.1"
         >
           {title}
-        </Box>
+        </Text>
         {subtitle && (
-          <Box fontSize="13px" color="var(--neon-text-dim)" mt="4px">
+          <Text
+            variant="body-sm"
+            display="block"
+            color="var(--neon-text-dim)"
+            mt="4px"
+          >
             {subtitle}
-          </Box>
+          </Text>
         )}
       </Box>
       {action && (

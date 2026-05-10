@@ -1,4 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
+import { Text } from "@/app/components/Text";
 
 export type StatEntry = { label: string; value: string; color?: string };
 
@@ -25,24 +26,25 @@ export function ProfileStatStrip({ stats }: { stats: StatEntry[] }) {
               : undefined
           }
         >
-          <Box
-            fontFamily="var(--font-neon-display), sans-serif"
-            fontSize="20px"
+          <Text
+            variant="display-2xl"
+            display="block"
             fontWeight={800}
             lineHeight="1"
             mb="4px"
             color={s.color ?? "rgba(255,255,255,0.6)"}
           >
             {s.value}
-          </Box>
-          <Box
+          </Text>
+          <Text
+            display="block"
             fontSize="10px"
             color="rgba(255,255,255,0.35)"
             textTransform="uppercase"
             letterSpacing="0.1em"
           >
             {s.label}
-          </Box>
+          </Text>
         </Box>
       ))}
     </Flex>

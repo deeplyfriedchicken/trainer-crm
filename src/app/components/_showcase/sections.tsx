@@ -499,13 +499,13 @@ export function CardsSection() {
 
       <SubSection title="Separators">
         <Box display="flex" flexDirection="column" gap="16px" maxW="520px">
-          <Box>Content block one</Box>
+          <Text>Content block one</Text>
           <Separator />
-          <Box>Content block two</Box>
+          <Text>Content block two</Text>
           <Separator accent="pink" />
-          <Box>Content block three</Box>
+          <Text>Content block three</Text>
           <Separator accent="cyan" />
-          <Box>Content block four</Box>
+          <Text>Content block four</Text>
         </Box>
       </SubSection>
     </Box>
@@ -637,14 +637,19 @@ export function TableSection() {
       <SectionTitle>Table</SectionTitle>
 
       <SubSection title="Sortable Data Table">
-        <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
+        <Text
+          variant="body-sm"
+          display="block"
+          color="var(--neon-text-muted)"
+          mb="20px"
+        >
           Click any column header to sort. Click again to reverse. Pass a{" "}
           <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             render
           </Text>{" "}
           function on any column for custom cell content — sorting still uses
           the underlying key value.
-        </Box>
+        </Text>
         <Table
           columns={MEMBER_COLS}
           rows={MEMBERS}
@@ -795,7 +800,12 @@ export function ChatPanelSection() {
     >
       <SectionTitle>Chat Panel</SectionTitle>
       <SubSection title="Message thread with live input">
-        <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
+        <Text
+          variant="body-sm"
+          display="block"
+          color="var(--neon-text-muted)"
+          mb="20px"
+        >
           Pass{" "}
           <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             onSend
@@ -809,7 +819,7 @@ export function ChatPanelSection() {
             currentUserId
           </Text>{" "}
           appear on the left; others on the right.
-        </Box>
+        </Text>
         <Box maxW="520px">
           <ShowcaseChatPanel />
         </Box>
@@ -904,7 +914,12 @@ export function DialogSection() {
     >
       <SectionTitle>Dialog</SectionTitle>
       <SubSection title="Modal overlay">
-        <Box color="var(--neon-text-muted)" fontSize="13px" mb="20px">
+        <Text
+          variant="body-sm"
+          display="block"
+          color="var(--neon-text-muted)"
+          mb="20px"
+        >
           Generic modal shell. Pass{" "}
           <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
             title
@@ -915,7 +930,7 @@ export function DialogSection() {
             children
           </Text>
           . Backdrop click and Esc both close.
-        </Box>
+        </Text>
         <ShowcaseDialog />
       </SubSection>
     </Box>
@@ -943,10 +958,11 @@ const BODY_VARIANTS: TextVariant[] = [
 const MONO_VARIANTS: TextVariant[] = ["mono-lg", "mono-md", "mono-sm"];
 
 function VariantRow({ variant }: { variant: TextVariant }) {
-  const sample =
-    variant.startsWith("display") ? "The quick neon fox"
-    : variant.startsWith("mono") ? 'const color = "#FD6DBB";'
-    : "The quick brown fox jumps over the lazy dog.";
+  const sample = variant.startsWith("display")
+    ? "The quick neon fox"
+    : variant.startsWith("mono")
+      ? 'const color = "#FD6DBB";'
+      : "The quick brown fox jumps over the lazy dog.";
   return (
     <Box
       display="flex"
@@ -980,7 +996,12 @@ export function TextSection() {
       borderBottom="1px solid var(--neon-border)"
     >
       <SectionTitle>Text</SectionTitle>
-      <Box color="var(--neon-text-muted)" fontSize="13px" mb="28px">
+      <Text
+        variant="body-sm"
+        display="block"
+        color="var(--neon-text-muted)"
+        mb="28px"
+      >
         Use{" "}
         <Text variant="mono-sm" as="code" color="var(--neon-cyan)">
           variant
@@ -994,7 +1015,7 @@ export function TextSection() {
           as
         </Text>
         , or any other prop as needed.
-      </Box>
+      </Text>
       <SubSection title="Display — Syne">
         {DISPLAY_VARIANTS.map((v) => (
           <VariantRow key={v} variant={v} />

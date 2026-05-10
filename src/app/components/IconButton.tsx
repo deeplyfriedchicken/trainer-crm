@@ -69,4 +69,6 @@ const IconButtonBase = forwardRef<HTMLButtonElement, NeonIconButtonProps>(
   },
 );
 
-export const IconButton = chakra(IconButtonBase);
+export const IconButton = chakra(
+  IconButtonBase,
+) as unknown as typeof IconButtonBase;

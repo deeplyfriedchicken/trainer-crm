@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { FaPlay } from "react-icons/fa6";
+import { FaPlay, FaStar } from "react-icons/fa6";
 import {
   LuCalendar,
+  LuChevronDown,
   LuChevronLeft,
   LuChevronRight,
   LuDumbbell,
   LuPencil,
+  LuStar,
 } from "react-icons/lu";
 import { Dialog, DialogBody } from "./Dialog";
 import styles from "./SessionsPanel.module.css";
@@ -53,19 +55,13 @@ function StarGroup({
     <div className={styles.starGroup}>
       <div className={styles.starLabel}>{label}</div>
       <div className={styles.stars}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <svg
-            key={n}
-            width="9"
-            height="9"
-            viewBox="0 0 24 24"
-            fill={n <= rating ? color : "rgba(255,255,255,0.1)"}
-            stroke={n <= rating ? color : "rgba(255,255,255,0.15)"}
-            strokeWidth="1.5"
-          >
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        ))}
+        {[1, 2, 3, 4, 5].map((n) =>
+          n <= rating ? (
+            <FaStar key={n} size={9} color={color} />
+          ) : (
+            <LuStar key={n} size={9} color="rgba(255,255,255,0.15)" />
+          ),
+        )}
       </div>
       <div className={styles.starValue}>{rating}/5</div>
     </div>
@@ -404,17 +400,11 @@ export function SessionsPanel({
                         <LuPencil size={12} />
                       </button>
                     )}
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.3)"
-                      strokeWidth="2"
+                    <LuChevronDown
+                      size={14}
+                      color="rgba(255,255,255,0.3)"
                       className={`${styles.chevron}${isOpen ? ` ${styles.chevronOpen}` : ""}`}
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
+                    />
                   </div>
                 </div>
 

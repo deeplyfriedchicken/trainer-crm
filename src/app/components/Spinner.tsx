@@ -43,4 +43,4 @@ function SpinnerBase({
 }
 
 // chakra() strips "size" via PatchHtmlProps — cast back to preserve it alongside style props
-export const Spinner = chakra(SpinnerBase);
+export const Spinner = chakra(SpinnerBase) as unknown as typeof SpinnerBase;

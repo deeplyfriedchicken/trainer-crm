@@ -17,10 +17,10 @@ export type ExerciseInput = {
 async function insertExercises(
   tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
   workoutPlanId: string,
-  inputs: ExerciseInput[],
+  inputs: { input: ExerciseInput; position: number }[],
   userId: string,
 ) {
-  for (const ex of inputs) {
+  for (const { input: ex, position } of inputs) {
     const [exercise] = await tx
       .insert(exercises)
       .values({
@@ -32,6 +32,7 @@ async function insertExercises(
         durationSeconds:
           ex.type === "duration" ? (ex.durationSeconds ?? null) : null,
         weightLbs: ex.weightLbs ?? null,
+        position,
         comment: ex.comment ?? null,
         createdBy: userId,
         updatedBy: userId,
@@ -77,7 +78,12 @@ export async function createWorkoutPlan({
       })
       .returning();
 
-    await insertExercises(tx, plan.id, exerciseInputs, createdBy);
+    await insertExercises(
+      tx,
+      plan.id,
+      exerciseInputs.map((input, position) => ({ input, position })),
+      createdBy,
+    );
     return plan;
   });
 }
@@ -104,9 +110,16 @@ export async function updateWorkoutPlan({
       .where(eq(workoutPlans.id, planId))
       .returning();
 
-    const toUpdate = exerciseInputs.filter((e) => e.id != null);
-    const toInsert = exerciseInputs.filter((e) => e.id == null);
-    const retainedIds = new Set(toUpdate.map((e) => e.id!));
+    // Tag each input with its array index — that index is the new `position`,
+    // applied to both updates and inserts so the array order becomes the
+    // canonical display order.
+    const indexed = exerciseInputs.map((input, position) => ({
+      input,
+      position,
+    }));
+    const toUpdate = indexed.filter((e) => e.input.id != null);
+    const toInsert = indexed.filter((e) => e.input.id == null);
+    const retainedIds = new Set(toUpdate.map((e) => e.input.id!));
 
     // Fetch current active exercises to find which ones were removed.
     // Soft-delete removed exercises instead of hard-deleting — hard deletes
@@ -129,7 +142,7 @@ export async function updateWorkoutPlan({
 
     // Update existing exercises in place — preserves their IDs so
     // workout_exercises rows (logged workout history) remain linked.
-    for (const ex of toUpdate) {
+    for (const { input: ex, position } of toUpdate) {
       await tx
         .update(exercises)
         .set({
@@ -140,6 +153,7 @@ export async function updateWorkoutPlan({
           durationSeconds:
             ex.type === "duration" ? (ex.durationSeconds ?? null) : null,
           weightLbs: ex.weightLbs ?? null,
+          position,
           comment: ex.comment ?? null,
           deletedAt: null,
           updatedBy,

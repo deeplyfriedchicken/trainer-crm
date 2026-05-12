@@ -68,7 +68,7 @@ export async function getTraineeById(id: string) {
           },
           exercises: {
             where: (ex, { isNull }) => isNull(ex.deletedAt),
-            orderBy: (ex, { asc }) => [asc(ex.createdAt)],
+            orderBy: (ex, { asc }) => [asc(ex.position)],
             with: {
               videoLinks: {
                 where: (vl) => inArray(vl.videoId, activeVideoIds()),

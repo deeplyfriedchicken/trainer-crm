@@ -94,14 +94,18 @@ Child of `workout_plans` — a plan has many exercises. Deleting a plan cascades
 | reps              | integer       | nullable; required when `type='reps'` (CHECK)               |
 | duration_seconds  | integer       | nullable; required when `type='duration'` (CHECK)           |
 | weight_lbs        | real          | nullable                                                    |
+| position          | integer       | NOT NULL; 0-based display order within the workout plan     |
 | comment           | text          | nullable                                                    |
+| deleted_at        | timestamptz   | nullable; soft-delete marker                                |
 | created_at        | timestamptz   | default now()                                               |
 | updated_at        | timestamptz   | default now(), auto-updates                                 |
 | created_by        | text          | FK → `users.id` ON DELETE RESTRICT, NOT NULL                |
 | updated_by        | text          | FK → `users.id` ON DELETE RESTRICT, NOT NULL                |
 
-Indexes: `exercises_plan_idx`, `exercises_created_by_idx`.
+Indexes: `exercises_plan_idx`, `exercises_plan_position_idx` on `(workout_plan_id, position)`, `exercises_created_by_idx`.
 Check constraint: `exercises_type_fields_check` — `(type='reps' AND reps IS NOT NULL) OR (type='duration' AND duration_seconds IS NOT NULL)`.
+
+Ordering: reads sort by `position ASC` (0-based, dense). On create/update the server assigns `position = i` from the input array index; reorders are expressed by sending `exercises[]` in the desired order via the existing PATCH endpoint.
 
 ## `workout_plan_videos`
 Join table linking a plan to one or more rows in `videos` — for videos attached to the plan as a whole rather than a specific exercise. Both sides cascade on delete.
@@ -384,6 +388,7 @@ Components in `src/app/components/` must work in **both** the `.neon` (showcase)
 | `Table` | `Table.tsx` | Generic sortable data table (see below) |
 | `SessionsPanel` | `SessionsPanel.tsx` | Accordion list of coaching sessions with exercises and ratings (see below) |
 | `ChatPanel` | `ChatPanel.tsx` | Scrollable message thread with send input; decoupled from persistence via `onSend` prop (see below) |
+| `SortableList` | `SortableList.tsx` | Drag-and-drop reorderable list over `@dnd-kit/sortable`; render-prop with drag-handle slot (see below) |
 | `PageHeader` | `PageHeader.tsx` | Page/section title with optional subtitle and right-side action slot |
 
 ### `Table` component
@@ -496,6 +501,40 @@ export function TraineeChatPanel({ chatId, ...rest }) {
   );
 }
 ```
+
+### `SortableList` component
+
+```tsx
+import { arrayMove, SortableList } from "@/app/components/SortableList";
+
+<SortableList
+  items={items}                           // T[]
+  getItemId={(item) => item.id}           // stable string id per item
+  onReorder={(from, to) =>                // called on drop / keyboard commit
+    setItems((prev) => arrayMove(prev, from, to))
+  }
+  renderItem={(item, idx, drag) => (
+    <div>
+      <button
+        type="button"
+        {...drag.attributes}
+        {...drag.listeners}
+        ref={drag.setActivatorRef}
+        aria-label={`Drag ${item.label}`}
+      >
+        <LuGripVertical size={14} />
+      </button>
+      <span>{idx + 1}. {item.label}</span>
+    </div>
+  )}
+/>
+```
+
+- Render-prop primitive over `@dnd-kit/sortable`. Consumers fully control the row's look — `drag` exposes `{attributes, listeners, setActivatorRef, isDragging}` to wire up whatever element acts as the handle.
+- Keyboard a11y is automatic: focus the handle, Space to pick up, ↑/↓ to move, Space to drop, Esc to cancel. The `KeyboardSensor` is wired in.
+- Items must have stable string IDs (`getItemId`). With `react-hook-form`'s `useFieldArray`, use `field.id`.
+- `arrayMove` is re-exported for keeping parallel arrays in sync (e.g. a per-row state array indexed positionally).
+- Pointer drag activates after 4px of movement so single clicks don't start a drag.
 
 ## CRM dashboard — `src/app/dashboard/`
 

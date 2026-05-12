@@ -24,7 +24,7 @@ export async function GET(
     with: {
       exercises: {
         where: (ex, { isNull }) => isNull(ex.deletedAt),
-        orderBy: (ex, { asc }) => [asc(ex.createdAt)],
+        orderBy: (ex, { asc }) => [asc(ex.position)],
       },
     },
   });

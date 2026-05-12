@@ -1,9 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { LuDumbbell, LuLink, LuPlus, LuX } from "react-icons/lu";
+import {
+  LuDumbbell,
+  LuGripVertical,
+  LuLink,
+  LuPlus,
+  LuX,
+} from "react-icons/lu";
 import { z } from "zod";
 import { Button } from "@/app/components/Button";
 import { Dialog } from "@/app/components/Dialog";
@@ -12,6 +18,7 @@ import type {
   ColorVariant,
   SessionEntry,
 } from "@/app/components/SessionsPanel";
+import { arrayMove, SortableList } from "@/app/components/SortableList";
 import { createPlan, updatePlan } from "../trainees/[id]/actions";
 import styles from "./SessionFormModal.module.css";
 import { type PickedVideo, VideoPickerModal } from "./VideoPickerModal";
@@ -106,6 +113,7 @@ function ExerciseCard({
   linkedVideos,
   onPickVideo,
   onRemoveVideo,
+  dragHandle,
 }: {
   idx: number;
   register: ReturnType<typeof useForm<FormValues>>["register"];
@@ -115,6 +123,7 @@ function ExerciseCard({
   linkedVideos: PickedVideo[];
   onPickVideo: () => void;
   onRemoveVideo: (videoId: string) => void;
+  dragHandle?: ReactNode;
 }) {
   const exErrors = errors.exercises?.[idx];
   const type = useWatch({ control, name: `exercises.${idx}.type` }) ?? "reps";
@@ -122,7 +131,10 @@ function ExerciseCard({
   return (
     <div className={styles.exerciseCard}>
       <div className={styles.exerciseCardHeader}>
-        <div className={styles.exerciseCardNum}>Exercise {idx + 1}</div>
+        <div className={styles.exerciseCardNum}>
+          {dragHandle}
+          Exercise {idx + 1}
+        </div>
         <IconButton
           variant="ghost"
           colorScheme="red"
@@ -352,7 +364,7 @@ export function SessionFormModal({
     defaultValues: buildDefaults(initialData),
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "exercises",
   });
@@ -381,6 +393,11 @@ export function SessionFormModal({
   function removeExercise(idx: number) {
     remove(idx);
     setExVideos((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function reorderExercises(from: number, to: number) {
+    move(from, to);
+    setExVideos((prev) => arrayMove(prev, from, to));
   }
 
   function handleVideoSelect(video: PickedVideo) {
@@ -565,19 +582,35 @@ export function SessionFormModal({
 
               {fields.length > 0 && (
                 <div className={styles.exerciseList}>
-                  {fields.map((field, idx) => (
-                    <ExerciseCard
-                      key={field.id}
-                      idx={idx}
-                      register={register}
-                      control={control}
-                      errors={errors}
-                      onRemove={() => removeExercise(idx)}
-                      linkedVideos={exVideos[idx] ?? []}
-                      onPickVideo={() => setPickerIdx(idx)}
-                      onRemoveVideo={(vid) => removeVideo(idx, vid)}
-                    />
-                  ))}
+                  <SortableList
+                    items={fields}
+                    getItemId={(f) => f.id}
+                    onReorder={reorderExercises}
+                    renderItem={(_field, idx, drag) => (
+                      <ExerciseCard
+                        idx={idx}
+                        register={register}
+                        control={control}
+                        errors={errors}
+                        onRemove={() => removeExercise(idx)}
+                        linkedVideos={exVideos[idx] ?? []}
+                        onPickVideo={() => setPickerIdx(idx)}
+                        onRemoveVideo={(vid) => removeVideo(idx, vid)}
+                        dragHandle={
+                          <button
+                            type="button"
+                            {...drag.attributes}
+                            {...drag.listeners}
+                            ref={drag.setActivatorRef}
+                            aria-label={`Reorder exercise ${idx + 1}`}
+                            className={styles.dragHandle}
+                          >
+                            <LuGripVertical size={14} />
+                          </button>
+                        }
+                      />
+                    )}
+                  />
                 </div>
               )}
 

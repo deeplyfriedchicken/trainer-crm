@@ -12,6 +12,7 @@ import {
   FormsSection,
   PageHeaderSection,
   SessionsPanelSection,
+  SortableListSection,
   StatPillSection,
   TabGroupSection,
   TableSection,
@@ -38,6 +39,7 @@ export default function ComponentsShowcase() {
         <ChatPanelSection />
         <DialogSection />
         <BottomSheetSection />
+        <SortableListSection />
         <TabGroupSection />
         <StatPillSection />
         <PageHeaderSection />

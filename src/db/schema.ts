@@ -164,6 +164,7 @@ export const exercises = pgTable(
     reps: integer("reps"),
     durationSeconds: integer("duration_seconds"),
     weightLbs: real("weight_lbs"),
+    position: integer("position").notNull(),
     comment: text("comment"),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
@@ -171,6 +172,7 @@ export const exercises = pgTable(
   },
   (t) => [
     index("exercises_plan_idx").on(t.workoutPlanId),
+    index("exercises_plan_position_idx").on(t.workoutPlanId, t.position),
     index("exercises_created_by_idx").on(t.createdBy),
     check(
       "exercises_type_fields_check",

@@ -18,7 +18,7 @@ export async function getClientData(traineeId: string) {
         with: {
           exercises: {
             where: (ex, { isNull }) => isNull(ex.deletedAt),
-            orderBy: (ex, { asc }) => [asc(ex.createdAt)],
+            orderBy: (ex, { asc }) => [asc(ex.position)],
             with: {
               videoLinks: {
                 with: {
@@ -126,7 +126,7 @@ export async function getPlanForLog(planId: string, traineeId: string) {
     with: {
       exercises: {
         where: (ex, { isNull }) => isNull(ex.deletedAt),
-        orderBy: (ex, { asc }) => [asc(ex.createdAt)],
+        orderBy: (ex, { asc }) => [asc(ex.position)],
         columns: {
           id: true,
           name: true,

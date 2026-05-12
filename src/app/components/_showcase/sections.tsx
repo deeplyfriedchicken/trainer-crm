@@ -2,8 +2,10 @@
 
 import { Box } from "@chakra-ui/react";
 import { useState } from "react";
+import { LuGripVertical } from "react-icons/lu";
 import { Alert } from "../Alert";
 import { Badge } from "../Badge";
+import { BottomSheet } from "../BottomSheet";
 import { Button } from "../Button";
 import {
   Card,
@@ -27,17 +29,17 @@ import { Select } from "../Select";
 import { Separator } from "../Separator";
 import { type SessionEntry, SessionsPanel } from "../SessionsPanel";
 import { Skeleton } from "../Skeleton";
+import { arrayMove, SortableList } from "../SortableList";
 import { Spinner } from "../Spinner";
 import { Stat } from "../Stat";
+import { StatPill } from "../StatPill";
 import { Switch } from "../Switch";
+import { Tab, TabGroup } from "../TabGroup";
 import { type ColumnDef, Table } from "../Table";
 import { Tag } from "../Tag";
 import { Text, type TextVariant } from "../Text";
 import { Textarea } from "../Textarea";
 import { toaster } from "../Toast";
-import { Tab, TabGroup } from "../TabGroup";
-import { BottomSheet } from "../BottomSheet";
-import { StatPill } from "../StatPill";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
 function Row({ children }: { children: React.ReactNode }) {
@@ -945,22 +947,62 @@ function ShowcaseTabGroup() {
   return (
     <Box display="flex" flexDirection="column" gap="24px" maxW="420px">
       <Box>
-        <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">
+        <Text
+          variant="body-xs"
+          color="var(--color-text-dim)"
+          mb="10px"
+          display="block"
+        >
           Pink (default — client portal)
         </Text>
         <TabGroup colorScheme="pink">
-          <Tab active={tab === "plans"} colorScheme="pink" onClick={() => setTab("plans")}>My Plans</Tab>
-          <Tab active={tab === "history"} colorScheme="pink" onClick={() => setTab("history")}>History (3)</Tab>
-          <Tab active={tab === "chat"} colorScheme="pink" onClick={() => setTab("chat")}>Chat</Tab>
+          <Tab
+            active={tab === "plans"}
+            colorScheme="pink"
+            onClick={() => setTab("plans")}
+          >
+            My Plans
+          </Tab>
+          <Tab
+            active={tab === "history"}
+            colorScheme="pink"
+            onClick={() => setTab("history")}
+          >
+            History (3)
+          </Tab>
+          <Tab
+            active={tab === "chat"}
+            colorScheme="pink"
+            onClick={() => setTab("chat")}
+          >
+            Chat
+          </Tab>
         </TabGroup>
       </Box>
       <Box>
-        <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">
+        <Text
+          variant="body-xs"
+          color="var(--color-text-dim)"
+          mb="10px"
+          display="block"
+        >
           Cyan (dashboard modals)
         </Text>
         <TabGroup colorScheme="cyan">
-          <Tab active={tab === "plans"} colorScheme="cyan" onClick={() => setTab("plans")}>Library</Tab>
-          <Tab active={tab === "history"} colorScheme="cyan" onClick={() => setTab("history")}>Upload new</Tab>
+          <Tab
+            active={tab === "plans"}
+            colorScheme="cyan"
+            onClick={() => setTab("plans")}
+          >
+            Library
+          </Tab>
+          <Tab
+            active={tab === "history"}
+            colorScheme="cyan"
+            onClick={() => setTab("history")}
+          >
+            Upload new
+          </Tab>
         </TabGroup>
       </Box>
     </Box>
@@ -985,14 +1027,22 @@ export function TabGroupSection() {
           mb="20px"
         >
           Use{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">TabGroup</Text>
-          {" "}as the container and{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">Tab</Text>
-          {" "}for each option. Control the{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">active</Text>
-          {" "}state externally — typically with{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">useState</Text>
-          {" "}or a URL search param.
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            TabGroup
+          </Text>{" "}
+          as the container and{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            Tab
+          </Text>{" "}
+          for each option. Control the{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            active
+          </Text>{" "}
+          state externally — typically with{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            useState
+          </Text>{" "}
+          or a URL search param.
         </Text>
         <ShowcaseTabGroup />
       </SubSection>
@@ -1007,9 +1057,23 @@ function ShowcaseBottomSheet() {
   const plans = ["Lower Body Power", "Upper Push Day", "Full Body HIIT"];
   return (
     <Box display="flex" gap="12px" flexWrap="wrap">
-      <Button onClick={() => setWhich("basic")}>Basic (title + subtitle)</Button>
-      <Button colorScheme="cyan" variant="outline" onClick={() => setWhich("footer")}>With footer</Button>
-      <Button colorScheme="pink" variant="ghost" onClick={() => setWhich("list")}>List content</Button>
+      <Button onClick={() => setWhich("basic")}>
+        Basic (title + subtitle)
+      </Button>
+      <Button
+        colorScheme="cyan"
+        variant="outline"
+        onClick={() => setWhich("footer")}
+      >
+        With footer
+      </Button>
+      <Button
+        colorScheme="pink"
+        variant="ghost"
+        onClick={() => setWhich("list")}
+      >
+        List content
+      </Button>
 
       {which === "basic" && (
         <BottomSheet
@@ -1018,7 +1082,12 @@ function ShowcaseBottomSheet() {
           subtitle="Duration: 42:15 · How did it go?"
         >
           <Box p="20px">
-            <Textarea colorScheme="cyan" placeholder="How did it feel?" rows={3} w="100%" />
+            <Textarea
+              colorScheme="cyan"
+              placeholder="How did it feel?"
+              rows={3}
+              w="100%"
+            />
           </Box>
         </BottomSheet>
       )}
@@ -1030,19 +1099,41 @@ function ShowcaseBottomSheet() {
           subtitle="Optional — jot down how the session felt"
           footer={
             <Box display="flex" gap="10px">
-              <Button variant="ghost" colorScheme="neutral" style={{ flex: 1 }} onClick={() => setWhich(null)}>Cancel</Button>
-              <Button variant="solid" colorScheme="cyan" style={{ flex: 2 }} onClick={() => setWhich(null)}>Save</Button>
+              <Button
+                variant="ghost"
+                colorScheme="neutral"
+                style={{ flex: 1 }}
+                onClick={() => setWhich(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="solid"
+                colorScheme="cyan"
+                style={{ flex: 2 }}
+                onClick={() => setWhich(null)}
+              >
+                Save
+              </Button>
             </Box>
           }
         >
           <Box p="20px">
-            <Textarea colorScheme="cyan" placeholder="Write your notes…" rows={4} w="100%" />
+            <Textarea
+              colorScheme="cyan"
+              placeholder="Write your notes…"
+              rows={4}
+              w="100%"
+            />
           </Box>
         </BottomSheet>
       )}
 
       {which === "list" && (
-        <BottomSheet onClose={() => setWhich(null)} title="Choose a Workout Plan">
+        <BottomSheet
+          onClose={() => setWhich(null)}
+          title="Choose a Workout Plan"
+        >
           {plans.map((p) => (
             <Box
               key={p}
@@ -1056,8 +1147,17 @@ function ShowcaseBottomSheet() {
               _hover={{ bg: "rgba(255,255,255,0.04)" }}
               onClick={() => setWhich(null)}
             >
-              <Box w="8px" h="8px" borderRadius="50%" bg="var(--color-primary)" boxShadow="0 0 6px var(--color-primary)" flexShrink={0} />
-              <Box flex={1} fontSize="14px" fontWeight={600} color="#fff">{p}</Box>
+              <Box
+                w="8px"
+                h="8px"
+                borderRadius="50%"
+                bg="var(--color-primary)"
+                boxShadow="0 0 6px var(--color-primary)"
+                flexShrink={0}
+              />
+              <Box flex={1} fontSize="14px" fontWeight={600} color="#fff">
+                {p}
+              </Box>
             </Box>
           ))}
           <Box h="16px" />
@@ -1086,16 +1186,120 @@ export function BottomSheetSection() {
         >
           Mobile-first sheet that slides up from the bottom. Backdrop click and
           Esc close it. Accepts optional{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">title</Text>
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            title
+          </Text>
           ,{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">subtitle</Text>
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            subtitle
+          </Text>
           ,{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">titleAction</Text>
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            titleAction
+          </Text>
           , and{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">footer</Text>
-          {" "}slots. Renders via portal.
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            footer
+          </Text>{" "}
+          slots. Renders via portal.
         </Text>
         <ShowcaseBottomSheet />
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── SortableList showcase ────────────────────────────────────────────────────
+
+type ShowcaseSortItem = { id: string; label: string };
+
+const SHOWCASE_SORT_ITEMS: ShowcaseSortItem[] = [
+  { id: "1", label: "Barbell Back Squat" },
+  { id: "2", label: "Bench Press" },
+  { id: "3", label: "Deadlift" },
+  { id: "4", label: "Pull-Ups" },
+  { id: "5", label: "Plank Hold" },
+];
+
+function ShowcaseSortableList() {
+  const [items, setItems] = useState<ShowcaseSortItem[]>(SHOWCASE_SORT_ITEMS);
+  return (
+    <Box maxW="420px">
+      <SortableList
+        items={items}
+        getItemId={(i) => i.id}
+        onReorder={(from, to) => setItems((prev) => arrayMove(prev, from, to))}
+        renderItem={(item, idx, drag) => (
+          <Box
+            display="flex"
+            alignItems="center"
+            gap="10px"
+            px="14px"
+            py="10px"
+            mb="8px"
+            bg="var(--color-surface)"
+            border="1px solid var(--color-border)"
+            borderRadius="8px"
+            color="#fff"
+          >
+            <button
+              type="button"
+              {...drag.attributes}
+              {...drag.listeners}
+              ref={drag.setActivatorRef}
+              aria-label={`Drag ${item.label}`}
+              style={{
+                cursor: drag.isDragging ? "grabbing" : "grab",
+                background: "transparent",
+                border: "none",
+                color: "rgba(255,255,255,0.5)",
+                display: "flex",
+                alignItems: "center",
+                padding: 4,
+              }}
+            >
+              <LuGripVertical size={16} />
+            </button>
+            <span style={{ flex: 1, fontWeight: 500, fontSize: 14 }}>
+              {idx + 1}. {item.label}
+            </span>
+          </Box>
+        )}
+      />
+    </Box>
+  );
+}
+
+export function SortableListSection() {
+  return (
+    <Box
+      as="section"
+      id="sortable-list"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--color-border)"
+    >
+      <SectionTitle>Sortable List</SectionTitle>
+      <SubSection title="Drag-and-drop list with keyboard support">
+        <Text
+          variant="body-sm"
+          display="block"
+          color="var(--color-text-muted)"
+          mb="20px"
+        >
+          Render-prop primitive over{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            @dnd-kit/sortable
+          </Text>
+          . Consumers supply{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            renderItem
+          </Text>{" "}
+          and spread the provided drag props on whatever they want to act as the
+          handle. Keyboard: focus the handle, press Space to pick up, arrow keys
+          to move, Space to drop, Esc to cancel.
+        </Text>
+        <ShowcaseSortableList />
       </SubSection>
     </Box>
   );
@@ -1122,24 +1326,53 @@ export function StatPillSection() {
         >
           Compact card for displaying a labelled numeric metric with an optional
           unit. Defaults to{" "}
-          <Text variant="mono-sm" as="code" color="var(--color-secondary)">colorScheme="cyan"</Text>
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">
+            colorScheme="cyan"
+          </Text>
           .
         </Text>
         <Box display="flex" flexDirection="column" gap="24px">
           <Box>
-            <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">Reps-based exercise</Text>
-            <Box display="grid" gridTemplateColumns="repeat(3, 120px)" gap="8px">
+            <Text
+              variant="body-xs"
+              color="var(--color-text-dim)"
+              mb="10px"
+              display="block"
+            >
+              Reps-based exercise
+            </Text>
+            <Box
+              display="grid"
+              gridTemplateColumns="repeat(3, 120px)"
+              gap="8px"
+            >
               <StatPill label="Sets" value={4} />
               <StatPill label="Reps" value={10} unit="per set" />
               <StatPill label="Volume" value={40} unit="total reps" />
             </Box>
           </Box>
           <Box>
-            <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">Duration-based exercise</Text>
-            <Box display="grid" gridTemplateColumns="repeat(3, 120px)" gap="8px">
+            <Text
+              variant="body-xs"
+              color="var(--color-text-dim)"
+              mb="10px"
+              display="block"
+            >
+              Duration-based exercise
+            </Text>
+            <Box
+              display="grid"
+              gridTemplateColumns="repeat(3, 120px)"
+              gap="8px"
+            >
               <StatPill label="Sets" value={3} />
               <StatPill label="Duration" value={45} unit="sec / set" />
-              <StatPill label="Total" value={135} unit="seconds" colorScheme="pink" />
+              <StatPill
+                label="Total"
+                value={135}
+                unit="seconds"
+                colorScheme="pink"
+              />
             </Box>
           </Box>
         </Box>

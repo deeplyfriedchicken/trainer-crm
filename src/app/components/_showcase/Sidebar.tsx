@@ -34,6 +34,7 @@ const groups: NavGroup[] = [
       { id: "chat-panel", label: "Chat Panel" },
       { id: "dialog", label: "Dialog" },
       { id: "bottom-sheet", label: "Bottom Sheet" },
+      { id: "sortable-list", label: "Sortable List" },
       { id: "tab-group", label: "Tab Group" },
       { id: "stat-pill", label: "Stat Pill" },
       { id: "page-header", label: "Page Header" },

@@ -1,7 +1,10 @@
-import { eq, sql } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { db } from "@/db";
-import { updateWorkoutPlan } from "@/db/queries/workout-plans";
+import {
+  createWorkoutPlan,
+  updateWorkoutPlan,
+} from "@/db/queries/workout-plans";
 import {
   exercises,
   userRoles,
@@ -70,6 +73,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
         type: "reps",
         sets: 3,
         reps: 10,
+        position: 0,
         createdBy: trainerId,
         updatedBy: trainerId,
       })
@@ -142,6 +146,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
         type: "reps",
         sets: 3,
         reps: 10,
+        position: 0,
         createdBy: trainerId,
         updatedBy: trainerId,
       })
@@ -155,6 +160,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
         type: "reps",
         sets: 3,
         reps: 12,
+        position: 1,
         createdBy: trainerId,
         updatedBy: trainerId,
       })
@@ -215,6 +221,124 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     expect(allLinks.map((l) => l.exerciseId)).toContain(exB.id);
   });
 
+  it("createWorkoutPlan assigns position by array index", async () => {
+    const plan = await createWorkoutPlan({
+      traineeId,
+      name: "Plan",
+      occurredAt: new Date(),
+      createdBy: trainerId,
+      exerciseInputs: [
+        { name: "A", type: "reps", sets: 3, reps: 10 },
+        { name: "B", type: "reps", sets: 3, reps: 10 },
+        { name: "C", type: "reps", sets: 3, reps: 10 },
+      ],
+    });
+
+    const rows = await db
+      .select({ name: exercises.name, position: exercises.position })
+      .from(exercises)
+      .where(eq(exercises.workoutPlanId, plan.id))
+      .orderBy(asc(exercises.position));
+
+    expect(rows).toEqual([
+      { name: "A", position: 0 },
+      { name: "B", position: 1 },
+      { name: "C", position: 2 },
+    ]);
+  });
+
+  it("updateWorkoutPlan renumbers positions when the array order changes", async () => {
+    const plan = await createWorkoutPlan({
+      traineeId,
+      name: "Plan",
+      occurredAt: new Date(),
+      createdBy: trainerId,
+      exerciseInputs: [
+        { name: "A", type: "reps", sets: 3, reps: 10 },
+        { name: "B", type: "reps", sets: 3, reps: 10 },
+        { name: "C", type: "reps", sets: 3, reps: 10 },
+      ],
+    });
+
+    const original = await db
+      .select({ id: exercises.id, name: exercises.name })
+      .from(exercises)
+      .where(eq(exercises.workoutPlanId, plan.id))
+      .orderBy(asc(exercises.position));
+    const byName = Object.fromEntries(original.map((r) => [r.name, r.id]));
+
+    // Reorder: C, A, B — and insert a new D in the middle.
+    await updateWorkoutPlan({
+      planId: plan.id,
+      name: "Plan",
+      occurredAt: new Date(),
+      updatedBy: trainerId,
+      exerciseInputs: [
+        { id: byName.C, name: "C", type: "reps", sets: 3, reps: 10 },
+        { id: byName.A, name: "A", type: "reps", sets: 3, reps: 10 },
+        { name: "D", type: "reps", sets: 3, reps: 10 },
+        { id: byName.B, name: "B", type: "reps", sets: 3, reps: 10 },
+      ],
+    });
+
+    const after = await db
+      .select({ name: exercises.name, position: exercises.position })
+      .from(exercises)
+      .where(eq(exercises.workoutPlanId, plan.id))
+      .orderBy(asc(exercises.position));
+
+    expect(after).toEqual([
+      { name: "C", position: 0 },
+      { name: "A", position: 1 },
+      { name: "D", position: 2 },
+      { name: "B", position: 3 },
+    ]);
+  });
+
+  it("reads return exercises in position order regardless of created_at", async () => {
+    const plan = await createWorkoutPlan({
+      traineeId,
+      name: "Plan",
+      occurredAt: new Date(),
+      createdBy: trainerId,
+      exerciseInputs: [
+        { name: "A", type: "reps", sets: 3, reps: 10 },
+        { name: "B", type: "reps", sets: 3, reps: 10 },
+      ],
+    });
+
+    const existing = await db
+      .select({ id: exercises.id, name: exercises.name })
+      .from(exercises)
+      .where(eq(exercises.workoutPlanId, plan.id))
+      .orderBy(asc(exercises.position));
+    const byName = Object.fromEntries(existing.map((r) => [r.name, r.id]));
+
+    // Move B above A — B is older but should now read first.
+    await updateWorkoutPlan({
+      planId: plan.id,
+      name: "Plan",
+      occurredAt: new Date(),
+      updatedBy: trainerId,
+      exerciseInputs: [
+        { id: byName.B, name: "B", type: "reps", sets: 3, reps: 10 },
+        { id: byName.A, name: "A", type: "reps", sets: 3, reps: 10 },
+      ],
+    });
+
+    const read = await db.query.workoutPlans.findFirst({
+      where: eq(workoutPlans.id, plan.id),
+      with: {
+        exercises: {
+          where: (ex, { isNull }) => isNull(ex.deletedAt),
+          orderBy: (ex, { asc }) => [asc(ex.position)],
+          columns: { name: true },
+        },
+      },
+    });
+    expect(read?.exercises.map((e) => e.name)).toEqual(["B", "A"]);
+  });
+
   it("soft-deleting a workout plan preserves exercises and workout_exercises", async () => {
     const [plan] = await db
       .insert(workoutPlans)
@@ -235,6 +359,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
         type: "reps",
         sets: 3,
         reps: 5,
+        position: 0,
         createdBy: trainerId,
         updatedBy: trainerId,
       })

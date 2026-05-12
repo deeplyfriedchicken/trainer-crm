@@ -72,12 +72,62 @@ const trainerUser = {
   roles: ["trainer"],
 };
 
+const mockVideo = {
+  id: "video_1",
+  title: "Squat Demo",
+  fileKey: "videos/squat.mp4",
+  fileUrl: "https://cdn.example.com/squat.mp4",
+  durationSeconds: 120,
+  status: "ready" as const,
+};
+
 const mockTrainee = {
   id: "trainee_1",
   email: "trainee@example.com",
   name: "Test Trainee",
   createdAt: new Date(),
   updatedAt: new Date(),
+  directVideos: [{ ...mockVideo, createdAt: new Date() }],
+  workoutPlans: [
+    {
+      id: "plan_1",
+      name: "Lower Body",
+      occurredAt: new Date(),
+      videoLinks: [{ videoId: "video_1", video: mockVideo }],
+      exercises: [
+        {
+          id: "ex_1",
+          name: "Squat",
+          type: "reps" as const,
+          sets: 3,
+          reps: 10,
+          durationSeconds: null,
+          weightLbs: 135,
+          videoLinks: [{ videoId: "video_1", video: mockVideo }],
+        },
+      ],
+    },
+  ],
+  workouts: [
+    {
+      id: "workout_1",
+      workoutPlan: { id: "plan_1", name: "Lower Body", occurredAt: new Date() },
+      videoLinks: [{ videoId: "video_1", video: mockVideo }],
+      exerciseLinks: [
+        {
+          exercise: {
+            id: "ex_1",
+            name: "Squat",
+            type: "reps" as const,
+            sets: 3,
+            reps: 10,
+            durationSeconds: null,
+            weightLbs: 135,
+          },
+        },
+      ],
+    },
+  ],
 };
 
 describe("GET /api/trainees", () => {
@@ -134,14 +184,30 @@ describe("POST /api/trainees", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 403 when user lacks admin/trainer_manager role", async () => {
-    mockGetRequestUser.mockResolvedValue(trainerUser);
+  it("returns 403 when user is a trainee", async () => {
+    mockGetRequestUser.mockResolvedValue({
+      id: "trainee_1",
+      email: "trainee@example.com",
+      name: "Trainee",
+      roles: ["trainee"],
+    });
     const req = nextRequest({
       method: "POST",
       body: { name: "T", email: "t@t.com" },
     });
     const res = await POST(req as never);
     expect(res.status).toBe(403);
+  });
+
+  it("returns 201 with created trainee for trainer", async () => {
+    mockGetRequestUser.mockResolvedValue(trainerUser);
+    mockCreateTrainee.mockResolvedValue(mockTrainee);
+    const req = nextRequest({
+      method: "POST",
+      body: { name: "Jane", email: "jane@example.com" },
+    });
+    const res = await POST(req as never);
+    expect(res.status).toBe(201);
   });
 
   it("returns 400 when name is missing", async () => {
@@ -218,6 +284,19 @@ describe("GET /api/trainees/[id]", () => {
     const body = await res.json();
     expect(body.data.id).toBe("trainee_1");
     expect(body.data.name).toBe("Test Trainee");
+  });
+
+  it("includes video status on all video objects in the response", async () => {
+    mockGetRequestUser.mockResolvedValue(trainerUser);
+    mockGetTraineeById.mockResolvedValue(mockTrainee);
+    const req = nextRequest();
+    const res = await GET_BY_ID(req as never, dynamicCtx("trainee_1"));
+    const body = await res.json();
+
+    expect(body.data.directVideos[0].status).toBe("ready");
+    expect(body.data.workoutPlans[0].videoLinks[0].video.status).toBe("ready");
+    expect(body.data.workoutPlans[0].exercises[0].videoLinks[0].video.status).toBe("ready");
+    expect(body.data.workouts[0].videoLinks[0].video.status).toBe("ready");
   });
 });
 

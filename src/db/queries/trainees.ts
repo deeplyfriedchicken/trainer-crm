@@ -61,6 +61,7 @@ export async function getTraineeById(id: string) {
                   fileKey: true,
                   fileUrl: true,
                   durationSeconds: true,
+                  status: true,
                 },
               },
             },
@@ -79,6 +80,7 @@ export async function getTraineeById(id: string) {
                       fileKey: true,
                       fileUrl: true,
                       durationSeconds: true,
+                      status: true,
                     },
                   },
                 },
@@ -101,6 +103,7 @@ export async function getTraineeById(id: string) {
                   fileKey: true,
                   fileUrl: true,
                   durationSeconds: true,
+                  status: true,
                 },
               },
             },
@@ -135,6 +138,7 @@ export async function getTraineeById(id: string) {
       fileUrl: videos.fileUrl,
       durationSeconds: videos.durationSeconds,
       createdAt: videos.createdAt,
+      status: videos.status,
     })
     .from(videos)
     .where(and(eq(videos.traineeId, id), isNull(videos.deletedAt)))

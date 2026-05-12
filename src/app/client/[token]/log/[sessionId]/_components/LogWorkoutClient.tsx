@@ -85,8 +85,14 @@ export function LogWorkoutClient({ token, plan }: Props) {
     PlanForLog["exercises"][number] | null
   >(null);
 
-  const countdownsRef = useRef<Record<string, number>>({});
-  const [countdownKeys, setCountdownKeys] = useState("");
+  const cdRef = useRef<{
+    exIdx: number;
+    setIdx: number;
+    remaining: number;
+    total: number;
+  } | null>(null);
+  const [cdRemaining, setCdRemaining] = useState<number | null>(null);
+  const cdTotalRef = useRef(0);
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
 
@@ -123,32 +129,22 @@ export function LogWorkoutClient({ token, plan }: Props) {
   useEffect(() => {
     const interval = setInterval(() => {
       if (pausedRef.current) return;
-      const keys = Object.keys(countdownsRef.current);
-      if (keys.length === 0) return;
-      const next = { ...countdownsRef.current };
-      let changed = false;
-      for (const key of keys) {
-        const remaining = next[key];
-        if (remaining > 1) {
-          next[key] = remaining - 1;
-          changed = true;
-        } else {
-          delete next[key];
-          changed = true;
-          const [exIdx, setIdx] = key.split("-").map(Number);
-          setLog((prev) => {
-            const nextLog = prev.map((e) => ({
-              ...e,
-              sets: e.sets.map((s) => ({ ...s })),
-            }));
-            nextLog[exIdx].sets[setIdx].completed = true;
-            return nextLog;
-          });
-        }
-      }
-      if (changed) {
-        countdownsRef.current = next;
-        setCountdownKeys(Object.keys(next).join(","));
+      if (!cdRef.current) return;
+      if (cdRef.current.remaining > 1) {
+        cdRef.current.remaining -= 1;
+        setCdRemaining(cdRef.current.remaining);
+      } else {
+        const { exIdx, setIdx } = cdRef.current;
+        cdRef.current = null;
+        setCdRemaining(null);
+        setLog((prev) => {
+          const nextLog = prev.map((e) => ({
+            ...e,
+            sets: e.sets.map((s) => ({ ...s })),
+          }));
+          nextLog[exIdx].sets[setIdx].completed = true;
+          return nextLog;
+        });
       }
     }, 1000);
     return () => clearInterval(interval);
@@ -176,16 +172,6 @@ export function LogWorkoutClient({ token, plan }: Props) {
     });
   };
 
-  const getCountdownRemaining = (exIdx: number, setIdx: number): number | null => {
-    return countdownsRef.current[`${exIdx}-${setIdx}`] ?? null;
-  };
-
-  const startCountdown = (exIdx: number, setIdx: number, duration: number) => {
-    const key = `${exIdx}-${setIdx}`;
-    countdownsRef.current = { ...countdownsRef.current, [key]: duration };
-    setCountdownKeys(Object.keys(countdownsRef.current).join(","));
-  };
-
   const handleSetClick = (exIdx: number, setIdx: number) => {
     const ex = plan.exercises[exIdx];
     const setLogEntry = log[exIdx].sets[setIdx];
@@ -194,7 +180,9 @@ export function LogWorkoutClient({ token, plan }: Props) {
       if (duration <= 0) {
         toggleSet(exIdx, setIdx);
       } else {
-        startCountdown(exIdx, setIdx, duration);
+        cdRef.current = { exIdx, setIdx, remaining: duration, total: duration };
+        cdTotalRef.current = duration;
+        setCdRemaining(duration);
       }
     } else {
       toggleSet(exIdx, setIdx);
@@ -311,31 +299,14 @@ export function LogWorkoutClient({ token, plan }: Props) {
                         unit="LBS"
                       />
 
-                      {(() => {
-                        if (set.completed) {
-                          return (
-                            <div className="log-check checked">
-                              <LuCheck size={14} color="#070712" />
-                            </div>
-                          );
+                      <div
+                        className={`log-check${set.completed ? " checked" : ""}`}
+                        onClick={() =>
+                          !isDisabled && handleSetClick(exIdx, setIdx)
                         }
-                        const cd = getCountdownRemaining(exIdx, setIdx);
-                        if (cd !== null) {
-                          return (
-                            <div className="log-countdown">
-                              {fmtDuration(cd)}
-                            </div>
-                          );
-                        }
-                        return (
-                          <div
-                            className="log-check"
-                            onClick={() =>
-                              !isDisabled && handleSetClick(exIdx, setIdx)
-                            }
-                          />
-                        );
-                      })()}
+                      >
+                        {set.completed && <LuCheck size={14} color="#070712" />}
+                      </div>
                     </div>
                   );
                 })}
@@ -381,6 +352,40 @@ export function LogWorkoutClient({ token, plan }: Props) {
           duration={elapsed}
           onCancel={() => setShowFeedback(false)}
         />
+      )}
+
+      {/* Countdown Overlay */}
+      {cdRemaining !== null && (
+        <div className="cd-overlay">
+          <div className="cd-content">
+            <div className="cd-ring">
+              <svg width="160" height="160" viewBox="0 0 160 160">
+                <circle
+                  cx="80"
+                  cy="80"
+                  r="72"
+                  fill="none"
+                  stroke="var(--color-border)"
+                  strokeWidth="4"
+                />
+                <circle
+                  cx="80"
+                  cy="80"
+                  r="72"
+                  fill="none"
+                  stroke="var(--color-primary)"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeDasharray={`${2 * Math.PI * 72}`}
+                  strokeDashoffset={`${2 * Math.PI * 72 * (1 - cdRemaining / cdTotalRef.current)}`}
+                  transform="rotate(-90 80 80)"
+                  style={{ transition: "stroke-dashoffset 0.3s linear" }}
+                />
+              </svg>
+              <div className="cd-ring-time">{fmtDuration(cdRemaining)}</div>
+            </div>
+          </div>
+        </div>
       )}
 
       {videoModalEx && (

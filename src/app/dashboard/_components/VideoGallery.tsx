@@ -262,22 +262,24 @@ export function VideoGallery({
 
         {allTags.length > 0 && (
           <div className={styles.tagFilters}>
-            <button
-              type="button"
-              className={`${styles.tagPill}${activeTag === "All" ? ` ${styles.active}` : ""}`}
+            <Button
+              variant={activeTag === "All" ? "outline" : "ghost"}
+              colorScheme="cyan"
+              size="sm"
               onClick={() => setActiveTag("All")}
             >
               All
-            </button>
+            </Button>
             {allTags.map((tag) => (
-              <button
+              <Button
                 key={tag.id}
-                type="button"
-                className={`${styles.tagPill}${activeTag === tag.name ? ` ${styles.active}` : ""}`}
+                variant={activeTag === tag.name ? "outline" : "ghost"}
+                colorScheme="cyan"
+                size="sm"
                 onClick={() => setActiveTag(tag.name)}
               >
                 {tag.name}
-              </button>
+              </Button>
             ))}
           </div>
         )}

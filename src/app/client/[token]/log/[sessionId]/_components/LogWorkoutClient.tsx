@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
 import { LuCheck, LuChevronLeft, LuPause, LuVideo } from "react-icons/lu";
 import type { PlanForLog } from "@/db/queries/client";
+import { IconButton } from "@/app/components/IconButton";
 import { FeedbackModal } from "./FeedbackModal";
 
 interface Props {
@@ -249,23 +250,17 @@ export function LogWorkoutClient({ token, plan }: Props) {
                 <div className="log-ex-num">{exIdx + 1}</div>
                 <div className="log-ex-name">{ex.name}</div>
                 {ex.videoLinks.length > 0 && (
-                  <button
-                    type="button"
+                  <IconButton
+                    variant="ghost"
+                    colorScheme="pink"
+                    size="sm"
                     onClick={() => setVideoModalEx(ex)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "var(--pink)",
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "4px",
-                      marginRight: 4,
-                    }}
+                    aria-label="Watch video"
                     title="Watch video"
+                    style={{ marginRight: 4 }}
                   >
                     <LuVideo size={14} />
-                  </button>
+                  </IconButton>
                 )}
                 <div className="log-ex-note">
                   {completedCount}/{exLog.sets.length}
@@ -426,26 +421,15 @@ export function LogWorkoutClient({ token, plan }: Props) {
                   Demo Video
                 </div>
               </div>
-              <button
-                type="button"
+              <IconButton
+                variant="ghost"
+                colorScheme="neutral"
+                size="sm"
                 onClick={() => setVideoModalEx(null)}
-                style={{
-                  background: "var(--surface2)",
-                  border: "1px solid var(--border2)",
-                  color: "var(--text-2)",
-                  borderRadius: 8,
-                  width: 32,
-                  height: 32,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 18,
-                  lineHeight: 1,
-                }}
+                aria-label="Close"
               >
                 ×
-              </button>
+              </IconButton>
             </div>
             {videoModalEx.videoLinks[0] && (
               <div
@@ -453,8 +437,9 @@ export function LogWorkoutClient({ token, plan }: Props) {
                   margin: "0 16px 20px",
                   borderRadius: 12,
                   overflow: "hidden",
-                  aspectRatio: "16/9",
                   background: "#000",
+                  width: "100%",
+                  maxHeight: "70vh",
                 }}
               >
                 <video
@@ -463,7 +448,8 @@ export function LogWorkoutClient({ token, plan }: Props) {
                   playsInline
                   style={{
                     width: "100%",
-                    height: "100%",
+                    height: "auto",
+                    maxHeight: "70vh",
                     border: "none",
                     display: "block",
                   }}

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { getClientChat, getClientData } from "@/db/queries/client";
 import { getClientSession } from "@/lib/client-session";
 import { decryptUserId } from "@/lib/client-token";
@@ -53,16 +54,18 @@ export default async function ClientPage({
   ]);
 
   return (
-    <WorkoutPlansView
-      trainee={{
-        id: clientData.id,
-        name: clientData.name,
-        email: clientData.email,
-      }}
-      workoutPlans={workoutPlans}
-      workouts={clientData.workouts}
-      token={token}
-      chat={chat}
-    />
+    <Suspense>
+      <WorkoutPlansView
+        trainee={{
+          id: clientData.id,
+          name: clientData.name,
+          email: clientData.email,
+        }}
+        workoutPlans={workoutPlans}
+        workouts={clientData.workouts}
+        token={token}
+        chat={chat}
+      />
+    </Suspense>
   );
 }

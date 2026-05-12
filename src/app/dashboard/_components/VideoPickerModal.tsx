@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
 import { LuCheck, LuFilm, LuSearch, LuUpload, LuX } from "react-icons/lu";
+import { Button } from "@/app/components/Button";
 import { Dialog } from "@/app/components/Dialog";
+import { IconButton } from "@/app/components/IconButton";
+import { Tab, TabGroup } from "@/app/components/TabGroup";
 import styles from "./VideoPickerModal.module.css";
 import { readVideoMetadata } from "./videoMetadata";
 
@@ -282,37 +285,40 @@ export function VideoPickerModal({
         <div className={styles.pickerHeaderTitle}>
           {view === "library" ? "Select Video" : "Upload Videos"}
         </div>
-        <div className={styles.headerTabs}>
-          <button
-            type="button"
-            className={`${styles.tabBtn}${view === "library" ? ` ${styles.tabBtnActive}` : ""}`}
+        <TabGroup colorScheme="cyan">
+          <Tab
+            active={view === "library"}
+            colorScheme="cyan"
             onClick={() => setView("library")}
             disabled={uploadPhase === "uploading"}
+            style={{ fontSize: 12 }}
           >
             Library
-          </button>
-          <button
-            type="button"
-            className={`${styles.tabBtn}${view === "upload" ? ` ${styles.tabBtnActive}` : ""}`}
+          </Tab>
+          <Tab
+            active={view === "upload"}
+            colorScheme="cyan"
             onClick={() => {
               resetUpload();
               setView("upload");
             }}
             disabled={uploadPhase === "uploading"}
+            style={{ fontSize: 12 }}
           >
             <LuUpload size={11} />
             Upload new
-          </button>
-        </div>
-        <button
-          type="button"
-          className={styles.pickerCloseBtn}
+          </Tab>
+        </TabGroup>
+        <IconButton
+          variant="ghost"
+          colorScheme="neutral"
+          size="sm"
           onClick={onClose}
           disabled={uploadPhase === "uploading"}
           aria-label="Close"
         >
           ×
-        </button>
+        </IconButton>
       </div>
 
       {/* ── Library view ─────────────────────────────────────────────── */}
@@ -384,14 +390,17 @@ export function VideoPickerModal({
             )}
 
             {hasMore && (
-              <button
-                type="button"
-                className={styles.loadMore}
+              <Button
+                variant="outline"
+                colorScheme="cyan"
+                size="sm"
                 onClick={loadMore}
                 disabled={loading}
+                display="block"
+                mx="auto"
               >
                 {loading ? "Loading…" : "Load more"}
-              </button>
+              </Button>
             )}
           </div>
         </>
@@ -444,13 +453,14 @@ export function VideoPickerModal({
                 <div className={styles.successSub}>
                   Go back to the library to select them.
                 </div>
-                <button
-                  type="button"
-                  className={styles.backToLibBtn}
+                <Button
+                  variant="outline"
+                  colorScheme="cyan"
+                  size="sm"
                   onClick={handleUploadDone}
                 >
                   Back to Library
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -538,14 +548,15 @@ export function VideoPickerModal({
                             </div>
                           )}
                         </div>
-                        <button
-                          type="button"
-                          className={styles.removeUploadBtn}
+                        <IconButton
+                          variant="ghost"
+                          colorScheme="red"
+                          size="sm"
                           onClick={() => removeUploadFile(i)}
                           aria-label="Remove"
                         >
                           <LuX size={11} />
-                        </button>
+                        </IconButton>
                       </div>
                     ))}
                   </div>
@@ -559,19 +570,21 @@ export function VideoPickerModal({
                     : "No files selected"}
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button
-                    type="button"
-                    className={styles.cancelUploadBtn}
+                  <Button
+                    variant="ghost"
+                    colorScheme="neutral"
+                    size="sm"
                     onClick={() => {
                       resetUpload();
                       setView("library");
                     }}
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.startUploadBtn}
+                  </Button>
+                  <Button
+                    variant="solid"
+                    colorScheme="cyan"
+                    size="sm"
                     disabled={uploadFiles.length === 0}
                     onClick={startUpload}
                   >
@@ -580,7 +593,7 @@ export function VideoPickerModal({
                     {uploadFiles.length > 0
                       ? `${uploadFiles.length} Video${uploadFiles.length > 1 ? "s" : ""}`
                       : "Videos"}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </>

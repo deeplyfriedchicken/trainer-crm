@@ -4,6 +4,7 @@ import { Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuMenu } from "react-icons/lu";
 import { Button } from "@/app/components/Button";
+import { IconButton } from "@/app/components/IconButton";
 import { Input } from "../../components/Input";
 import useHandleLogout from "../_hooks/useLogout";
 import { SearchIcon } from "./NavIcons";
@@ -19,14 +20,16 @@ export function Topbar() {
 
   return (
     <Box as="header" className="crm-topbar">
-      <button
-        type="button"
-        className="crm-hamburger"
+      <IconButton
+        variant="ghost"
+        colorScheme="neutral"
+        size="md"
         onClick={openNav}
         aria-label="Open navigation"
+        className="crm-hamburger"
       >
         <LuMenu size={18} />
-      </button>
+      </IconButton>
       <div className="crm-topbar-title">
         TBD<span className="crm-topbar-title-accent">Fit</span>
       </div>

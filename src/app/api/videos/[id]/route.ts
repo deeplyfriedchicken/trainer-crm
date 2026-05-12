@@ -13,11 +13,11 @@ import { getPresignedGetUrl } from "@/lib/s3";
 // @errors 401 unauthorized | 404 video not found
 export async function GET(
   request: NextRequest,
-  ctx: RouteContext<"/api/videos/[id]">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
-  const { id } = await ctx.params;
+  const { id } = await params;
 
   const video = await getVideoById(id);
   if (!video) {
@@ -33,11 +33,11 @@ export async function GET(
 // @errors 400 validation | 401 unauthorized | 403 forbidden | 404 not found
 export async function PATCH(
   request: NextRequest,
-  ctx: RouteContext<"/api/videos/[id]">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getApiUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
-  const { id } = await ctx.params;
+  const { id } = await params;
 
   const video = await getVideoById(id);
   if (!video) {
@@ -80,11 +80,11 @@ export async function PATCH(
 // @errors 401 unauthorized | 404 video not found | 204 no content
 export async function DELETE(
   request: NextRequest,
-  ctx: RouteContext<"/api/videos/[id]">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getApiUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
-  const { id } = await ctx.params;
+  const { id } = await params;
 
   const video = await softDeleteVideo(id);
   if (!video)

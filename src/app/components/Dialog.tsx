@@ -2,6 +2,7 @@
 
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { IconButton } from "./IconButton";
 import styles from "./Dialog.module.css";
 
 /** Scrollable content area for use inside Dialog when you don't need custom layout. */
@@ -86,14 +87,15 @@ export function Dialog({
             {titleAction && (
               <div className={styles.titleAction}>{titleAction}</div>
             )}
-            <button
-              type="button"
-              className={styles.closeBtn}
+            <IconButton
+              variant="ghost"
+              colorScheme="neutral"
+              size="sm"
               onClick={onClose}
               aria-label="Close"
             >
               ×
-            </button>
+            </IconButton>
           </div>
         )}
         {children}

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { ExerciseLogEntry } from "@/db/queries/workouts";
+import { Button } from "@/app/components/Button";
 import { completeWorkout } from "../../../actions";
 
 interface Props {
@@ -122,24 +123,24 @@ export function FeedbackModal({
         </div>
 
         <div className="feedback-footer">
-          <button
-            type="button"
-            className="client-btn client-btn-ghost"
+          <Button
+            variant="ghost"
+            colorScheme="neutral"
             style={{ flex: 1 }}
             onClick={onCancel}
             disabled={isPending}
           >
             Skip
-          </button>
-          <button
-            type="button"
-            className="client-btn client-btn-primary"
+          </Button>
+          <Button
+            variant="solid"
+            colorScheme="cyan"
             style={{ flex: 2 }}
             onClick={handleSubmit}
             disabled={isPending}
           >
             {isPending ? "Saving…" : "Save Session"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

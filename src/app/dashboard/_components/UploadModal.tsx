@@ -11,7 +11,9 @@ import {
   LuUpload,
 } from "react-icons/lu";
 import { z } from "zod";
+import { Button } from "@/app/components/Button";
 import { Dialog } from "@/app/components/Dialog";
+import { IconButton } from "@/app/components/IconButton";
 import styles from "./UploadModal.module.css";
 import { readVideoMetadata } from "./videoMetadata";
 
@@ -99,15 +101,18 @@ function TagPicker({
       {allTags.map((tag) => {
         const selected = selectedIds.includes(tag.id);
         return (
-          <button
+          <Button
             key={tag.id}
             type="button"
+            variant={selected ? "outline" : "ghost"}
+            colorScheme={hasError && !selected ? "red" : "cyan"}
+            size="sm"
             onClick={() => toggle(tag.id)}
-            className={`${styles.tagPill}${selected ? ` ${styles.tagPillSelected}` : ""}${!selected && hasError ? ` ${styles.tagPillError}` : ""}`}
+            style={{ height: "26px", padding: "0 10px", fontSize: 11 }}
           >
             {selected && <span style={{ marginRight: 3, fontSize: 9 }}>✓</span>}
             {tag.name}
-          </button>
+          </Button>
         );
       })}
       <input
@@ -323,15 +328,16 @@ export function UploadModal({
           <div className={styles.customHeaderTitle}>Upload Videos</div>
           <div className={styles.customHeaderSub}>{headerSubtitle}</div>
         </div>
-        <button
-          type="button"
-          className={styles.customCloseBtn}
+        <IconButton
+          variant="ghost"
+          colorScheme="neutral"
+          size="sm"
           onClick={handleClose}
           disabled={phase === "uploading"}
           aria-label="Close"
         >
           ×
-        </button>
+        </IconButton>
       </div>
 
       {/* Success */}
@@ -354,41 +360,25 @@ export function UploadModal({
               </div>
             </div>
             <div className={styles.successActions}>
-              <button
-                type="button"
+              <Button
+                variant="solid"
+                colorScheme="cyan"
                 onClick={handleSuccess}
                 style={{
-                  padding: "9px 22px",
-                  borderRadius: 10,
                   background: "#4ade80",
-                  border: "none",
-                  color: "#001a0a",
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: "pointer",
                   boxShadow: "0 0 16px rgba(74,222,128,0.4)",
+                  color: "#001a0a",
                 }}
               >
                 Done
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="outline"
+                colorScheme="cyan"
                 onClick={handleUploadMore}
-                style={{
-                  padding: "9px 22px",
-                  borderRadius: 10,
-                  background: "transparent",
-                  border: "1px solid rgba(52,253,254,0.4)",
-                  color: "var(--color-secondary)",
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
               >
                 Upload More
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -519,14 +509,15 @@ export function UploadModal({
                             Video {idx + 1} of {fields.length}
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          className={styles.removeBtn}
+                        <IconButton
+                          variant="ghost"
+                          colorScheme="red"
+                          size="sm"
                           onClick={() => removeFile(idx)}
                           aria-label="Remove"
                         >
                           ×
-                        </button>
+                        </IconButton>
                       </div>
 
                       <div className={styles.fieldGrid}>
@@ -611,14 +602,15 @@ export function UploadModal({
                 })}
 
                 {/* Add more */}
-                <button
-                  type="button"
-                  className={styles.addMoreBtn}
+                <Button
+                  variant="dashed"
+                  colorScheme="cyan"
+                  style={{ width: "100%" }}
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <LuPlus size={14} />
                   Add more videos
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -630,50 +622,25 @@ export function UploadModal({
                 : "No files selected"}
             </div>
             <div className={styles.footerActions}>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                colorScheme="neutral"
                 onClick={handleClose}
-                style={{
-                  padding: "8px 18px",
-                  borderRadius: 10,
-                  background: "transparent",
-                  border: "none",
-                  color: "rgba(255,255,255,0.5)",
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  cursor: "pointer",
-                }}
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
+                variant="solid"
+                colorScheme="cyan"
                 disabled={isUploading || fields.length === 0}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "9px 22px",
-                  borderRadius: 10,
-                  background: "var(--color-secondary)",
-                  border: "none",
-                  color: "#001a1a",
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: fields.length ? "pointer" : "not-allowed",
-                  opacity: fields.length ? 1 : 0.4,
-                  boxShadow: fields.length
-                    ? "0 0 14px rgba(52,253,254,0.4)"
-                    : "none",
-                }}
               >
                 <LuUpload size={14} />
                 Upload{" "}
                 {fields.length > 0
                   ? `${fields.length} Video${fields.length > 1 ? "s" : ""}`
                   : "Videos"}
-              </button>
+              </Button>
             </div>
           </div>
         </form>

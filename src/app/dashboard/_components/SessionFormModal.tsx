@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { LuDumbbell, LuLink, LuPlus, LuX } from "react-icons/lu";
 import { z } from "zod";
+import { Button } from "@/app/components/Button";
 import { Dialog } from "@/app/components/Dialog";
+import { IconButton } from "@/app/components/IconButton";
 import type {
   ColorVariant,
   SessionEntry,
@@ -121,14 +123,15 @@ function ExerciseCard({
     <div className={styles.exerciseCard}>
       <div className={styles.exerciseCardHeader}>
         <div className={styles.exerciseCardNum}>Exercise {idx + 1}</div>
-        <button
-          type="button"
-          className={styles.removeExBtn}
+        <IconButton
+          variant="ghost"
+          colorScheme="red"
+          size="sm"
           onClick={onRemove}
           aria-label="Remove exercise"
         >
           ×
-        </button>
+        </IconButton>
       </div>
 
       {/* Type toggle */}
@@ -271,27 +274,34 @@ function ExerciseCard({
             {linkedVideos.map((vid) => (
               <div key={vid.id} className={styles.videoChip}>
                 <span className={styles.videoChipTitle}>{vid.title}</span>
-                <button
-                  type="button"
-                  className={styles.videoChipRemove}
+                <IconButton
+                  variant="ghost"
+                  colorScheme="neutral"
+                  size="sm"
                   onClick={() => onRemoveVideo(vid.id)}
                   aria-label={`Remove ${vid.title}`}
+                  minW="16px"
+                  w="16px"
+                  h="16px"
+                  fontSize="10px"
+                  borderRadius="3px"
                 >
                   <LuX size={10} />
-                </button>
+                </IconButton>
               </div>
             ))}
           </div>
         )}
-        <button
+        <Button
           id={`exercise-${idx}-link-video`}
-          type="button"
-          className={styles.linkVideoBtn}
+          variant="dashed"
+          colorScheme="cyan"
+          size="sm"
           onClick={onPickVideo}
         >
           <LuLink size={11} />
           Link video
-        </button>
+        </Button>
       </div>
 
       {/* Exercise notes */}
@@ -460,15 +470,16 @@ export function SessionFormModal({
                 : "Create a new workout plan for this trainee"}
             </div>
           </div>
-          <button
-            type="button"
-            className={styles.closeBtn}
+          <IconButton
+            variant="ghost"
+            colorScheme="neutral"
+            size="sm"
             onClick={handleClose}
             disabled={isSubmitting}
             aria-label="Close"
           >
             ×
-          </button>
+          </IconButton>
         </div>
 
         <form
@@ -570,35 +581,44 @@ export function SessionFormModal({
                 </div>
               )}
 
-              <button
-                type="button"
-                className={styles.addExBtn}
-                style={{ marginTop: fields.length > 0 ? 12 : 0 }}
+              <Button
+                variant="dashed"
+                colorScheme="cyan"
+                style={{
+                  width: "100%",
+                  marginTop: fields.length > 0 ? 12 : 0,
+                }}
                 onClick={addExercise}
               >
                 <LuPlus size={14} />
                 Add exercise
-              </button>
+              </Button>
             </div>
           </div>
 
           <div className={styles.footer}>
-            <button
-              type="button"
-              className={styles.cancelBtn}
+            <Button
+              variant="ghost"
+              colorScheme="neutral"
+              size="sm"
               onClick={handleClose}
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="solid"
+              colorScheme="pink"
+              size="sm"
               disabled={isSubmitting}
-              className={styles.saveBtn}
-              style={{
-                background: `var(--color-${colorVariant})`,
-                color: "#0a0a1a",
-                boxShadow: `0 0 16px var(--color-${colorVariant})`,
-              }}
+              style={
+                colorVariant !== "primary"
+                  ? {
+                      background: `var(--color-${colorVariant})`,
+                      boxShadow: `0 0 16px var(--color-${colorVariant})`,
+                    }
+                  : undefined
+              }
             >
               <LuDumbbell size={14} />
               {isSubmitting
@@ -606,7 +626,7 @@ export function SessionFormModal({
                 : isEdit
                   ? "Save Changes"
                   : "Create Plan"}
-            </button>
+            </Button>
           </div>
         </form>
       </Dialog>

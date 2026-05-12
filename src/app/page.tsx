@@ -15,6 +15,7 @@ import {
   LuTrendingUp,
   LuUser,
 } from "react-icons/lu";
+import { IconButton } from "@/app/components/IconButton";
 import s from "./page.module.css";
 
 const barlowCondensed = Barlow_Condensed({
@@ -65,13 +66,16 @@ export default function Home() {
             </li>
           </ul>
           <div className={s.navRight}>
-            <button
+            <IconButton
+              variant="ghost"
+              colorScheme="neutral"
+              size="sm"
               className={s.navMobileToggle}
               aria-label="Menu"
               onClick={() => setMobileNavOpen((v) => !v)}
             >
               <LuMenu size={18} />
-            </button>
+            </IconButton>
             <Link href="/login" className={s.btnGhost}>
               Sign In
             </Link>

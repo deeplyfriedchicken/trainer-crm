@@ -11,7 +11,9 @@ import {
   LuPencil,
   LuStar,
 } from "react-icons/lu";
+import { Button } from "./Button";
 import { Dialog, DialogBody } from "./Dialog";
+import { IconButton } from "./IconButton";
 import styles from "./SessionsPanel.module.css";
 
 // ── Types ─────────────────────────────────────────────────────────────────
@@ -301,18 +303,24 @@ export function SessionsPanel({
         <div className={styles.panelHeader}>
           <div className={styles.panelTitle}>Sessions</div>
           {onNewSession ? (
-            <button
-              type="button"
-              className={styles.newBtn}
-              style={{
-                background: `${accentHex}1e`,
-                border: `1px solid ${accentHex}55`,
-                color: accentHex,
-              }}
+            <Button
+              variant="outline"
+              colorScheme={accentHex === "#34fdfe" ? "cyan" : "pink"}
+              size="sm"
               onClick={onNewSession}
+              style={
+                accentHex !== "#fd6dbb" && accentHex !== "#34fdfe"
+                  ? {
+                      background: `${accentHex}1e`,
+                      border: `1px solid ${accentHex}55`,
+                      color: accentHex,
+                      boxShadow: "none",
+                    }
+                  : undefined
+              }
             >
               + New
-            </button>
+            </Button>
           ) : (
             <div className={styles.panelCount}>{sessions.length} total</div>
           )}
@@ -401,17 +409,19 @@ export function SessionsPanel({
                       </>
                     )}
                     {onEditSession && (
-                      <button
-                        type="button"
-                        className={styles.editBtn}
+                      <IconButton
+                        variant="ghost"
+                        colorScheme="neutral"
+                        size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
                           onEditSession(s);
                         }}
+                        aria-label="Edit session"
                         title="Edit session"
                       >
                         <LuPencil size={12} />
-                      </button>
+                      </IconButton>
                     )}
                     <LuChevronDown
                       size={14}
@@ -535,15 +545,22 @@ export function SessionsPanel({
 
                               {/* Play button — shown when at least one video is linked */}
                               {ex.videos.length > 0 && (
-                                <button
-                                  type="button"
-                                  className={styles.playBtn}
+                                <IconButton
+                                  variant="ghost"
+                                  colorScheme="cyan"
+                                  size="sm"
                                   onClick={() => setVideoExercise(ex)}
+                                  aria-label={
+                                    ex.videos.length > 1
+                                      ? `${ex.videos.length} videos`
+                                      : (ex.videos[0]?.title ?? "Play video")
+                                  }
                                   title={
                                     ex.videos.length > 1
                                       ? `${ex.videos.length} videos`
                                       : ex.videos[0]?.title
                                   }
+                                  position="relative"
                                 >
                                   <FaPlay size={8} color="#34FDFE" />
                                   {ex.videos.length > 1 && (
@@ -551,7 +568,7 @@ export function SessionsPanel({
                                       {ex.videos.length}
                                     </span>
                                   )}
-                                </button>
+                                </IconButton>
                               )}
                             </div>
                           ))}

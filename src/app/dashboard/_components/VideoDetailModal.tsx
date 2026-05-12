@@ -232,6 +232,7 @@ function TagChipInput({
                 e.stopPropagation();
                 removeTag(tag);
               }}
+              aria-label={`Remove tag ${tag}`}
               style={{
                 background: "none",
                 border: "none",
@@ -241,10 +242,16 @@ function TagChipInput({
                 display: "inline-flex",
                 alignItems: "center",
                 lineHeight: 1,
-                fontSize: 15,
+                fontSize: 14,
                 opacity: 0.7,
+                transition: "opacity 0.15s",
               }}
-              aria-label={`Remove tag ${tag}`}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.opacity = "1";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.opacity = "0.7";
+              }}
             >
               ×
             </button>
@@ -348,70 +355,30 @@ export function VideoDetailModal({
 
   const editBtn =
     canEditVideo && detail && !detail.deletedAt && !isEditing ? (
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        colorScheme="cyan"
+        size="sm"
         onClick={startEdit}
         aria-label="Edit video"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 5,
-          padding: "5px 12px",
-          borderRadius: 8,
-          cursor: "pointer",
-          background: "rgba(52,253,254,0.08)",
-          border: "1px solid rgba(52,253,254,0.2)",
-          color: "#34FDFE",
-          fontSize: 12,
-          fontWeight: 600,
-          transition: "background 0.15s",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            "rgba(52,253,254,0.15)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            "rgba(52,253,254,0.08)";
-        }}
       >
         <LuPencil size={13} />
         Edit
-      </button>
+      </Button>
     ) : null;
 
   const deleteBtn =
     showDelete && !isEditing ? (
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        colorScheme="red"
+        size="sm"
         onClick={() => setConfirmDelete(true)}
         aria-label="Delete video"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 5,
-          padding: "5px 12px",
-          borderRadius: 8,
-          cursor: "pointer",
-          background: "rgba(248,113,113,0.1)",
-          border: "1px solid rgba(248,113,113,0.25)",
-          color: "#f87171",
-          fontSize: 12,
-          fontWeight: 600,
-          transition: "background 0.15s",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            "rgba(248,113,113,0.18)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            "rgba(248,113,113,0.1)";
-        }}
       >
         <LuTrash2 size={13} />
         Delete
-      </button>
+      </Button>
     ) : null;
 
   const titleAction =

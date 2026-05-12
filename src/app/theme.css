@@ -4,6 +4,13 @@
   --color-secondary: #34fdfe;
   --color-secondary-soft: #a0fffe;
   --color-tertiary: #4ade80;
+  /* Aliases used by Button / IconButton colorScheme prop */
+  --color-pink: var(--color-primary);
+  --color-pink-soft: var(--color-primary-soft);
+  --color-cyan: var(--color-secondary);
+  --color-cyan-soft: var(--color-secondary-soft);
+  --color-red: #f87171;
+  --color-red-soft: #fca5a5;
   --color-bg: #070712;
   --color-surface: #0f0f1e;
   --color-surface-2: #141428;

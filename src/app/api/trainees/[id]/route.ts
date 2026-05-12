@@ -10,12 +10,12 @@ import { getRequestUser } from "@/lib/request-auth";
 // @errors 401 unauthorized | 404 trainee not found
 export async function GET(
   request: NextRequest,
-  ctx: RouteContext<"/api/trainees/[id]">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await ctx.params;
+  const { id } = await params;
   const trainee = await getTraineeById(id);
   if (!trainee)
     return Response.json({ error: "Trainee not found" }, { status: 404 });
@@ -27,12 +27,12 @@ export async function GET(
 // @errors 401 unauthorized | 404 trainee not found
 export async function PATCH(
   request: NextRequest,
-  ctx: RouteContext<"/api/trainees/[id]">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await ctx.params;
+  const { id } = await params;
   const body = (await request.json()) as { name?: string; email?: string };
   const updated = await updateTrainee(id, body);
   if (!updated)
@@ -44,7 +44,7 @@ export async function PATCH(
 // @errors 401 unauthorized | 403 forbidden | 204 no content
 export async function DELETE(
   request: NextRequest,
-  ctx: RouteContext<"/api/trainees/[id]">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -54,7 +54,7 @@ export async function DELETE(
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { id } = await ctx.params;
+  const { id } = await params;
   await deleteTrainee(id);
   return new Response(null, { status: 204 });
 }

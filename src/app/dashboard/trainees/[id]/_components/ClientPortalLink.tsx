@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LuLink } from "react-icons/lu";
+import { Button } from "@/app/components/Button";
 
 interface Props {
   traineeId: string;
@@ -33,35 +34,17 @@ export function ClientPortalLink({ traineeId }: Props) {
   const isLoading = state === "loading";
 
   return (
-    <button
+    <Button
+      variant="outline"
+      colorScheme={isError ? "red" : "neutral"}
+      size="sm"
       onClick={handleCopy}
       disabled={isLoading}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "6px 14px",
-        borderRadius: 8,
-        background: isCopied
-          ? "rgba(52,253,254,0.12)"
-          : isError
-            ? "rgba(248,113,113,0.12)"
-            : "rgba(255,255,255,0.05)",
-        border: `1px solid ${isCopied ? "rgba(52,253,254,0.3)" : isError ? "rgba(248,113,113,0.3)" : "rgba(255,255,255,0.1)"}`,
-        color: isCopied
-          ? "var(--color-secondary)"
-          : isError
-            ? "#f87171"
-            : "rgba(255,255,255,0.6)",
-        fontSize: 12,
-        fontFamily: "var(--font-body)",
-        fontWeight: 500,
-        cursor: isLoading ? "default" : "pointer",
-        opacity: isLoading ? 0.6 : 1,
-        transition: "all 0.15s",
-        whiteSpace: "nowrap",
-      }}
-      type="button"
+      style={
+        isCopied
+          ? { borderColor: "rgba(52,253,254,0.3)", color: "var(--color-cyan)" }
+          : undefined
+      }
     >
       <LuLink size={13} />
       {isCopied
@@ -71,6 +54,6 @@ export function ClientPortalLink({ traineeId }: Props) {
           : isLoading
             ? "Generating…"
             : "Client Portal Link"}
-    </button>
+    </Button>
   );
 }

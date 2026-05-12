@@ -3,6 +3,7 @@
 import { Box, chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import type { NeonColorScheme } from "./Button";
+import { IconButton } from "./IconButton";
 
 export interface NeonTagProps extends React.HTMLAttributes<HTMLElement> {
   children: ReactNode;
@@ -37,22 +38,20 @@ function TagBase({
     >
       {children}
       {onRemove && (
-        <button
-          type="button"
+        <IconButton
+          variant="ghost"
+          colorScheme="neutral"
+          size="sm"
           onClick={onRemove}
           aria-label="Remove"
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "inherit",
-            cursor: "pointer",
-            fontSize: "14px",
-            lineHeight: 1,
-            padding: 0,
-          }}
+          minW="16px"
+          w="16px"
+          h="16px"
+          fontSize="12px"
+          borderRadius="4px"
         >
           ×
-        </button>
+        </IconButton>
       )}
     </Box>
   );

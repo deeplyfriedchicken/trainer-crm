@@ -23,12 +23,12 @@ async function resolveChat(
 // @errors 401 unauthorized | 404 chat not found or access denied
 export async function GET(
   request: NextRequest,
-  ctx: RouteContext<"/api/chats/[id]/messages">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await ctx.params;
+  const { id } = await params;
   const chat = await resolveChat(id, user);
   if (!chat) return Response.json({ error: "Chat not found" }, { status: 404 });
 
@@ -41,12 +41,12 @@ export async function GET(
 // @errors 400 text required | 401 unauthorized | 404 chat not found or access denied | 201 created
 export async function POST(
   request: NextRequest,
-  ctx: RouteContext<"/api/chats/[id]/messages">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getRequestUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await ctx.params;
+  const { id } = await params;
   const chat = await resolveChat(id, user);
   if (!chat) return Response.json({ error: "Chat not found" }, { status: 404 });
 

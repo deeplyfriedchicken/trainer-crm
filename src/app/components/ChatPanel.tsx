@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { LuSend } from "react-icons/lu";
+import { IconButton } from "./IconButton";
 import styles from "./ChatPanel.module.css";
 
 export type ChatMessage = {
@@ -253,15 +254,16 @@ export function ChatPanel({
           placeholder="Message…"
           disabled={isPending}
         />
-        <button
-          type="button"
-          className={styles.sendBtn}
+        <IconButton
+          variant="solid"
+          colorScheme="pink"
+          size="md"
           onClick={handleSend}
           disabled={isPending || !input.trim()}
           aria-label="Send message"
         >
           <LuSend size={14} color="#1a0010" />
-        </button>
+        </IconButton>
       </div>
     </div>
   );

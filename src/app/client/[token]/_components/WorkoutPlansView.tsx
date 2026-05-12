@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { LuChevronDown, LuChevronRight, LuPlus, LuVideo } from "react-icons/lu";
 import type { ClientChat, ClientData } from "@/db/queries/client";
+import { Tab, TabGroup } from "@/app/components/TabGroup";
 import { ClientChatPanel } from "./ClientChatPanel";
 
 type Plan = ClientData["workoutPlans"][number];
@@ -26,12 +27,20 @@ function fmtDuration(secs: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-function PlanCard({ plan, token }: { plan: Plan; token: string }) {
-  const [open, setOpen] = useState(false);
-
+function PlanCard({
+  plan,
+  token,
+  open,
+  onToggle,
+}: {
+  plan: Plan;
+  token: string;
+  open: boolean;
+  onToggle: () => void;
+}) {
   return (
     <div className="client-card">
-      <div className="plan-header" onClick={() => setOpen((o) => !o)}>
+      <div className="plan-header" onClick={onToggle}>
         <div className="plan-dot" />
         <div style={{ flex: 1 }}>
           <div className="plan-name">{plan.name}</div>
@@ -275,8 +284,36 @@ export function WorkoutPlansView({
   token,
   chat,
 }: Props) {
-  const [tab, setTab] = useState<"plans" | "history" | "chat">("plans");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const tab =
+    (searchParams.get("tab") as "plans" | "history" | "chat") ?? "plans";
+  const openIds = new Set(
+    searchParams.get("open")?.split(",").filter(Boolean) ?? [],
+  );
   const [showChoosePlan, setShowChoosePlan] = useState(false);
+
+  function updateParams(updates: Record<string, string | null>) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(updates)) {
+      if (value === null) params.delete(key);
+      else params.set(key, value);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  }
+
+  function setTab(newTab: "plans" | "history" | "chat") {
+    updateParams({ tab: newTab });
+  }
+
+  function togglePlan(planId: string) {
+    const next = new Set(openIds);
+    if (next.has(planId)) next.delete(planId);
+    else next.add(planId);
+    updateParams({ open: next.size > 0 ? [...next].join(",") : null });
+  }
 
   const initials = trainee.name
     .split(" ")
@@ -314,31 +351,31 @@ export function WorkoutPlansView({
           </div>
         </div>
 
-        <div className="client-tabs">
-          <button
-            className={`client-tab${tab === "plans" ? " active" : ""}`}
+        <TabGroup colorScheme="pink" style={{ marginBottom: 20 }}>
+          <Tab
+            active={tab === "plans"}
+            colorScheme="pink"
             onClick={() => setTab("plans")}
-            type="button"
           >
             My Plans
-          </button>
-          <button
-            className={`client-tab${tab === "history" ? " active" : ""}`}
+          </Tab>
+          <Tab
+            active={tab === "history"}
+            colorScheme="pink"
             onClick={() => setTab("history")}
-            type="button"
           >
             History{workouts.length > 0 ? ` (${workouts.length})` : ""}
-          </button>
+          </Tab>
           {chat && (
-            <button
-              className={`client-tab${tab === "chat" ? " active" : ""}`}
+            <Tab
+              active={tab === "chat"}
+              colorScheme="pink"
               onClick={() => setTab("chat")}
-              type="button"
             >
               Chat
-            </button>
+            </Tab>
           )}
-        </div>
+        </TabGroup>
 
         {tab === "plans" && (
           <div>
@@ -352,7 +389,13 @@ export function WorkoutPlansView({
               </div>
             ) : (
               workoutPlans.map((p) => (
-                <PlanCard key={p.id} plan={p} token={token} />
+                <PlanCard
+                  key={p.id}
+                  plan={p}
+                  token={token}
+                  open={openIds.has(p.id)}
+                  onToggle={() => togglePlan(p.id)}
+                />
               ))
             )}
             <div style={{ height: 100 }} />

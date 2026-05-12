@@ -5,6 +5,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { LuChevronDown, LuChevronRight, LuPlus, LuVideo } from "react-icons/lu";
 import type { ClientChat, ClientData } from "@/db/queries/client";
+import { Badge } from "@/app/components/Badge";
+import { BottomSheet } from "@/app/components/BottomSheet";
+import { Button } from "@/app/components/Button";
 import { Tab, TabGroup } from "@/app/components/TabGroup";
 import { ClientChatPanel } from "./ClientChatPanel";
 
@@ -64,15 +67,15 @@ function PlanCard({
             >
               <span className="ex-name">{ex.name}</span>
               {ex.videoLinks.length > 0 && (
-                <span className="ex-tag has-video">
-                  <LuVideo size={12} /> Video
-                </span>
+                <Badge colorScheme="pink" variant="subtle">
+                  <LuVideo size={10} /> Video
+                </Badge>
               )}
-              <span className="ex-tag">
+              <Badge colorScheme="cyan" variant="subtle">
                 {ex.type === "duration"
                   ? `${ex.sets}×${ex.durationSeconds}s`
                   : `${ex.sets}×${ex.reps}`}
-              </span>
+              </Badge>
               {ex.weightLbs && (
                 <span className="ex-weight">@ {ex.weightLbs}lbs</span>
               )}
@@ -82,11 +85,10 @@ function PlanCard({
             </Link>
           ))}
           <div className="plan-actions">
-            <Link
-              href={`/client/${token}/log/${plan.id}`}
-              className="client-btn client-btn-primary client-btn-sm"
-            >
-              Start Workout
+            <Link href={`/client/${token}/log/${plan.id}`} style={{ display: "block" }}>
+              <Button variant="solid" colorScheme="pink" size="sm" w="100%">
+                Start Workout
+              </Button>
             </Link>
           </div>
         </div>
@@ -112,9 +114,9 @@ function HistoryCard({ workout }: { workout: Workout }) {
             <div className="history-date">{fmtDate(workout.createdAt)}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="history-badge">
+            <Badge colorScheme="cyan" variant="subtle">
               {fmtDuration(workout.durationSeconds)}
-            </span>
+            </Badge>
             <span
               style={{
                 color: "var(--text-3)",
@@ -134,14 +136,14 @@ function HistoryCard({ workout }: { workout: Workout }) {
             )}
             <div className="scales-row">
               {workout.painRating != null && (
-                <span className="scale-badge scale-pain">
+                <Badge colorScheme="red" variant="subtle">
                   Pain {workout.painRating}/10
-                </span>
+                </Badge>
               )}
               {workout.energyRating != null && (
-                <span className="scale-badge scale-energy">
+                <Badge colorScheme="pink" variant="subtle">
                   Energy {workout.energyRating}/10
-                </span>
+                </Badge>
               )}
             </div>
           </div>
@@ -208,66 +210,6 @@ function HistoryCard({ workout }: { workout: Workout }) {
   );
 }
 
-function ChoosePlanSheet({
-  plans,
-  token,
-  onClose,
-}: {
-  plans: Plan[];
-  token: string;
-  onClose: () => void;
-}) {
-  const router = useRouter();
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="sheet" onClick={(e) => e.stopPropagation()}>
-        <div className="sheet-handle" />
-        <div className="sheet-title">Choose a Workout Plan</div>
-        {plans.length === 0 ? (
-          <div
-            style={{
-              padding: "20px 16px",
-              color: "var(--text-3)",
-              fontSize: 14,
-            }}
-          >
-            No plans available. Your trainer will assign plans here.
-          </div>
-        ) : (
-          plans.map((p) => (
-            <div
-              key={p.id}
-              className="sheet-plan-row"
-              onClick={() => {
-                onClose();
-                router.push(`/client/${token}/log/${p.id}`);
-              }}
-            >
-              <div className="sheet-plan-dot" />
-              <div style={{ flex: 1 }}>
-                <div className="sheet-plan-name">{p.name}</div>
-                <div
-                  style={{ fontSize: 11, color: "var(--text-3)", marginTop: 2 }}
-                >
-                  {fmtDate(p.occurredAt)}
-                </div>
-              </div>
-              <span className="sheet-plan-count">
-                {p.exercises.length} exercise
-                {p.exercises.length !== 1 ? "s" : ""}
-              </span>
-              <span style={{ color: "var(--text-3)", marginLeft: 8 }}>
-                <LuChevronRight size={14} />
-              </span>
-            </div>
-          ))
-        )}
-        <div style={{ height: 16 }} />
-      </div>
-    </div>
-  );
-}
 
 interface Props {
   trainee: { id: string; name: string; email: string };
@@ -438,11 +380,42 @@ export function WorkoutPlansView({
       </button>
 
       {showChoosePlan && (
-        <ChoosePlanSheet
-          plans={workoutPlans}
-          token={token}
+        <BottomSheet
           onClose={() => setShowChoosePlan(false)}
-        />
+          title="Choose a Workout Plan"
+        >
+          {workoutPlans.length === 0 ? (
+            <div style={{ padding: "20px 16px", color: "var(--color-text-muted)", fontSize: 14 }}>
+              No plans available. Your trainer will assign plans here.
+            </div>
+          ) : (
+            workoutPlans.map((p) => (
+              <div
+                key={p.id}
+                className="sheet-plan-row"
+                onClick={() => {
+                  setShowChoosePlan(false);
+                  router.push(`/client/${token}/log/${p.id}`);
+                }}
+              >
+                <div className="sheet-plan-dot" />
+                <div style={{ flex: 1 }}>
+                  <div className="sheet-plan-name">{p.name}</div>
+                  <div style={{ fontSize: 11, color: "var(--color-text-dim)", marginTop: 2 }}>
+                    {fmtDate(p.occurredAt)}
+                  </div>
+                </div>
+                <span className="sheet-plan-count">
+                  {p.exercises.length} exercise{p.exercises.length !== 1 ? "s" : ""}
+                </span>
+                <span style={{ color: "var(--color-text-dim)", marginLeft: 8 }}>
+                  <LuChevronRight size={14} />
+                </span>
+              </div>
+            ))
+          )}
+          <div style={{ height: 16 }} />
+        </BottomSheet>
       )}
     </div>
   );

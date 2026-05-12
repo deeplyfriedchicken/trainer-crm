@@ -35,6 +35,9 @@ import { Tag } from "../Tag";
 import { Text, type TextVariant } from "../Text";
 import { Textarea } from "../Textarea";
 import { toaster } from "../Toast";
+import { Tab, TabGroup } from "../TabGroup";
+import { BottomSheet } from "../BottomSheet";
+import { StatPill } from "../StatPill";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
 function Row({ children }: { children: React.ReactNode }) {
@@ -930,6 +933,216 @@ export function DialogSection() {
           . Backdrop click and Esc both close.
         </Text>
         <ShowcaseDialog />
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── TabGroup showcase ────────────────────────────────────────────────────────
+
+function ShowcaseTabGroup() {
+  const [tab, setTab] = useState("plans");
+  return (
+    <Box display="flex" flexDirection="column" gap="24px" maxW="420px">
+      <Box>
+        <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">
+          Pink (default — client portal)
+        </Text>
+        <TabGroup colorScheme="pink">
+          <Tab active={tab === "plans"} colorScheme="pink" onClick={() => setTab("plans")}>My Plans</Tab>
+          <Tab active={tab === "history"} colorScheme="pink" onClick={() => setTab("history")}>History (3)</Tab>
+          <Tab active={tab === "chat"} colorScheme="pink" onClick={() => setTab("chat")}>Chat</Tab>
+        </TabGroup>
+      </Box>
+      <Box>
+        <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">
+          Cyan (dashboard modals)
+        </Text>
+        <TabGroup colorScheme="cyan">
+          <Tab active={tab === "plans"} colorScheme="cyan" onClick={() => setTab("plans")}>Library</Tab>
+          <Tab active={tab === "history"} colorScheme="cyan" onClick={() => setTab("history")}>Upload new</Tab>
+        </TabGroup>
+      </Box>
+    </Box>
+  );
+}
+
+export function TabGroupSection() {
+  return (
+    <Box
+      as="section"
+      id="tab-group"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--color-border)"
+    >
+      <SectionTitle>Tab Group</SectionTitle>
+      <SubSection title="Segmented tab navigation">
+        <Text
+          variant="body-sm"
+          display="block"
+          color="var(--color-text-muted)"
+          mb="20px"
+        >
+          Use{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">TabGroup</Text>
+          {" "}as the container and{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">Tab</Text>
+          {" "}for each option. Control the{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">active</Text>
+          {" "}state externally — typically with{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">useState</Text>
+          {" "}or a URL search param.
+        </Text>
+        <ShowcaseTabGroup />
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── BottomSheet showcase ─────────────────────────────────────────────────────
+
+function ShowcaseBottomSheet() {
+  const [which, setWhich] = useState<null | "basic" | "footer" | "list">(null);
+  const plans = ["Lower Body Power", "Upper Push Day", "Full Body HIIT"];
+  return (
+    <Box display="flex" gap="12px" flexWrap="wrap">
+      <Button onClick={() => setWhich("basic")}>Basic (title + subtitle)</Button>
+      <Button colorScheme="cyan" variant="outline" onClick={() => setWhich("footer")}>With footer</Button>
+      <Button colorScheme="pink" variant="ghost" onClick={() => setWhich("list")}>List content</Button>
+
+      {which === "basic" && (
+        <BottomSheet
+          onClose={() => setWhich(null)}
+          title="Session Complete 🎉"
+          subtitle="Duration: 42:15 · How did it go?"
+        >
+          <Box p="20px">
+            <Textarea colorScheme="cyan" placeholder="How did it feel?" rows={3} w="100%" />
+          </Box>
+        </BottomSheet>
+      )}
+
+      {which === "footer" && (
+        <BottomSheet
+          onClose={() => setWhich(null)}
+          title="Add Notes"
+          subtitle="Optional — jot down how the session felt"
+          footer={
+            <Box display="flex" gap="10px">
+              <Button variant="ghost" colorScheme="neutral" style={{ flex: 1 }} onClick={() => setWhich(null)}>Cancel</Button>
+              <Button variant="solid" colorScheme="cyan" style={{ flex: 2 }} onClick={() => setWhich(null)}>Save</Button>
+            </Box>
+          }
+        >
+          <Box p="20px">
+            <Textarea colorScheme="cyan" placeholder="Write your notes…" rows={4} w="100%" />
+          </Box>
+        </BottomSheet>
+      )}
+
+      {which === "list" && (
+        <BottomSheet onClose={() => setWhich(null)} title="Choose a Workout Plan">
+          {plans.map((p) => (
+            <Box
+              key={p}
+              px="20px"
+              py="14px"
+              display="flex"
+              alignItems="center"
+              gap="12px"
+              borderBottom="1px solid var(--color-border)"
+              cursor="pointer"
+              _hover={{ bg: "rgba(255,255,255,0.04)" }}
+              onClick={() => setWhich(null)}
+            >
+              <Box w="8px" h="8px" borderRadius="50%" bg="var(--color-primary)" boxShadow="0 0 6px var(--color-primary)" flexShrink={0} />
+              <Box flex={1} fontSize="14px" fontWeight={600} color="#fff">{p}</Box>
+            </Box>
+          ))}
+          <Box h="16px" />
+        </BottomSheet>
+      )}
+    </Box>
+  );
+}
+
+export function BottomSheetSection() {
+  return (
+    <Box
+      as="section"
+      id="bottom-sheet"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--color-border)"
+    >
+      <SectionTitle>Bottom Sheet</SectionTitle>
+      <SubSection title="Slide-up overlay panel">
+        <Text
+          variant="body-sm"
+          display="block"
+          color="var(--color-text-muted)"
+          mb="20px"
+        >
+          Mobile-first sheet that slides up from the bottom. Backdrop click and
+          Esc close it. Accepts optional{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">title</Text>
+          ,{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">subtitle</Text>
+          ,{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">titleAction</Text>
+          , and{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">footer</Text>
+          {" "}slots. Renders via portal.
+        </Text>
+        <ShowcaseBottomSheet />
+      </SubSection>
+    </Box>
+  );
+}
+
+// ─── StatPill showcase ────────────────────────────────────────────────────────
+
+export function StatPillSection() {
+  return (
+    <Box
+      as="section"
+      id="stat-pill"
+      px="60px"
+      py="56px"
+      borderBottom="1px solid var(--color-border)"
+    >
+      <SectionTitle>Stat Pill</SectionTitle>
+      <SubSection title="Metric display cards">
+        <Text
+          variant="body-sm"
+          display="block"
+          color="var(--color-text-muted)"
+          mb="20px"
+        >
+          Compact card for displaying a labelled numeric metric with an optional
+          unit. Defaults to{" "}
+          <Text variant="mono-sm" as="code" color="var(--color-secondary)">colorScheme="cyan"</Text>
+          .
+        </Text>
+        <Box display="flex" flexDirection="column" gap="24px">
+          <Box>
+            <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">Reps-based exercise</Text>
+            <Box display="grid" gridTemplateColumns="repeat(3, 120px)" gap="8px">
+              <StatPill label="Sets" value={4} />
+              <StatPill label="Reps" value={10} unit="per set" />
+              <StatPill label="Volume" value={40} unit="total reps" />
+            </Box>
+          </Box>
+          <Box>
+            <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">Duration-based exercise</Text>
+            <Box display="grid" gridTemplateColumns="repeat(3, 120px)" gap="8px">
+              <StatPill label="Sets" value={3} />
+              <StatPill label="Duration" value={45} unit="sec / set" />
+              <StatPill label="Total" value={135} unit="seconds" colorScheme="pink" />
+            </Box>
+          </Box>
+        </Box>
       </SubSection>
     </Box>
   );

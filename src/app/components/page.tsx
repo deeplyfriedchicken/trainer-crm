@@ -3,6 +3,7 @@ import { ColorPalette } from "./_showcase/ColorPalette";
 import { Hero } from "./_showcase/Hero";
 import { Sidebar } from "./_showcase/Sidebar";
 import {
+  BottomSheetSection,
   ButtonsSection,
   CardsSection,
   ChatPanelSection,
@@ -11,6 +12,8 @@ import {
   FormsSection,
   PageHeaderSection,
   SessionsPanelSection,
+  StatPillSection,
+  TabGroupSection,
   TableSection,
   TextSection,
 } from "./_showcase/sections";
@@ -34,6 +37,9 @@ export default function ComponentsShowcase() {
         <SessionsPanelSection />
         <ChatPanelSection />
         <DialogSection />
+        <BottomSheetSection />
+        <TabGroupSection />
+        <StatPillSection />
         <PageHeaderSection />
       </Box>
       <Toaster />

@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from "react";
 import type { ExerciseLogEntry } from "@/db/queries/workouts";
+import { BottomSheet } from "@/app/components/BottomSheet";
 import { Button } from "@/app/components/Button";
+import { Textarea } from "@/app/components/Textarea";
 import { completeWorkout } from "../../../actions";
 
 interface Props {
@@ -49,80 +51,13 @@ export function FeedbackModal({
   };
 
   return (
-    <div className="feedback-overlay">
-      <div className="feedback-sheet">
-        <div className="feedback-header">
-          <div className="feedback-title">Session Complete 🎉</div>
-          <div className="feedback-sub">
-            Duration: {fmtDuration(duration)} · How did it go?
-          </div>
-        </div>
-
-        <div className="feedback-body">
-          <div>
-            <div className="fb-section-title">Pain Level</div>
-            <div className="scale-btns">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  className={`scale-btn${pain === n ? " active-pain" : ""}`}
-                  onClick={() => setPain(n)}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-            <div className="scale-ends">
-              <span>None</span>
-              <span>Severe</span>
-            </div>
-          </div>
-
-          <div>
-            <div className="fb-section-title">Energy Level</div>
-            <div className="scale-btns">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  className={`scale-btn${energy === n ? " active-energy" : ""}`}
-                  onClick={() => setEnergy(n)}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-            <div className="scale-ends">
-              <span>Exhausted</span>
-              <span>Feeling great</span>
-            </div>
-          </div>
-
-          <div>
-            <div className="fb-section-title">Notes</div>
-            <textarea
-              className="fb-textarea"
-              placeholder="How did the session feel? Any issues or breakthroughs?"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-          </div>
-
-          {error && (
-            <div
-              style={{
-                color: "var(--red)",
-                fontSize: 13,
-                fontFamily: "var(--font-mono)",
-              }}
-            >
-              {error}
-            </div>
-          )}
-        </div>
-
-        <div className="feedback-footer">
+    <BottomSheet
+      onClose={onCancel}
+      title="Session Complete 🎉"
+      subtitle={`Duration: ${fmtDuration(duration)} · How did it go?`}
+      zIndex={300}
+      footer={
+        <div style={{ display: "flex", gap: 10 }}>
           <Button
             variant="ghost"
             colorScheme="neutral"
@@ -142,7 +77,73 @@ export function FeedbackModal({
             {isPending ? "Saving…" : "Save Session"}
           </Button>
         </div>
+      }
+    >
+      <div className="feedback-body">
+        <div>
+          <div className="fb-section-title">Pain Level</div>
+          <div className="scale-btns">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+              <button
+                key={n}
+                type="button"
+                className={`scale-btn${pain === n ? " active-pain" : ""}`}
+                onClick={() => setPain(n)}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          <div className="scale-ends">
+            <span>None</span>
+            <span>Severe</span>
+          </div>
+        </div>
+
+        <div>
+          <div className="fb-section-title">Energy Level</div>
+          <div className="scale-btns">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+              <button
+                key={n}
+                type="button"
+                className={`scale-btn${energy === n ? " active-energy" : ""}`}
+                onClick={() => setEnergy(n)}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          <div className="scale-ends">
+            <span>Exhausted</span>
+            <span>Feeling great</span>
+          </div>
+        </div>
+
+        <div>
+          <div className="fb-section-title">Notes</div>
+          <Textarea
+            colorScheme="cyan"
+            placeholder="How did the session feel? Any issues or breakthroughs?"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            rows={4}
+            w="100%"
+          />
+        </div>
+
+        {error && (
+          <div
+            style={{
+              color: "var(--red)",
+              fontSize: 13,
+              fontFamily: "var(--font-mono)",
+            }}
+          >
+            {error}
+          </div>
+        )}
       </div>
-    </div>
+    </BottomSheet>
   );
 }

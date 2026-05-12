@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { LuChevronLeft, LuVideo } from "react-icons/lu";
 import { getExerciseForClient } from "@/db/queries/client";
+import { Badge } from "@/app/components/Badge";
+import { StatPill } from "@/app/components/StatPill";
 import { getClientSession } from "@/lib/client-session";
 import { decryptUserId } from "@/lib/client-token";
 import { getPresignedGetUrl } from "@/lib/s3";
@@ -53,29 +55,26 @@ export default async function ExerciseDetailPage({
         <div className="ex-detail-header">
           <div className="ex-detail-badges">
             {exercise.videoLinks.length > 0 && (
-              <span className="ex-badge pink">
-                <LuVideo size={12} /> Video
-              </span>
+              <Badge colorScheme="pink" variant="subtle">
+                <LuVideo size={10} /> Video
+              </Badge>
             )}
           </div>
           <h1 className="ex-detail-title">{exercise.name}</h1>
         </div>
 
         <div className="sets-grid">
-          <div className="set-pill">
-            <div className="set-pill-num">Sets</div>
-            <div className="set-pill-val">{exercise.sets}</div>
-          </div>
-          <div className="set-pill">
-            <div className="set-pill-num">Reps</div>
-            <div className="set-pill-val">{exercise.reps}</div>
-            <div className="set-pill-unit">per set</div>
-          </div>
-          <div className="set-pill">
-            <div className="set-pill-num">Volume</div>
-            <div className="set-pill-val">{volume}</div>
-            <div className="set-pill-unit">total reps</div>
-          </div>
+          <StatPill label="Sets" value={exercise.sets} />
+          <StatPill
+            label={exercise.type === "duration" ? "Duration" : "Reps"}
+            value={exercise.type === "duration" ? exercise.durationSeconds ?? 0 : (exercise.reps ?? 0)}
+            unit={exercise.type === "duration" ? "sec / set" : "per set"}
+          />
+          <StatPill
+            label="Volume"
+            value={volume}
+            unit="total reps"
+          />
         </div>
 
         {exercise.comment && (

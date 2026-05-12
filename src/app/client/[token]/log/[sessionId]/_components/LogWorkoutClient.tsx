@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import { LuCheck, LuChevronLeft, LuPause, LuVideo } from "react-icons/lu";
+import { LuChevronLeft, LuPause, LuVideo } from "react-icons/lu";
 import type { PlanForLog } from "@/db/queries/client";
+import { BottomSheet } from "@/app/components/BottomSheet";
+import { Checkbox } from "@/app/components/Checkbox";
 import { IconButton } from "@/app/components/IconButton";
 import { FeedbackModal } from "./FeedbackModal";
 
@@ -294,14 +296,13 @@ export function LogWorkoutClient({ token, plan }: Props) {
                         unit="LBS"
                       />
 
-                      <div
-                        className={`log-check${set.completed ? " checked" : ""}`}
-                        onClick={() =>
-                          !isDisabled && handleSetClick(exIdx, setIdx)
-                        }
-                      >
-                        {set.completed && <LuCheck size={14} color="#070712" />}
-                      </div>
+                      <Checkbox
+                        colorScheme="cyan"
+                        checked={set.completed}
+                        disabled={isDisabled}
+                        onCheckedChange={() => handleSetClick(exIdx, setIdx)}
+                        style={{ justifySelf: "end" }}
+                      />
                     </div>
                   );
                 })}
@@ -384,62 +385,30 @@ export function LogWorkoutClient({ token, plan }: Props) {
       )}
 
       {videoModalEx && (
-        <div className="modal-overlay" onClick={() => setVideoModalEx(null)}>
-          <div
-            className="sheet"
-            onClick={(e) => e.stopPropagation()}
-            style={{ padding: "0 0 env(safe-area-inset-bottom, 24px)" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "16px 16px 12px",
-                gap: 12,
-              }}
+        <BottomSheet
+          onClose={() => setVideoModalEx(null)}
+          title={videoModalEx.name}
+          subtitle="Demo Video"
+          titleAction={
+            <IconButton
+              variant="ghost"
+              colorScheme="neutral"
+              size="sm"
+              onClick={() => setVideoModalEx(null)}
+              aria-label="Close"
             >
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.03em",
-                  }}
-                >
-                  {videoModalEx.name}
-                </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "var(--text-3)",
-                    fontFamily: "var(--font-mono)",
-                    marginTop: 2,
-                  }}
-                >
-                  Demo Video
-                </div>
-              </div>
-              <IconButton
-                variant="ghost"
-                colorScheme="neutral"
-                size="sm"
-                onClick={() => setVideoModalEx(null)}
-                aria-label="Close"
-              >
-                ×
-              </IconButton>
-            </div>
+              ×
+            </IconButton>
+          }
+          zIndex={250}
+        >
             {videoModalEx.videoLinks[0] && (
               <div
                 style={{
-                  margin: "0 16px 20px",
+                  margin: "12px 16px 20px",
                   borderRadius: 12,
                   overflow: "hidden",
                   background: "#000",
-                  width: "100%",
-                  maxHeight: "70vh",
                 }}
               >
                 <video
@@ -449,15 +418,14 @@ export function LogWorkoutClient({ token, plan }: Props) {
                   style={{
                     width: "100%",
                     height: "auto",
-                    maxHeight: "70vh",
+                    maxHeight: "60vh",
                     border: "none",
                     display: "block",
                   }}
                 />
               </div>
             )}
-          </div>
-        </div>
+        </BottomSheet>
       )}
     </div>
   );

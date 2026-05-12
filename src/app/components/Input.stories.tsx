@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { VStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Input } from "./Input";
 
 const meta: Meta<typeof Input> = {
@@ -24,7 +24,11 @@ export const WithValue: Story = {
 };
 
 export const Cyan: Story = {
-  args: { placeholder: "Cyan focus ring", colorScheme: "cyan", style: { width: 280 } },
+  args: {
+    placeholder: "Cyan focus ring",
+    colorScheme: "cyan",
+    style: { width: 280 },
+  },
 };
 
 export const Invalid: Story = {

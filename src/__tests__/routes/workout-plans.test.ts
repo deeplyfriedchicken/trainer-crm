@@ -21,7 +21,9 @@ const {
   mockFindMany: vi.fn(),
   mockFindFirst: vi.fn(),
   mockTransaction: vi.fn(),
-  mockUpdate: vi.fn().mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn() }) }),
+  mockUpdate: vi
+    .fn()
+    .mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn() }) }),
 }));
 
 vi.mock("@/lib/request-auth", () => ({
@@ -332,6 +334,8 @@ describe("DELETE /api/workout-plans/[id]", () => {
     const res = await DELETE(req as never, dynamicCtx("plan_1"));
     expect(res.status).toBe(204);
     expect(mockUpdate).toHaveBeenCalled();
-    expect(mockSet).toHaveBeenCalledWith(expect.objectContaining({ deletedAt: expect.any(Date) }));
+    expect(mockSet).toHaveBeenCalledWith(
+      expect.objectContaining({ deletedAt: expect.any(Date) }),
+    );
   });
 });

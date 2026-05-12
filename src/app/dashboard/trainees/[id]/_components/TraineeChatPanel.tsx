@@ -2,8 +2,8 @@
 
 import {
   type ChatMessage,
-  type ColorVariant,
   ChatPanel,
+  type ColorVariant,
 } from "@/app/components/ChatPanel";
 import { sendMessage } from "../actions";
 

@@ -30,12 +30,30 @@ function DialogDemo({
         maxWidth={maxWidth}
       >
         <DialogBody>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 14, lineHeight: 1.6 }}>
-            This is the dialog body. You can put any content here — forms, details, confirmations.
+          <p
+            style={{
+              color: "rgba(255,255,255,0.7)",
+              fontSize: 14,
+              lineHeight: 1.6,
+            }}
+          >
+            This is the dialog body. You can put any content here — forms,
+            details, confirmations.
           </p>
-          <div style={{ marginTop: 20, display: "flex", gap: 8, justifyContent: "flex-end" }}>
-            <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button size="sm" onClick={() => setOpen(false)}>Confirm</Button>
+          <div
+            style={{
+              marginTop: 20,
+              display: "flex",
+              gap: 8,
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button size="sm" onClick={() => setOpen(false)}>
+              Confirm
+            </Button>
           </div>
         </DialogBody>
       </Dialog>

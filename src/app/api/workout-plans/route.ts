@@ -24,7 +24,10 @@ export async function GET(request: NextRequest) {
   }
 
   const plans = await db.query.workoutPlans.findMany({
-    where: and(eq(workoutPlans.traineeId, traineeId), isNull(workoutPlans.deletedAt)),
+    where: and(
+      eq(workoutPlans.traineeId, traineeId),
+      isNull(workoutPlans.deletedAt),
+    ),
     orderBy: [desc(workoutPlans.occurredAt)],
     with: {
       exercises: {

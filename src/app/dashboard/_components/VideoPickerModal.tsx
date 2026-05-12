@@ -5,6 +5,7 @@ import { FaPlay } from "react-icons/fa6";
 import { LuCheck, LuFilm, LuSearch, LuUpload, LuX } from "react-icons/lu";
 import { Dialog } from "@/app/components/Dialog";
 import styles from "./VideoPickerModal.module.css";
+import { readVideoMetadata } from "./videoMetadata";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -207,6 +208,7 @@ export function VideoPickerModal({
       const videoIds: string[] = [];
       for (let i = 0; i < uploadFiles.length; i++) {
         const file = uploadFiles[i];
+        const meta = await readVideoMetadata(file);
         const presignRes = await fetch("/api/videos/presign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -215,6 +217,9 @@ export function VideoPickerModal({
             mimeType: file.type,
             fileSizeBytes: file.size,
             ...(traineeId && { traineeId }),
+            ...(meta.width &&
+              meta.height && { width: meta.width, height: meta.height }),
+            ...(meta.duration && { duration: meta.duration }),
           }),
         });
         const { videoId, uploadUrl } = await presignRes.json();
@@ -474,7 +479,9 @@ export function VideoPickerModal({
                   <LuUpload
                     size={uploadFiles.length > 0 ? 22 : 30}
                     color={
-                      dragging ? "var(--color-secondary)" : "rgba(52,253,254,0.5)"
+                      dragging
+                        ? "var(--color-secondary)"
+                        : "rgba(52,253,254,0.5)"
                     }
                     style={{ margin: "0 auto 8px" }}
                   />

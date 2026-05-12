@@ -15,11 +15,22 @@ export async function POST(request: NextRequest) {
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { fileName, mimeType, fileSizeBytes, traineeId } = body as {
+  const {
+    fileName,
+    mimeType,
+    fileSizeBytes,
+    traineeId,
+    width,
+    height,
+    duration,
+  } = body as {
     fileName: string;
     mimeType: string;
     fileSizeBytes: number;
     traineeId?: string;
+    width?: number;
+    height?: number;
+    duration?: number;
   };
 
   if (!mimeType?.startsWith("video/")) {
@@ -44,6 +55,9 @@ export async function POST(request: NextRequest) {
     fileSizeBytes,
     mimeType,
     status: "uploading",
+    ...(width != null &&
+      height != null && { originalWidth: width, originalHeight: height }),
+    ...(duration != null && { durationSeconds: Math.round(duration) }),
   });
 
   const uploadUrl = await getSignedUrl(

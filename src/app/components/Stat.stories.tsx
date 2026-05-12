@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Stat } from "./Stat";
 
 const meta: Meta<typeof Stat> = {
@@ -41,10 +41,27 @@ export const NegativeTrend: Story = {
 export const Dashboard: Story = {
   render: () => (
     <HStack gap="40px" flexWrap="wrap">
-      <Stat label="Active Clients" value="24" accent="pink" helpText="+4 this month" indicator="up" />
+      <Stat
+        label="Active Clients"
+        value="24"
+        accent="pink"
+        helpText="+4 this month"
+        indicator="up"
+      />
       <Stat label="Sessions Today" value="8" accent="cyan" />
-      <Stat label="Videos Uploaded" value="142" accent="pink" helpText="-5 from last week" indicator="down" />
-      <Stat label="Avg Energy Rating" value="3.8" accent="cyan" helpText="Stable" />
+      <Stat
+        label="Videos Uploaded"
+        value="142"
+        accent="pink"
+        helpText="-5 from last week"
+        indicator="down"
+      />
+      <Stat
+        label="Avg Energy Rating"
+        value="3.8"
+        accent="cyan"
+        helpText="Stable"
+      />
     </HStack>
   ),
 };

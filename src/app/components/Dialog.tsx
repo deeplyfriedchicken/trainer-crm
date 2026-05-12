@@ -83,7 +83,9 @@ export function Dialog({
             <div id="dialog-title" className={styles.title}>
               {title}
             </div>
-            {titleAction && <div className={styles.titleAction}>{titleAction}</div>}
+            {titleAction && (
+              <div className={styles.titleAction}>{titleAction}</div>
+            )}
             <button
               type="button"
               className={styles.closeBtn}

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HStack, VStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Button } from "./Button";
 
 const meta: Meta<typeof Button> = {
@@ -8,7 +8,10 @@ const meta: Meta<typeof Button> = {
   parameters: { layout: "centered" },
   argTypes: {
     colorScheme: { control: "select", options: ["pink", "cyan"] },
-    variant: { control: "select", options: ["solid", "outline", "ghost", "link"] },
+    variant: {
+      control: "select",
+      options: ["solid", "outline", "ghost", "link"],
+    },
     size: { control: "select", options: ["sm", "md", "lg", "xl"] },
   },
 };
@@ -17,7 +20,12 @@ export default meta;
 type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
-  args: { children: "Click me", colorScheme: "pink", variant: "solid", size: "md" },
+  args: {
+    children: "Click me",
+    colorScheme: "pink",
+    variant: "solid",
+    size: "md",
+  },
 };
 
 export const AllVariants: Story = {
@@ -45,10 +53,18 @@ export const AllSizes: Story = {
 export const CyanScheme: Story = {
   render: () => (
     <HStack gap="12px" flexWrap="wrap">
-      <Button colorScheme="cyan" variant="solid">Solid</Button>
-      <Button colorScheme="cyan" variant="outline">Outline</Button>
-      <Button colorScheme="cyan" variant="ghost">Ghost</Button>
-      <Button colorScheme="cyan" variant="link">Link</Button>
+      <Button colorScheme="cyan" variant="solid">
+        Solid
+      </Button>
+      <Button colorScheme="cyan" variant="outline">
+        Outline
+      </Button>
+      <Button colorScheme="cyan" variant="ghost">
+        Ghost
+      </Button>
+      <Button colorScheme="cyan" variant="link">
+        Link
+      </Button>
     </HStack>
   ),
 };

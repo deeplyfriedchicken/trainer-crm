@@ -47,14 +47,22 @@
 }
 
 .grad-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-soft)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
 .grad-secondary {
-  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-soft));
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary),
+    var(--color-secondary-soft)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

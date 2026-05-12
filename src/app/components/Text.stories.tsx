@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { VStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Text, type TextVariant } from "./Text";
 
 const meta: Meta<typeof Text> = {
@@ -10,9 +10,22 @@ const meta: Meta<typeof Text> = {
     variant: {
       control: "select",
       options: [
-        "display-7xl", "display-6xl", "display-5xl", "display-4xl", "display-3xl", "display-2xl", "display-xl",
-        "body-lg", "body-md", "body-sm", "body-xs", "body-3xs", "label",
-        "mono-lg", "mono-md", "mono-sm",
+        "display-7xl",
+        "display-6xl",
+        "display-5xl",
+        "display-4xl",
+        "display-3xl",
+        "display-2xl",
+        "display-xl",
+        "body-lg",
+        "body-md",
+        "body-sm",
+        "body-xs",
+        "body-3xs",
+        "label",
+        "mono-lg",
+        "mono-md",
+        "mono-sm",
       ] satisfies TextVariant[],
     },
   },
@@ -22,7 +35,10 @@ export default meta;
 type Story = StoryObj<typeof Text>;
 
 export const Default: Story = {
-  args: { variant: "body-md", children: "The quick brown fox jumps over the lazy dog." },
+  args: {
+    variant: "body-md",
+    children: "The quick brown fox jumps over the lazy dog.",
+  },
 };
 
 export const DisplayScale: Story = {
@@ -42,11 +58,21 @@ export const DisplayScale: Story = {
 export const BodyScale: Story = {
   render: () => (
     <VStack align="flex-start" gap="12px">
-      <Text variant="body-lg">Body Large — The quick brown fox jumps over the lazy dog.</Text>
-      <Text variant="body-md">Body Medium — The quick brown fox jumps over the lazy dog.</Text>
-      <Text variant="body-sm">Body Small — The quick brown fox jumps over the lazy dog.</Text>
-      <Text variant="body-xs">Body XS — The quick brown fox jumps over the lazy dog.</Text>
-      <Text variant="body-3xs">Body 3XS — The quick brown fox jumps over the lazy dog.</Text>
+      <Text variant="body-lg">
+        Body Large — The quick brown fox jumps over the lazy dog.
+      </Text>
+      <Text variant="body-md">
+        Body Medium — The quick brown fox jumps over the lazy dog.
+      </Text>
+      <Text variant="body-sm">
+        Body Small — The quick brown fox jumps over the lazy dog.
+      </Text>
+      <Text variant="body-xs">
+        Body XS — The quick brown fox jumps over the lazy dog.
+      </Text>
+      <Text variant="body-3xs">
+        Body 3XS — The quick brown fox jumps over the lazy dog.
+      </Text>
       <Text variant="label">Label — Section Title</Text>
     </VStack>
   ),

@@ -19,7 +19,10 @@ export async function resetTraineePin(traineeId: string) {
   );
   if (!canReset) throw new Error("Unauthorized");
 
-  await db.update(users).set({ pin: null, pinUpdatedAt: new Date() }).where(eq(users.id, traineeId));
+  await db
+    .update(users)
+    .set({ pin: null, pinUpdatedAt: new Date() })
+    .where(eq(users.id, traineeId));
   revalidatePath(`/dashboard/trainees/${traineeId}`);
 }
 

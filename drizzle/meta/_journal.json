@@ -71,6 +71,13 @@
       "when": 1778437325987,
       "tag": "0009_common_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1778558914291,
+      "tag": "0010_flawless_madame_masque",
+      "breakpoints": true
     }
   ]
 }

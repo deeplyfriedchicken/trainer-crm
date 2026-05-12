@@ -103,7 +103,7 @@ const VARIANT_STYLES: Record<TextVariant, StyleDef> = {
     fontWeight: 400,
     lineHeight: "1.5",
   },
-  "label": {
+  label: {
     fontFamily: "var(--font-body), sans-serif",
     fontSize: "11px",
     fontWeight: 600,
@@ -144,4 +144,3 @@ const TextBase = forwardRef<HTMLElement, TextProps>(function Text(
 
 // chakra() strips "variant" via PatchHtmlProps — cast back to restore it
 export const Text = chakra(TextBase) as unknown as typeof TextBase;
-

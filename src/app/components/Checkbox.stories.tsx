@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { VStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Checkbox } from "./Checkbox";
 
 const meta: Meta<typeof Checkbox> = {
@@ -23,7 +23,11 @@ export const Checked: Story = {
 };
 
 export const Cyan: Story = {
-  args: { children: "Cyan checkbox", colorScheme: "cyan", defaultChecked: true },
+  args: {
+    children: "Cyan checkbox",
+    colorScheme: "cyan",
+    defaultChecked: true,
+  },
 };
 
 export const Disabled: Story = {
@@ -31,14 +35,20 @@ export const Disabled: Story = {
 };
 
 export const DisabledChecked: Story = {
-  args: { children: "Disabled & checked", disabled: true, defaultChecked: true },
+  args: {
+    children: "Disabled & checked",
+    disabled: true,
+    defaultChecked: true,
+  },
 };
 
 export const Group: Story = {
   render: () => (
     <VStack align="flex-start" gap="10px">
       <Checkbox defaultChecked>Push notifications</Checkbox>
-      <Checkbox defaultChecked colorScheme="cyan">Email updates</Checkbox>
+      <Checkbox defaultChecked colorScheme="cyan">
+        Email updates
+      </Checkbox>
       <Checkbox>SMS alerts</Checkbox>
       <Checkbox disabled>Legacy (deprecated)</Checkbox>
     </VStack>

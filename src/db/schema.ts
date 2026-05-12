@@ -109,6 +109,8 @@ export const videos = pgTable(
     fileSizeBytes: bigint("file_size_bytes", { mode: "number" }).notNull(),
     mimeType: text("mime_type").notNull(),
     durationSeconds: integer("duration_seconds"),
+    originalWidth: integer("original_width"),
+    originalHeight: integer("original_height"),
     status: videoStatus("status").notNull().default("uploading"),
     originalFileKey: text("original_file_key"),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),

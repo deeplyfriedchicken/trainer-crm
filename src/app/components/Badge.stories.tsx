@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Badge } from "./Badge";
 
 const meta: Meta<typeof Badge> = {
@@ -22,12 +22,24 @@ export const Default: Story = {
 export const AllVariants: Story = {
   render: () => (
     <HStack gap="8px" flexWrap="wrap">
-      <Badge colorScheme="pink" variant="solid">Solid Pink</Badge>
-      <Badge colorScheme="pink" variant="subtle">Subtle Pink</Badge>
-      <Badge colorScheme="pink" variant="outline">Outline Pink</Badge>
-      <Badge colorScheme="cyan" variant="solid">Solid Cyan</Badge>
-      <Badge colorScheme="cyan" variant="subtle">Subtle Cyan</Badge>
-      <Badge colorScheme="cyan" variant="outline">Outline Cyan</Badge>
+      <Badge colorScheme="pink" variant="solid">
+        Solid Pink
+      </Badge>
+      <Badge colorScheme="pink" variant="subtle">
+        Subtle Pink
+      </Badge>
+      <Badge colorScheme="pink" variant="outline">
+        Outline Pink
+      </Badge>
+      <Badge colorScheme="cyan" variant="solid">
+        Solid Cyan
+      </Badge>
+      <Badge colorScheme="cyan" variant="subtle">
+        Subtle Cyan
+      </Badge>
+      <Badge colorScheme="cyan" variant="outline">
+        Outline Cyan
+      </Badge>
     </HStack>
   ),
 };

@@ -10,8 +10,8 @@ import {
   LuClock,
   LuMenu,
   LuMonitor,
-  LuStar,
   LuSquareCheck,
+  LuStar,
   LuTrendingUp,
   LuUser,
 } from "react-icons/lu";

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { VStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Switch } from "./Switch";
 
 const meta: Meta<typeof Switch> = {
@@ -42,7 +42,9 @@ export const Group: Story = {
   render: () => (
     <VStack align="flex-start" gap="12px">
       <Switch defaultChecked>Push notifications</Switch>
-      <Switch defaultChecked colorScheme="cyan">Email digests</Switch>
+      <Switch defaultChecked colorScheme="cyan">
+        Email digests
+      </Switch>
       <Switch>SMS alerts</Switch>
       <Switch disabled>Legacy webhooks (deprecated)</Switch>
     </VStack>

@@ -55,7 +55,10 @@ export async function getClientSession(): Promise<{
         where: eq(users.id, payload.traineeId),
         columns: { pinUpdatedAt: true },
       });
-      if (user?.pinUpdatedAt && user.pinUpdatedAt.getTime() / 1000 > payload.iat) {
+      if (
+        user?.pinUpdatedAt &&
+        user.pinUpdatedAt.getTime() / 1000 > payload.iat
+      ) {
         return null;
       }
     }

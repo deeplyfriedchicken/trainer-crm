@@ -1,8 +1,4 @@
-import type {
-  HttpMethod,
-  QueryFileDoc,
-  RouteDoc,
-} from "@/lib/docs/parsers";
+import type { HttpMethod, QueryFileDoc, RouteDoc } from "@/lib/docs/parsers";
 import { getDocsBundle } from "@/lib/docs/registry";
 
 export const dynamic = "force-dynamic";

@@ -3,10 +3,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { LuCheck, LuCircleAlert, LuFilm, LuPlus, LuUpload } from "react-icons/lu";
+import {
+  LuCheck,
+  LuCircleAlert,
+  LuFilm,
+  LuPlus,
+  LuUpload,
+} from "react-icons/lu";
 import { z } from "zod";
 import { Dialog } from "@/app/components/Dialog";
 import styles from "./UploadModal.module.css";
+import { readVideoMetadata } from "./videoMetadata";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -231,6 +238,8 @@ export function UploadModal({
       const videoIds: string[] = [];
       for (let i = 0; i < droppedFiles.length; i++) {
         const file = droppedFiles[i];
+        // Read video dimensions + duration before upload (falls back to transcoding if unsupported)
+        const meta = await readVideoMetadata(file);
         // 1. Get presigned URL + create DB record
         const presignRes = await fetch("/api/videos/presign", {
           method: "POST",
@@ -239,6 +248,9 @@ export function UploadModal({
             fileName: file.name,
             mimeType: file.type,
             fileSizeBytes: file.size,
+            ...(meta.width &&
+              meta.height && { width: meta.width, height: meta.height }),
+            ...(meta.duration && { duration: meta.duration }),
           }),
         });
         const { videoId, uploadUrl } = await presignRes.json();
@@ -444,7 +456,9 @@ export function UploadModal({
               />
               <LuUpload
                 size={36}
-                color={dragging ? "var(--color-secondary)" : "rgba(52,253,254,0.5)"}
+                color={
+                  dragging ? "var(--color-secondary)" : "rgba(52,253,254,0.5)"
+                }
                 style={{ margin: "0 auto 10px" }}
               />
               <div
@@ -461,7 +475,11 @@ export function UploadModal({
             {/* Error banner */}
             {hasErrors && (
               <div className={styles.errorBanner}>
-                <LuCircleAlert size={16} color="#f87171" style={{ flexShrink: 0, marginTop: 1 }} />
+                <LuCircleAlert
+                  size={16}
+                  color="#f87171"
+                  style={{ flexShrink: 0, marginTop: 1 }}
+                />
                 <div>
                   <div className={styles.errorBannerTitle}>
                     Please fix the errors below before uploading.

@@ -585,9 +585,7 @@ const MEMBER_COLS: ColumnDef<ShowcaseMember>[] = [
     key: "sessions",
     label: "Sessions",
     render: (row) => (
-      <span
-        style={{ fontFamily: "var(--font-mono), monospace", fontSize: 12 }}
-      >
+      <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 12 }}>
         {row.sessions}
       </span>
     ),

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { SessionsPanel, type SessionEntry } from "./SessionsPanel";
+import { type SessionEntry, SessionsPanel } from "./SessionsPanel";
 
 const meta: Meta<typeof SessionsPanel> = {
   title: "Components/SessionsPanel",

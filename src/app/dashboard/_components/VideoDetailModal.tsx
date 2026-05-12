@@ -17,8 +17,8 @@ import { Button } from "@/app/components/Button";
 import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { Skeleton } from "@/app/components/Skeleton";
 import { Textarea } from "@/app/components/Textarea";
-import { updateVideoMetadata } from "@/app/dashboard/videos/actions";
 import { usePermissions } from "@/app/dashboard/_hooks/usePermissions";
+import { updateVideoMetadata } from "@/app/dashboard/videos/actions";
 
 type VideoDetail = {
   id: string;
@@ -46,11 +46,31 @@ type VideoDetail = {
 
 const TAG_COLORS = ["#FD6DBB", "#34FDFE", "#a78bfa", "#4ade80", "#fb923c"];
 const COLOR_MAP: Record<string, string> = {
-  A: "#FD6DBB", B: "#34FDFE", C: "#a78bfa", D: "#4ade80", E: "#fb923c",
-  F: "#FD6DBB", G: "#34FDFE", H: "#a78bfa", I: "#4ade80", J: "#FD6DBB",
-  K: "#34FDFE", L: "#a78bfa", M: "#4ade80", N: "#fb923c", O: "#FD6DBB",
-  P: "#34FDFE", Q: "#a78bfa", R: "#4ade80", S: "#FD6DBB", T: "#34FDFE",
-  U: "#a78bfa", V: "#4ade80", W: "#fb923c", X: "#FD6DBB", Y: "#34FDFE",
+  A: "#FD6DBB",
+  B: "#34FDFE",
+  C: "#a78bfa",
+  D: "#4ade80",
+  E: "#fb923c",
+  F: "#FD6DBB",
+  G: "#34FDFE",
+  H: "#a78bfa",
+  I: "#4ade80",
+  J: "#FD6DBB",
+  K: "#34FDFE",
+  L: "#a78bfa",
+  M: "#4ade80",
+  N: "#fb923c",
+  O: "#FD6DBB",
+  P: "#34FDFE",
+  Q: "#a78bfa",
+  R: "#4ade80",
+  S: "#FD6DBB",
+  T: "#34FDFE",
+  U: "#a78bfa",
+  V: "#4ade80",
+  W: "#fb923c",
+  X: "#FD6DBB",
+  Y: "#34FDFE",
   Z: "#a78bfa",
 };
 
@@ -67,13 +87,16 @@ function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
-  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  if (h > 0)
+    return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 function formatDate(d: string): string {
   return new Date(d).toLocaleDateString("en-US", {
-    month: "short", day: "numeric", year: "numeric",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 }
 
@@ -94,12 +117,21 @@ function MetaRow({
 }) {
   return (
     <>
-      <div style={{
-        display: "flex", alignItems: "center", gap: 5,
-        color: "rgba(255,255,255,0.35)", fontSize: 11, fontWeight: 600,
-        textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4,
-      }}>
-        {icon}{label}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 5,
+          color: "rgba(255,255,255,0.35)",
+          fontSize: 11,
+          fontWeight: 600,
+          textTransform: "uppercase",
+          letterSpacing: "0.06em",
+          marginBottom: 4,
+        }}
+      >
+        {icon}
+        {label}
       </div>
       <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>
         {children}
@@ -110,10 +142,16 @@ function MetaRow({
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{
-      fontSize: 11, fontWeight: 600, textTransform: "uppercase",
-      letterSpacing: "0.06em", color: "rgba(255,255,255,0.35)", marginBottom: 6,
-    }}>
+    <div
+      style={{
+        fontSize: 11,
+        fontWeight: 600,
+        textTransform: "uppercase",
+        letterSpacing: "0.06em",
+        color: "rgba(255,255,255,0.35)",
+        marginBottom: 6,
+      }}
+    >
       {children}
     </div>
   );
@@ -150,11 +188,22 @@ function TagChipInput({
   return (
     <div
       style={{
-        display: "flex", flexWrap: "wrap", gap: 6, padding: "6px 10px",
-        background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)",
-        borderRadius: 8, alignItems: "center", minHeight: 38, cursor: "text",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 6,
+        padding: "6px 10px",
+        background: "rgba(255,255,255,0.04)",
+        border: "1px solid rgba(255,255,255,0.12)",
+        borderRadius: 8,
+        alignItems: "center",
+        minHeight: 38,
+        cursor: "text",
       }}
-      onClick={(e) => (e.currentTarget.querySelector("input") as HTMLInputElement | null)?.focus()}
+      onClick={(e) =>
+        (
+          e.currentTarget.querySelector("input") as HTMLInputElement | null
+        )?.focus()
+      }
     >
       {tags.map((tag) => {
         const c = tagColor(tag);
@@ -162,20 +211,38 @@ function TagChipInput({
           <span
             key={tag}
             style={{
-              display: "inline-flex", alignItems: "center", gap: 4,
-              background: `${c}22`, color: c, border: `1px solid ${c}44`,
-              borderRadius: 20, padding: "2px 6px 2px 10px",
-              fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              background: `${c}22`,
+              color: c,
+              border: `1px solid ${c}44`,
+              borderRadius: 20,
+              padding: "2px 6px 2px 10px",
+              fontSize: 11,
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
             }}
           >
             {tag}
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); removeTag(tag); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                removeTag(tag);
+              }}
               style={{
-                background: "none", border: "none", cursor: "pointer",
-                color: c, padding: "0 2px", display: "inline-flex", alignItems: "center",
-                lineHeight: 1, fontSize: 15, opacity: 0.7,
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: c,
+                padding: "0 2px",
+                display: "inline-flex",
+                alignItems: "center",
+                lineHeight: 1,
+                fontSize: 15,
+                opacity: 0.7,
               }}
               aria-label={`Remove tag ${tag}`}
             >
@@ -188,11 +255,21 @@ function TagChipInput({
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={onKeyDown}
-        onBlur={() => { if (input.trim()) addTag(input); }}
-        placeholder={tags.length === 0 ? "Add tags — Enter or comma to add" : ""}
+        onBlur={() => {
+          if (input.trim()) addTag(input);
+        }}
+        placeholder={
+          tags.length === 0 ? "Add tags — Enter or comma to add" : ""
+        }
         style={{
-          background: "none", border: "none", outline: "none",
-          color: "#fff", fontSize: 12, flex: 1, minWidth: 100, padding: "2px 0",
+          background: "none",
+          border: "none",
+          outline: "none",
+          color: "#fff",
+          fontSize: 12,
+          flex: 1,
+          minWidth: 100,
+          padding: "2px 0",
         }}
       />
     </div>
@@ -233,9 +310,13 @@ export function VideoDetailModal({
     let cancelled = false;
     fetch(`/api/videos/${videoId}`)
       .then((r) => r.json())
-      .then(({ data }) => { if (!cancelled) setDetail(data as VideoDetail); })
+      .then(({ data }) => {
+        if (!cancelled) setDetail(data as VideoDetail);
+      })
       .catch(() => {});
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [videoId]);
 
   function startEdit() {
@@ -265,58 +346,86 @@ export function VideoDetailModal({
 
   const showDelete = canDeleteVideo && !!onDelete && !detail?.deletedAt;
 
-  const editBtn = canEditVideo && detail && !detail.deletedAt && !isEditing ? (
-    <button
-      type="button"
-      onClick={startEdit}
-      aria-label="Edit video"
-      style={{
-        display: "inline-flex", alignItems: "center", gap: 5,
-        padding: "5px 12px", borderRadius: 8, cursor: "pointer",
-        background: "rgba(52,253,254,0.08)",
-        border: "1px solid rgba(52,253,254,0.2)",
-        color: "#34FDFE", fontSize: 12, fontWeight: 600,
-        transition: "background 0.15s",
-      }}
-      onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(52,253,254,0.15)"; }}
-      onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(52,253,254,0.08)"; }}
-    >
-      <LuPencil size={13} />
-      Edit
-    </button>
-  ) : null;
+  const editBtn =
+    canEditVideo && detail && !detail.deletedAt && !isEditing ? (
+      <button
+        type="button"
+        onClick={startEdit}
+        aria-label="Edit video"
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
+          padding: "5px 12px",
+          borderRadius: 8,
+          cursor: "pointer",
+          background: "rgba(52,253,254,0.08)",
+          border: "1px solid rgba(52,253,254,0.2)",
+          color: "#34FDFE",
+          fontSize: 12,
+          fontWeight: 600,
+          transition: "background 0.15s",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background =
+            "rgba(52,253,254,0.15)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background =
+            "rgba(52,253,254,0.08)";
+        }}
+      >
+        <LuPencil size={13} />
+        Edit
+      </button>
+    ) : null;
 
-  const deleteBtn = showDelete && !isEditing ? (
-    <button
-      type="button"
-      onClick={() => setConfirmDelete(true)}
-      aria-label="Delete video"
-      style={{
-        display: "inline-flex", alignItems: "center", gap: 5,
-        padding: "5px 12px", borderRadius: 8, cursor: "pointer",
-        background: "rgba(248,113,113,0.1)",
-        border: "1px solid rgba(248,113,113,0.25)",
-        color: "#f87171", fontSize: 12, fontWeight: 600,
-        transition: "background 0.15s",
-      }}
-      onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.18)"; }}
-      onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.1)"; }}
-    >
-      <LuTrash2 size={13} />
-      Delete
-    </button>
-  ) : null;
+  const deleteBtn =
+    showDelete && !isEditing ? (
+      <button
+        type="button"
+        onClick={() => setConfirmDelete(true)}
+        aria-label="Delete video"
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
+          padding: "5px 12px",
+          borderRadius: 8,
+          cursor: "pointer",
+          background: "rgba(248,113,113,0.1)",
+          border: "1px solid rgba(248,113,113,0.25)",
+          color: "#f87171",
+          fontSize: 12,
+          fontWeight: 600,
+          transition: "background 0.15s",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background =
+            "rgba(248,113,113,0.18)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background =
+            "rgba(248,113,113,0.1)";
+        }}
+      >
+        <LuTrash2 size={13} />
+        Delete
+      </button>
+    ) : null;
 
-  const titleAction = (editBtn || deleteBtn) ? (
-    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-      {editBtn}
-      {deleteBtn}
-    </div>
-  ) : null;
+  const titleAction =
+    editBtn || deleteBtn ? (
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        {editBtn}
+        {deleteBtn}
+      </div>
+    ) : null;
 
   const trainee = detail?.trainee ?? null;
   const exercise = detail?.exerciseLinks[0]?.exercise ?? null;
-  const plan = exercise?.workoutPlan ?? detail?.workoutPlanLinks[0]?.workoutPlan ?? null;
+  const plan =
+    exercise?.workoutPlan ?? detail?.workoutPlanLinks[0]?.workoutPlan ?? null;
   const uploaderCol = detail ? uploaderColor(detail.uploader.name) : "#FD6DBB";
 
   return (
@@ -333,9 +442,20 @@ export function VideoDetailModal({
           src={fileUrl}
           controls
           autoPlay
-          style={{ width: "100%", display: "block", maxHeight: "52vh", background: "#000" }}
+          style={{
+            width: "100%",
+            display: "block",
+            maxHeight: "52vh",
+            background: "#000",
+          }}
         >
-          <track kind="captions" srcLang="en" label="English" src="data:text/vtt;charset=utf-8,WEBVTT" default />
+          <track
+            kind="captions"
+            srcLang="en"
+            label="English"
+            src="data:text/vtt;charset=utf-8,WEBVTT"
+            default
+          />
         </video>
 
         <DialogBody>
@@ -348,13 +468,23 @@ export function VideoDetailModal({
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   style={{
-                    width: "100%", background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8,
-                    padding: "8px 12px", color: "#fff", fontSize: 14,
-                    outline: "none", boxSizing: "border-box",
+                    width: "100%",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: 8,
+                    padding: "8px 12px",
+                    color: "#fff",
+                    fontSize: 14,
+                    outline: "none",
+                    boxSizing: "border-box",
                   }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(52,253,254,0.4)"; }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(52,253,254,0.4)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor =
+                      "rgba(255,255,255,0.12)";
+                  }}
                 />
               </div>
 
@@ -376,7 +506,14 @@ export function VideoDetailModal({
               </div>
 
               {/* Actions */}
-              <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 4 }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  justifyContent: "flex-end",
+                  paddingTop: 4,
+                }}
+              >
                 <Button
                   variant="ghost"
                   colorScheme="cyan"
@@ -402,15 +539,31 @@ export function VideoDetailModal({
               {/* Tags */}
               {detail ? (
                 detail.videoTags.length > 0 && (
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 6,
+                      flexWrap: "wrap",
+                      marginBottom: 14,
+                    }}
+                  >
                     {detail.videoTags.map(({ tag }) => {
                       const c = tagColor(tag.name);
                       return (
-                        <span key={tag.id} style={{
-                          background: `${c}22`, color: c, border: `1px solid ${c}44`,
-                          borderRadius: 20, padding: "2px 10px", fontSize: 11,
-                          fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
-                        }}>
+                        <span
+                          key={tag.id}
+                          style={{
+                            background: `${c}22`,
+                            color: c,
+                            border: `1px solid ${c}44`,
+                            borderRadius: 20,
+                            padding: "2px 10px",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
                           {tag.name}
                         </span>
                       );
@@ -418,36 +571,77 @@ export function VideoDetailModal({
                   </div>
                 )
               ) : (
-                <Skeleton style={{ height: 24, width: 120, borderRadius: 20, marginBottom: 14 }} />
+                <Skeleton
+                  style={{
+                    height: 24,
+                    width: 120,
+                    borderRadius: 20,
+                    marginBottom: 14,
+                  }}
+                />
               )}
 
               {/* Description */}
               {detail?.description && (
-                <p style={{
-                  fontSize: 13, color: "rgba(255,255,255,0.5)",
-                  lineHeight: 1.6, marginBottom: 18,
-                }}>
+                <p
+                  style={{
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.5)",
+                    lineHeight: 1.6,
+                    marginBottom: 18,
+                  }}
+                >
                   {detail.description}
                 </p>
               )}
 
               {/* Context: trainee + exercise/plan */}
-              {(detail ? (trainee || exercise || plan) : true) && (
-                <div style={{
-                  marginBottom: 18, padding: "12px 14px",
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 10,
-                  display: "flex", flexDirection: "column", gap: 8,
-                }}>
+              {(detail ? trainee || exercise || plan : true) && (
+                <div
+                  style={{
+                    marginBottom: 18,
+                    padding: "12px 14px",
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    borderRadius: 10,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                  }}
+                >
                   {detail ? (
                     <>
                       {trainee && (
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
-                          <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", width: 64, flexShrink: 0 }}>Trainee</span>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            fontSize: 13,
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "rgba(255,255,255,0.35)",
+                              fontSize: 11,
+                              fontWeight: 600,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.06em",
+                              width: 64,
+                              flexShrink: 0,
+                            }}
+                          >
+                            Trainee
+                          </span>
                           <Link
                             href={`/dashboard/trainees/${trainee.id}`}
-                            style={{ color: "var(--color-secondary)", display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
+                            style={{
+                              color: "var(--color-secondary)",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              textDecoration: "none",
+                            }}
                             onClick={onClose}
                           >
                             {trainee.name}
@@ -456,38 +650,106 @@ export function VideoDetailModal({
                         </div>
                       )}
                       {exercise && (
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
-                          <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", width: 64, flexShrink: 0 }}>Exercise</span>
-                          <span style={{ color: "rgba(255,255,255,0.7)" }}>{exercise.name}</span>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            fontSize: 13,
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "rgba(255,255,255,0.35)",
+                              fontSize: 11,
+                              fontWeight: 600,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.06em",
+                              width: 64,
+                              flexShrink: 0,
+                            }}
+                          >
+                            Exercise
+                          </span>
+                          <span style={{ color: "rgba(255,255,255,0.7)" }}>
+                            {exercise.name}
+                          </span>
                         </div>
                       )}
                       {plan && (
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
-                          <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", width: 64, flexShrink: 0 }}>Plan</span>
-                          <span style={{ color: "rgba(255,255,255,0.7)" }}>{plan.name}</span>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            fontSize: 13,
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "rgba(255,255,255,0.35)",
+                              fontSize: 11,
+                              fontWeight: 600,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.06em",
+                              width: 64,
+                              flexShrink: 0,
+                            }}
+                          >
+                            Plan
+                          </span>
+                          <span style={{ color: "rgba(255,255,255,0.7)" }}>
+                            {plan.name}
+                          </span>
                         </div>
                       )}
                     </>
                   ) : (
                     <>
-                      <Skeleton style={{ height: 18, width: "60%", borderRadius: 6 }} />
-                      <Skeleton style={{ height: 18, width: "40%", borderRadius: 6 }} />
+                      <Skeleton
+                        style={{ height: 18, width: "60%", borderRadius: 6 }}
+                      />
+                      <Skeleton
+                        style={{ height: 18, width: "40%", borderRadius: 6 }}
+                      />
                     </>
                   )}
                 </div>
               )}
 
               {/* Metadata grid */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "10px 24px",
+                }}
+              >
                 {detail ? (
                   <>
                     <MetaRow icon={<LuUser size={13} />} label="Uploaded by">
-                      <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                        <div style={{
-                          width: 22, height: 22, borderRadius: 6, display: "flex",
-                          alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700,
-                          background: `${uploaderCol}22`, border: `1px solid ${uploaderCol}55`, color: uploaderCol,
-                        }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 7,
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: 6,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            background: `${uploaderCol}22`,
+                            border: `1px solid ${uploaderCol}55`,
+                            color: uploaderCol,
+                          }}
+                        >
                           {detail.uploader.name[0]?.toUpperCase()}
                         </div>
                         {detail.uploader.name}
@@ -527,10 +789,14 @@ export function VideoDetailModal({
         maxWidth={440}
       >
         <DialogBody>
-          <p style={{
-            fontSize: 14, color: "rgba(255,255,255,0.65)",
-            marginBottom: 20, lineHeight: 1.6,
-          }}>
+          <p
+            style={{
+              fontSize: 14,
+              color: "rgba(255,255,255,0.65)",
+              marginBottom: 20,
+              lineHeight: 1.6,
+            }}
+          >
             Are you sure you want to delete{" "}
             <span style={{ color: "#fff", fontWeight: 600 }}>
               {detail?.title ?? initialTitle}

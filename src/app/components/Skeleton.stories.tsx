@@ -1,5 +1,5 @@
+import { HStack, VStack } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { VStack, HStack } from "@chakra-ui/react";
 import { Skeleton } from "./Skeleton";
 
 const meta: Meta<typeof Skeleton> = {

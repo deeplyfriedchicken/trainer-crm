@@ -94,12 +94,7 @@ function Swatch({ name, hex }: { name: string; hex: string }) {
       >
         {name}
       </Text>
-      <Text
-        display="block"
-        variant="mono-sm"
-        opacity={0.7}
-        color={textColor}
-      >
+      <Text display="block" variant="mono-sm" opacity={0.7} color={textColor}>
         {hex}
       </Text>
     </Box>
@@ -178,10 +173,7 @@ export function ColorPalette() {
                         border="1px solid rgba(255,255,255,0.2)"
                         flexShrink={0}
                       />
-                      <Text
-                        variant="mono-sm"
-                        color="rgba(255,255,255,0.55)"
-                      >
+                      <Text variant="mono-sm" color="rgba(255,255,255,0.55)">
                         {t.value}
                       </Text>
                     </Box>

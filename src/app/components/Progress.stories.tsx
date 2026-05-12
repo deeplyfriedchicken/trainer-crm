@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { VStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Progress } from "./Progress";
 
 const meta: Meta<typeof Progress> = {
@@ -20,11 +20,22 @@ export const Default: Story = {
 };
 
 export const WithLabel: Story = {
-  args: { value: 75, label: "Upload Progress", showValueText: true, style: { width: 320 } },
+  args: {
+    value: 75,
+    label: "Upload Progress",
+    showValueText: true,
+    style: { width: 320 },
+  },
 };
 
 export const Cyan: Story = {
-  args: { value: 45, colorScheme: "cyan", label: "Capacity", showValueText: true, style: { width: 320 } },
+  args: {
+    value: 45,
+    colorScheme: "cyan",
+    label: "Capacity",
+    showValueText: true,
+    style: { width: 320 },
+  },
 };
 
 export const Indeterminate: Story = {
@@ -35,7 +46,12 @@ export const AllStates: Story = {
   render: () => (
     <VStack gap="18px" align="stretch" w="320px">
       <Progress value={25} label="Beginner" showValueText />
-      <Progress value={50} colorScheme="cyan" label="Intermediate" showValueText />
+      <Progress
+        value={50}
+        colorScheme="cyan"
+        label="Intermediate"
+        showValueText
+      />
       <Progress value={80} label="Advanced" showValueText />
       <Progress value={null} label="Syncing…" />
     </VStack>

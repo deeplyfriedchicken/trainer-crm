@@ -1,7 +1,7 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
-import { type TextVariant, Text } from "../Text";
+import { Text, type TextVariant } from "../Text";
 import { SectionTitle, SubSection } from "./ColorPalette";
 
 const displayVariants: { variant: TextVariant; size: string }[] = [

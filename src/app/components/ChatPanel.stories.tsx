@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { ChatPanel, type ChatMessage } from "./ChatPanel";
+import { type ChatMessage, ChatPanel } from "./ChatPanel";
 
 const meta: Meta<typeof ChatPanel> = {
   title: "Components/ChatPanel",
@@ -10,8 +10,16 @@ const meta: Meta<typeof ChatPanel> = {
 export default meta;
 type Story = StoryObj<typeof ChatPanel>;
 
-const trainer = { id: "trainer-1", name: "Alex Trainer", email: "alex@gym.com" };
-const trainee = { id: "trainee-1", name: "Jamie Doe", email: "jamie@example.com" };
+const trainer = {
+  id: "trainer-1",
+  name: "Alex Trainer",
+  email: "alex@gym.com",
+};
+const trainee = {
+  id: "trainee-1",
+  name: "Jamie Doe",
+  email: "jamie@example.com",
+};
 
 const sampleMessages: ChatMessage[] = [
   {
@@ -28,7 +36,9 @@ const sampleMessages: ChatMessage[] = [
   },
   {
     id: "3",
-    content: { text: "Perfect. We'll add 5lbs next week. Keep up the hydration too!" },
+    content: {
+      text: "Perfect. We'll add 5lbs next week. Keep up the hydration too!",
+    },
     createdAt: new Date(Date.now() - 1000 * 60 * 5),
     sender: trainer,
   },

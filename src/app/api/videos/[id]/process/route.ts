@@ -12,12 +12,12 @@ import {
 // @returns 200 (SKIP_TRANSCODING) | 202 transcoding submitted
 export async function POST(
   request: NextRequest,
-  ctx: RouteContext<"/api/videos/[id]/process">,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getApiUser(request);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await ctx.params;
+  const { id } = await params;
 
   const video = await getVideoById(id);
   if (!video) {
@@ -41,6 +41,20 @@ export async function POST(
   // Local dev: skip transcoding and mark ready immediately
   if (process.env.SKIP_TRANSCODING === "true") {
     const updated = await updateVideo(id, { status: "ready" });
+    return Response.json({ data: updated });
+  }
+
+  const shouldSkipTranscode =
+    video.originalWidth != null &&
+    video.originalHeight != null &&
+    Math.min(video.originalWidth, video.originalHeight) <= 720 &&
+    video.mimeType === "video/mp4";
+
+  if (shouldSkipTranscode) {
+    const updated = await updateVideo(id, {
+      status: "ready",
+      originalFileKey: video.fileKey,
+    });
     return Response.json({ data: updated });
   }
 

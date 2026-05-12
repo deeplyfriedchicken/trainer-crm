@@ -26,7 +26,10 @@ export default async function DocsApiPage() {
             <code>src/db/queries/</code>. Also available as plaintext at{" "}
             <a
               href="/llms.txt"
-              style={{ color: "var(--color-secondary)", textDecoration: "underline" }}
+              style={{
+                color: "var(--color-secondary)",
+                textDecoration: "underline",
+              }}
             >
               /llms.txt
             </a>

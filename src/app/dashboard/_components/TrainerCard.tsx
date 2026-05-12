@@ -82,7 +82,12 @@ export function TrainerCard({
       >
         {name}
       </Text>
-      <Text variant="body-xs" color="var(--color-text-dim)" mb="10px" display="block">
+      <Text
+        variant="body-xs"
+        color="var(--color-text-dim)"
+        mb="10px"
+        display="block"
+      >
         {email}
       </Text>
 
@@ -112,7 +117,11 @@ export function TrainerCard({
             >
               {value}
             </Text>
-            <Text variant="body-xs" color="var(--color-text-dim)" display="block">
+            <Text
+              variant="body-xs"
+              color="var(--color-text-dim)"
+              display="block"
+            >
               {label}
             </Text>
           </Box>

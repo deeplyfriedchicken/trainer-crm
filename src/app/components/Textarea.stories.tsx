@@ -23,7 +23,8 @@ export const Default: Story = {
 
 export const WithValue: Story = {
   args: {
-    defaultValue: "Good effort today. Focus on keeping your back straight during deadlifts next session.",
+    defaultValue:
+      "Good effort today. Focus on keeping your back straight during deadlifts next session.",
     rows: 4,
     style: { width: 320 },
   },

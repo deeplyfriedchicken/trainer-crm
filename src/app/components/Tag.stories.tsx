@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Tag } from "./Tag";
 
 const meta: Meta<typeof Tag> = {
@@ -23,9 +23,7 @@ export const Cyan: Story = {
 };
 
 export const Removable: Story = {
-  render: () => (
-    <Tag onRemove={() => alert("Removed!")}>Removable Tag</Tag>
-  ),
+  render: () => <Tag onRemove={() => alert("Removed!")}>Removable Tag</Tag>,
 };
 
 export const TagGroup: Story = {

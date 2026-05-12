@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
-import { deleteVideo } from "@/app/dashboard/videos/actions";
 import { VideoDetailModal } from "@/app/dashboard/_components/VideoDetailModal";
+import { deleteVideo } from "@/app/dashboard/videos/actions";
 
 export type TraineeVideoEntry = {
   id: string;

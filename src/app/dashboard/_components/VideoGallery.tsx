@@ -317,7 +317,6 @@ export function VideoGallery({
           router.refresh();
         }}
       />
-
     </>
   );
 }

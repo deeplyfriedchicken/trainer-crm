@@ -2,7 +2,9 @@
 .crm {
   --crm-sidebar-w: 260px;
   --crm-topbar-h: 64px;
-  --font-display: var(--font-crm-display); /* alias so component library components resolve correctly */
+  --font-display: var(
+    --font-crm-display
+  ); /* alias so component library components resolve correctly */
 
   background: var(--color-bg);
   color: #fff;
@@ -64,7 +66,11 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
   padding: 2px;
   cursor: pointer;
   position: relative;

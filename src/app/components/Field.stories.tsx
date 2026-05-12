@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { VStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Field } from "./Field";
 import { Input } from "./Input";
 import { Select } from "./Select";
@@ -31,7 +31,10 @@ export const Required: Story = {
 
 export const WithHelperText: Story = {
   render: () => (
-    <Field label="Username" helperText="Only letters, numbers, and underscores.">
+    <Field
+      label="Username"
+      helperText="Only letters, numbers, and underscores."
+    >
       <Input placeholder="trainer_pro" />
     </Field>
   ),
@@ -39,7 +42,11 @@ export const WithHelperText: Story = {
 
 export const WithError: Story = {
   render: () => (
-    <Field label="Email" invalid errorText="Please enter a valid email address.">
+    <Field
+      label="Email"
+      invalid
+      errorText="Please enter a valid email address."
+    >
       <Input placeholder="you@example.com" invalid />
     </Field>
   ),

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { ColorVariant } from "@/app/components/SessionsPanel";
 import { getOrCreateChat } from "@/db/queries/chats";
 import { getTraineeById } from "@/db/queries/trainees";
 import { getCurrentUser } from "@/lib/auth";
@@ -7,7 +8,6 @@ import { BackLink } from "./_components/BackLink";
 import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
 import { ResetPinButton } from "./_components/ResetPinButton";
-import type { ColorVariant } from "@/app/components/SessionsPanel";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
 import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
 import { TraineeVideosPanel } from "./_components/TraineeVideosPanel";

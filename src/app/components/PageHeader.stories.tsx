@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { PageHeader } from "./PageHeader";
 import { Button } from "./Button";
+import { PageHeader } from "./PageHeader";
 
 const meta: Meta<typeof PageHeader> = {
   title: "Components/PageHeader",
@@ -34,6 +34,10 @@ export const LongTitle: Story = {
   args: {
     title: "Workout Plan — Advanced Strength Block",
     subtitle: "6-week periodized program",
-    action: <Button size="sm" variant="outline">Edit Plan</Button>,
+    action: (
+      <Button size="sm" variant="outline">
+        Edit Plan
+      </Button>
+    ),
   },
 };

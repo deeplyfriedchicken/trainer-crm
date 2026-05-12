@@ -44,7 +44,10 @@ function FieldBase({
         >
           {label}
           {required && (
-            <ChakraField.RequiredIndicator color="var(--color-primary)" ml="2px" />
+            <ChakraField.RequiredIndicator
+              color="var(--color-primary)"
+              ml="2px"
+            />
           )}
         </ChakraField.Label>
       )}

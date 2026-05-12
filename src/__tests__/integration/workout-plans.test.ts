@@ -1,5 +1,4 @@
-import { sql } from "drizzle-orm";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { db } from "@/db";
 import { updateWorkoutPlan } from "@/db/queries/workout-plans";
@@ -174,8 +173,18 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
       .returning();
 
     await db.insert(workoutExercises).values([
-      { workoutId: workout.id, exerciseId: exA.id, createdBy: traineeId, updatedBy: traineeId },
-      { workoutId: workout.id, exerciseId: exB.id, createdBy: traineeId, updatedBy: traineeId },
+      {
+        workoutId: workout.id,
+        exerciseId: exA.id,
+        createdBy: traineeId,
+        updatedBy: traineeId,
+      },
+      {
+        workoutId: workout.id,
+        exerciseId: exB.id,
+        createdBy: traineeId,
+        updatedBy: traineeId,
+      },
     ]);
 
     // Update plan — remove exB (only send exA with its ID)

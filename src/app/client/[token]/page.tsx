@@ -54,7 +54,11 @@ export default async function ClientPage({
 
   return (
     <WorkoutPlansView
-      trainee={{ id: clientData.id, name: clientData.name, email: clientData.email }}
+      trainee={{
+        id: clientData.id,
+        name: clientData.name,
+        email: clientData.email,
+      }}
       workoutPlans={workoutPlans}
       workouts={clientData.workouts}
       token={token}

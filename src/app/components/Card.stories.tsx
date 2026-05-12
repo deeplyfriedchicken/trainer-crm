@@ -1,7 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Button } from "./Button";
-import { Card, CardBody, CardFooter, CardHeader, CardTitle, CardDescription } from "./Card";
+import {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./Card";
 
 const meta: Meta<typeof Card> = {
   title: "Components/Card",
@@ -52,7 +59,9 @@ export const GlowPink: Story = {
       </CardHeader>
       <CardBody>Card content goes here.</CardBody>
       <CardFooter>
-        <Button size="sm" variant="outline">Cancel</Button>
+        <Button size="sm" variant="outline">
+          Cancel
+        </Button>
         <Button size="sm">Save</Button>
       </CardFooter>
     </Card>
@@ -75,15 +84,21 @@ export const AllVariants: Story = {
   render: () => (
     <HStack gap="16px" align="stretch" flexWrap="wrap">
       <Card variant="solid" flex="1" minW="220px">
-        <CardHeader><CardTitle>Solid</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Solid</CardTitle>
+        </CardHeader>
         <CardBody>Default surface.</CardBody>
       </Card>
       <Card variant="outlined" flex="1" minW="220px">
-        <CardHeader><CardTitle>Outlined</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Outlined</CardTitle>
+        </CardHeader>
         <CardBody>Transparent.</CardBody>
       </Card>
       <Card variant="glow" glowColor="pink" flex="1" minW="220px">
-        <CardHeader><CardTitle>Glow</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Glow</CardTitle>
+        </CardHeader>
         <CardBody>With aura.</CardBody>
       </Card>
     </HStack>

@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HStack } from "@chakra-ui/react";
-import { LuSearch, LuBell, LuPlus, LuSettings } from "react-icons/lu";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { LuBell, LuPlus, LuSearch, LuSettings } from "react-icons/lu";
 import { IconButton } from "./IconButton";
 
 const meta: Meta<typeof IconButton> = {
@@ -24,9 +24,15 @@ export const Default: Story = {
 export const AllVariants: Story = {
   render: () => (
     <HStack gap="10px">
-      <IconButton aria-label="Add" variant="solid"><LuPlus /></IconButton>
-      <IconButton aria-label="Add" variant="outline"><LuPlus /></IconButton>
-      <IconButton aria-label="Add" variant="ghost"><LuPlus /></IconButton>
+      <IconButton aria-label="Add" variant="solid">
+        <LuPlus />
+      </IconButton>
+      <IconButton aria-label="Add" variant="outline">
+        <LuPlus />
+      </IconButton>
+      <IconButton aria-label="Add" variant="ghost">
+        <LuPlus />
+      </IconButton>
     </HStack>
   ),
 };
@@ -34,10 +40,18 @@ export const AllVariants: Story = {
 export const AllSizes: Story = {
   render: () => (
     <HStack gap="10px" align="center">
-      <IconButton aria-label="Bell" size="sm"><LuBell /></IconButton>
-      <IconButton aria-label="Bell" size="md"><LuBell /></IconButton>
-      <IconButton aria-label="Bell" size="lg"><LuBell /></IconButton>
-      <IconButton aria-label="Bell" size="xl"><LuBell /></IconButton>
+      <IconButton aria-label="Bell" size="sm">
+        <LuBell />
+      </IconButton>
+      <IconButton aria-label="Bell" size="md">
+        <LuBell />
+      </IconButton>
+      <IconButton aria-label="Bell" size="lg">
+        <LuBell />
+      </IconButton>
+      <IconButton aria-label="Bell" size="xl">
+        <LuBell />
+      </IconButton>
     </HStack>
   ),
 };
@@ -45,9 +59,15 @@ export const AllSizes: Story = {
 export const CyanScheme: Story = {
   render: () => (
     <HStack gap="10px">
-      <IconButton aria-label="Settings" colorScheme="cyan" variant="solid"><LuSettings /></IconButton>
-      <IconButton aria-label="Settings" colorScheme="cyan" variant="outline"><LuSettings /></IconButton>
-      <IconButton aria-label="Settings" colorScheme="cyan" variant="ghost"><LuSettings /></IconButton>
+      <IconButton aria-label="Settings" colorScheme="cyan" variant="solid">
+        <LuSettings />
+      </IconButton>
+      <IconButton aria-label="Settings" colorScheme="cyan" variant="outline">
+        <LuSettings />
+      </IconButton>
+      <IconButton aria-label="Settings" colorScheme="cyan" variant="ghost">
+        <LuSettings />
+      </IconButton>
     </HStack>
   ),
 };

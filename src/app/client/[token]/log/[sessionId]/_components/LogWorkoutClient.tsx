@@ -85,6 +85,11 @@ export function LogWorkoutClient({ token, plan }: Props) {
     PlanForLog["exercises"][number] | null
   >(null);
 
+  const countdownsRef = useRef<Record<string, number>>({});
+  const [countdownKeys, setCountdownKeys] = useState("");
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+
   const [log, setLog] = useState<ExerciseLog[]>(() =>
     plan.exercises.map((ex) => ({
       id: ex.id,
@@ -115,6 +120,40 @@ export function LogWorkoutClient({ token, plan }: Props) {
     return () => clearInterval(interval);
   }, [paused]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (pausedRef.current) return;
+      const keys = Object.keys(countdownsRef.current);
+      if (keys.length === 0) return;
+      const next = { ...countdownsRef.current };
+      let changed = false;
+      for (const key of keys) {
+        const remaining = next[key];
+        if (remaining > 1) {
+          next[key] = remaining - 1;
+          changed = true;
+        } else {
+          delete next[key];
+          changed = true;
+          const [exIdx, setIdx] = key.split("-").map(Number);
+          setLog((prev) => {
+            const nextLog = prev.map((e) => ({
+              ...e,
+              sets: e.sets.map((s) => ({ ...s })),
+            }));
+            nextLog[exIdx].sets[setIdx].completed = true;
+            return nextLog;
+          });
+        }
+      }
+      if (changed) {
+        countdownsRef.current = next;
+        setCountdownKeys(Object.keys(next).join(","));
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const updateReps = (exIdx: number, setIdx: number, val: number) => {
     setLog((prev) => {
       const next = prev.map((e) => ({
@@ -135,6 +174,31 @@ export function LogWorkoutClient({ token, plan }: Props) {
       next[exIdx].sets[setIdx].weightLbs = val;
       return next;
     });
+  };
+
+  const getCountdownRemaining = (exIdx: number, setIdx: number): number | null => {
+    return countdownsRef.current[`${exIdx}-${setIdx}`] ?? null;
+  };
+
+  const startCountdown = (exIdx: number, setIdx: number, duration: number) => {
+    const key = `${exIdx}-${setIdx}`;
+    countdownsRef.current = { ...countdownsRef.current, [key]: duration };
+    setCountdownKeys(Object.keys(countdownsRef.current).join(","));
+  };
+
+  const handleSetClick = (exIdx: number, setIdx: number) => {
+    const ex = plan.exercises[exIdx];
+    const setLogEntry = log[exIdx].sets[setIdx];
+    if (ex.type === "duration") {
+      const duration = setLogEntry.reps;
+      if (duration <= 0) {
+        toggleSet(exIdx, setIdx);
+      } else {
+        startCountdown(exIdx, setIdx, duration);
+      }
+    } else {
+      toggleSet(exIdx, setIdx);
+    }
   };
 
   const toggleSet = (exIdx: number, setIdx: number) => {
@@ -247,12 +311,31 @@ export function LogWorkoutClient({ token, plan }: Props) {
                         unit="LBS"
                       />
 
-                      <div
-                        className={`log-check${set.completed ? " checked" : ""}`}
-                        onClick={() => !isDisabled && toggleSet(exIdx, setIdx)}
-                      >
-                        {set.completed && <LuCheck size={14} color="#070712" />}
-                      </div>
+                      {(() => {
+                        if (set.completed) {
+                          return (
+                            <div className="log-check checked">
+                              <LuCheck size={14} color="#070712" />
+                            </div>
+                          );
+                        }
+                        const cd = getCountdownRemaining(exIdx, setIdx);
+                        if (cd !== null) {
+                          return (
+                            <div className="log-countdown">
+                              {fmtDuration(cd)}
+                            </div>
+                          );
+                        }
+                        return (
+                          <div
+                            className="log-check"
+                            onClick={() =>
+                              !isDisabled && handleSetClick(exIdx, setIdx)
+                            }
+                          />
+                        );
+                      })()}
                     </div>
                   );
                 })}

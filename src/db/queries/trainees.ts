@@ -24,10 +24,7 @@ export async function listTrainees(options: ListTraineesOptions) {
     .from(users)
     .leftJoin(
       workoutPlans,
-      and(
-        eq(workoutPlans.traineeId, users.id),
-        isNull(workoutPlans.deletedAt),
-      ),
+      and(eq(workoutPlans.traineeId, users.id), isNull(workoutPlans.deletedAt)),
     )
     .where(isNull(users.deletedAt))
     .groupBy(

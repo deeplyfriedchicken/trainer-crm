@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Table, type ColumnDef } from "./Table";
 import { Badge } from "./Badge";
+import { type ColumnDef, Table } from "./Table";
 
 const meta: Meta = {
   title: "Components/Table",
@@ -18,11 +18,41 @@ type Trainee = {
 };
 
 const trainees: Trainee[] = [
-  { id: "1", name: "Alex Johnson", email: "alex@example.com", sessions: 24, status: "active" },
-  { id: "2", name: "Maria Garcia", email: "maria@example.com", sessions: 8, status: "active" },
-  { id: "3", name: "Sam Lee", email: "sam@example.com", sessions: 0, status: "inactive" },
-  { id: "4", name: "Jordan Park", email: "jordan@example.com", sessions: 15, status: "active" },
-  { id: "5", name: "Taylor Swift", email: "taylor@example.com", sessions: 3, status: "inactive" },
+  {
+    id: "1",
+    name: "Alex Johnson",
+    email: "alex@example.com",
+    sessions: 24,
+    status: "active",
+  },
+  {
+    id: "2",
+    name: "Maria Garcia",
+    email: "maria@example.com",
+    sessions: 8,
+    status: "active",
+  },
+  {
+    id: "3",
+    name: "Sam Lee",
+    email: "sam@example.com",
+    sessions: 0,
+    status: "inactive",
+  },
+  {
+    id: "4",
+    name: "Jordan Park",
+    email: "jordan@example.com",
+    sessions: 15,
+    status: "active",
+  },
+  {
+    id: "5",
+    name: "Taylor Swift",
+    email: "taylor@example.com",
+    sessions: 3,
+    status: "inactive",
+  },
 ];
 
 const columns: ColumnDef<Trainee>[] = [

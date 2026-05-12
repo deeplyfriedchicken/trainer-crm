@@ -1,4 +1,4 @@
-# Trainer CRM
+# TBDFit
 
 A coaching management platform for trainers to manage clients, log workouts, and share videos.
 

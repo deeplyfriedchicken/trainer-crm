@@ -88,7 +88,7 @@ export async function createMessage(
   });
 
   if (withSender) {
-    void notifyRecipients(
+    await notifyRecipients(
       chatId,
       senderId,
       withSender.sender.name,

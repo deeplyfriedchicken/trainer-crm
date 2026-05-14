@@ -61,18 +61,22 @@ function formatTime(d: Date) {
   });
 }
 
+const POLL_INTERVAL_MS = 15_000;
+
 export function ChatPanel({
   initialMessages,
   currentUserId,
   participant,
   colorVariant = "primary",
   onSend,
+  onFetchMessages,
 }: {
   initialMessages: ChatMessage[];
   currentUserId: string;
   participant: ChatParticipant;
   colorVariant?: ColorVariant;
   onSend: (text: string) => Promise<ChatMessage>;
+  onFetchMessages?: () => Promise<ChatMessage[]>;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -86,6 +90,24 @@ export function ChatPanel({
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, []);
+
+  useEffect(() => {
+    if (!onFetchMessages) return;
+    const interval = setInterval(async () => {
+      if (document.visibilityState === "hidden") return;
+      try {
+        const fresh = await onFetchMessages();
+        setMessages((prev) => {
+          const knownIds = new Set(prev.map((m) => m.id));
+          const newOnes = fresh.filter((m) => !knownIds.has(m.id));
+          return newOnes.length > 0 ? [...prev, ...newOnes] : prev;
+        });
+      } catch {
+        // Polling failures are silent
+      }
+    }, POLL_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [onFetchMessages]);
 
   function handleSend() {
     const text = input.trim();

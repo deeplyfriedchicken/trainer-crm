@@ -19,6 +19,12 @@ export function TraineeChatPanel({ chatId, ...rest }: Props) {
   return (
     <ChatPanel
       {...rest}
+      onFetchMessages={async () => {
+        const res = await fetch(`/api/chats/${chatId}/messages`);
+        if (!res.ok) return [];
+        const json = (await res.json()) as { data: ChatMessage[] };
+        return json.data;
+      }}
       onSend={async (text) => {
         const msg = await sendMessage(chatId, text);
         return msg as ChatMessage;

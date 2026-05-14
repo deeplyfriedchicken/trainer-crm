@@ -344,6 +344,45 @@ export const messages = pgTable(
   ],
 );
 
+/* ──────────────────────── Push Tokens ─────────────────────────── */
+
+export const pushTokens = pgTable(
+  "push_tokens",
+  {
+    id: id(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    token: text("token").notNull(),
+    platform: text("platform").notNull().$type<"ios" | "android">(),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("push_tokens_token_idx").on(t.token),
+    index("push_tokens_user_idx").on(t.userId),
+  ],
+);
+
+/* ──────────────────── Push Subscriptions ───────────────────────── */
+
+export const pushSubscriptions = pgTable(
+  "push_subscriptions",
+  {
+    id: id(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("push_subscriptions_endpoint_idx").on(t.endpoint),
+    index("push_subscriptions_user_idx").on(t.userId),
+  ],
+);
+
 /* ─────────────────────────── Video Tags ────────────────────────── */
 
 export const tags = pgTable(
@@ -561,6 +600,20 @@ export const videoTagsRelations = relations(videoTags, ({ one }) => ({
   }),
 }));
 
+export const pushTokensRelations = relations(pushTokens, ({ one }) => ({
+  user: one(users, { fields: [pushTokens.userId], references: [users.id] }),
+}));
+
+export const pushSubscriptionsRelations = relations(
+  pushSubscriptions,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [pushSubscriptions.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
 /* ────────────────────────── Inferred types ─────────────────────── */
 
 export type User = typeof users.$inferSelect;
@@ -592,3 +645,7 @@ export type Tag = typeof tags.$inferSelect;
 export type NewTag = typeof tags.$inferInsert;
 export type VideoTag = typeof videoTags.$inferSelect;
 export type NewVideoTag = typeof videoTags.$inferInsert;
+export type PushToken = typeof pushTokens.$inferSelect;
+export type NewPushToken = typeof pushTokens.$inferInsert;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;

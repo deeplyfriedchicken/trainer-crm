@@ -1,7 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { type ChatMessage, ChatPanel } from "@/app/components/ChatPanel";
-import { sendClientMessage } from "../actions";
+import { fetchClientMessages, sendClientMessage } from "../actions";
+import {
+  PushPermissionPrompt,
+  shouldShowPrompt,
+} from "./PushPermissionPrompt";
 
 type Props = {
   chatId: string;
@@ -16,22 +21,32 @@ const FALLBACK_PARTICIPANT = {
 };
 
 export function ClientChatPanel({ chatId, traineeId, initialMessages }: Props) {
-  // Show the most recent non-self sender in the header. Falls back to a
-  // generic label if no trainer has messaged yet.
+  const [showPrompt, setShowPrompt] = useState(false);
+
   const latestTrainer = [...initialMessages]
     .reverse()
     .find((m) => m.sender.id !== traineeId)?.sender;
   const participant = latestTrainer ?? FALLBACK_PARTICIPANT;
 
   return (
-    <ChatPanel
-      initialMessages={initialMessages}
-      currentUserId={traineeId}
-      participant={participant}
-      onSend={async (text) => {
-        const msg = await sendClientMessage(chatId, text);
-        return msg as ChatMessage;
-      }}
-    />
+    <>
+      <ChatPanel
+        initialMessages={initialMessages}
+        currentUserId={traineeId}
+        participant={participant}
+        onFetchMessages={async () => {
+          const msgs = await fetchClientMessages(chatId);
+          return (msgs ?? []) as ChatMessage[];
+        }}
+        onSend={async (text) => {
+          const msg = await sendClientMessage(chatId, text);
+          if (shouldShowPrompt()) setShowPrompt(true);
+          return msg as ChatMessage;
+        }}
+      />
+      {showPrompt && (
+        <PushPermissionPrompt onDismiss={() => setShowPrompt(false)} />
+      )}
+    </>
   );
 }

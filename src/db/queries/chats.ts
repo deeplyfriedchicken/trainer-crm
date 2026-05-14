@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, exists, or } from "drizzle-orm";
 import { db } from "@/db";
 import { chats, type MessageContent, messages } from "@/db/schema";
+import { notifyRecipients } from "@/lib/notifications";
 
 export async function listChatsForUser(userId: string) {
   return db.query.chats.findMany({
@@ -85,6 +86,15 @@ export async function createMessage(
     where: eq(messages.id, msg.id),
     with: { sender: { columns: { id: true, name: true, email: true } } },
   });
+
+  if (withSender) {
+    void notifyRecipients(
+      chatId,
+      senderId,
+      withSender.sender.name,
+      content.text,
+    );
+  }
 
   return withSender;
 }

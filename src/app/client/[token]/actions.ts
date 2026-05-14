@@ -8,6 +8,10 @@ import { createWorkout, type ExerciseLogEntry } from "@/db/queries/workouts";
 import { users } from "@/db/schema";
 import { hashPin, verifyPin } from "@/lib/client-pin";
 import {
+  deletePushSubscription,
+  upsertPushSubscription,
+} from "@/db/queries/push";
+import {
   createClientSession,
   deleteClientSession,
   getClientSession,
@@ -51,6 +55,31 @@ export async function sendClientMessage(chatId: string, text: string) {
   const session = await getClientSession();
   if (!session) throw new Error("Unauthorized");
   return createMessage(chatId, session.traineeId, { text });
+}
+
+export async function fetchClientMessages(chatId: string) {
+  const session = await getClientSession();
+  if (!session) throw new Error("Unauthorized");
+  const { getChatMessages } = await import("@/db/queries/chats");
+  return getChatMessages(chatId);
+}
+
+export async function registerPushSubscription(
+  endpoint: string,
+  p256dh: string,
+  auth: string,
+): Promise<void> {
+  const session = await getClientSession();
+  if (!session) throw new Error("Unauthorized");
+  await upsertPushSubscription(session.traineeId, endpoint, p256dh, auth);
+}
+
+export async function unregisterPushSubscription(
+  endpoint: string,
+): Promise<void> {
+  const session = await getClientSession();
+  if (!session) throw new Error("Unauthorized");
+  await deletePushSubscription(endpoint);
 }
 
 export async function logout(token: string): Promise<void> {

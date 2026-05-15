@@ -47,7 +47,7 @@ export async function notifyRecipients(
       });
 
       const traineePayload = {
-        title: `New message from ${senderName}`,
+        title: senderName,
         body: messageText.slice(0, 80),
       };
 

@@ -2,12 +2,33 @@
 export const dynamic = "force-dynamic";
 
 import { Barlow_Condensed, Space_Grotesk, Space_Mono } from "next/font/google";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { CurrentUserProvider } from "@/providers/CurrentUserProvider";
 import { Sidebar } from "./_components/Sidebar";
 import { Topbar } from "./_components/Topbar";
 import "./crm.css";
+
+const OG_IMAGE = "https://tbd.fit/wp-content/uploads/2025/03/tbd-logo-1000.png";
+const DESCRIPTION =
+  "Personal training grounded in physical therapy, from recovery to peak performance";
+
+export const metadata: Metadata = {
+  title: "TBDFit Trainer Portal",
+  description: DESCRIPTION,
+  openGraph: {
+    title: "TBDFit Trainer Portal",
+    description: DESCRIPTION,
+    images: [{ url: OG_IMAGE, width: 1000, height: 1000, alt: "TBDFit" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "TBDFit Trainer Portal",
+    description: DESCRIPTION,
+    images: [OG_IMAGE],
+  },
+};
 
 const barlow = Barlow_Condensed({
   subsets: ["latin"],

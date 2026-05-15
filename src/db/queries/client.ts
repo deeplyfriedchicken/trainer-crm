@@ -163,6 +163,28 @@ export async function getPlanForLog(planId: string, traineeId: string) {
 
 export type PlanForLog = NonNullable<Awaited<ReturnType<typeof getPlanForLog>>>;
 
+export async function getClientMetadata(traineeId: string) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, traineeId),
+    columns: { name: true },
+    with: {
+      workoutPlans: {
+        where: (wp, { isNull }) => isNull(wp.deletedAt),
+        orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
+        limit: 1,
+        columns: { name: true },
+      },
+    },
+  });
+
+  if (!user) return null;
+
+  return {
+    name: user.name,
+    mostRecentPlanName: user.workoutPlans[0]?.name ?? null,
+  };
+}
+
 export async function getClientChat(traineeId: string) {
   const chat = await db.query.chats.findFirst({
     where: eq(chats.traineeId, traineeId),

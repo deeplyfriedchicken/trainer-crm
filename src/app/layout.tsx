@@ -13,9 +13,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const OG_IMAGE = "https://tbd.fit/wp-content/uploads/2025/03/tbd-logo-1000.png";
+
 export const metadata: Metadata = {
-  title: "Trainer",
-  description: "Fitness training and trainer management",
+  title: "TBDFit",
+  description:
+    "Personal training grounded in physical therapy, from recovery to peak performance",
+  openGraph: {
+    title: "TBDFit",
+    description:
+      "Personal training grounded in physical therapy, from recovery to peak performance",
+    images: [{ url: OG_IMAGE, width: 1000, height: 1000, alt: "TBDFit" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "TBDFit",
+    description:
+      "Personal training grounded in physical therapy, from recovery to peak performance",
+    images: [OG_IMAGE],
+  },
 };
 
 export default function RootLayout({

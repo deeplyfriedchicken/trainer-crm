@@ -32,25 +32,21 @@ export async function notifyRecipients(
         );
 
       const trainerIds = trainerRoles.map((r) => r.userId);
-      console.log("[notify] trainee→trainers, trainerIds:", trainerIds);
       if (trainerIds.length === 0) return;
 
       const tokens = await db.query.pushTokens.findMany({
         where: inArray(pushTokens.userId, trainerIds),
       });
-      console.log("[notify] FCM tokens found:", tokens.length);
 
       if (tokens.length > 0) {
         await sendToFcmTokens(tokens.map((t) => t.token), payload);
-        console.log("[notify] FCM sent");
       }
     } else {
       const subs = await db.query.pushSubscriptions.findMany({
         where: eq(pushSubscriptions.userId, chat.traineeId),
       });
-      console.log("[notify] trainer→trainee, web push subs found:", subs.length);
 
-      const results = await Promise.allSettled(
+      await Promise.allSettled(
         subs.map((sub) =>
           sendToSubscription(
             { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
@@ -58,11 +54,8 @@ export async function notifyRecipients(
           ),
         ),
       );
-      results.forEach((r, i) => {
-        if (r.status === "rejected") console.error(`[notify] web-push sub[${i}] failed:`, r.reason);
-      });
     }
-  } catch (err) {
-    console.error("[notify] top-level error:", err);
+  } catch {
+    // Never let notification failures surface to the caller
   }
 }

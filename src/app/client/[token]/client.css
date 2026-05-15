@@ -109,6 +109,7 @@ body::after {
   background: rgba(7, 7, 18, 0.85);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--color-border);
+  padding-top: env(safe-area-inset-top, 0px);
 }
 .client-topbar-inner {
   max-width: var(--max-w);

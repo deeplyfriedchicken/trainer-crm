@@ -1,7 +1,9 @@
 "use client";
 
+import { BottomSheet } from "@/app/components/BottomSheet";
+import { Button } from "@/app/components/Button";
+import { Text } from "@/app/components/Text";
 import { registerPushSubscription } from "../actions";
-import styles from "./PushPermissionPrompt.module.css";
 
 const STORAGE_KEY = "push-prompted";
 
@@ -45,23 +47,42 @@ export function PushPermissionPrompt({ onDismiss }: Props) {
   }
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.sheet}>
-        <div className={styles.handle} />
-        <div className={styles.icon}>🔔</div>
-        <p className={styles.title}>Stay in the loop</p>
-        <p className={styles.body}>
-          Get notified when your trainer sends a message, even when the app is
-          closed.
-        </p>
-        <button type="button" className={styles.allow} onClick={handleAllow}>
-          Allow notifications
-        </button>
-        <button type="button" className={styles.deny} onClick={handleDeny}>
-          Not now
-        </button>
-      </div>
-    </div>
+    <BottomSheet
+      onClose={handleDeny}
+      title="Stay in the loop"
+      footer={
+        <>
+          <Button variant="solid" colorScheme="pink" w="100%" mb={3} onClick={handleAllow}>
+            Allow notifications
+          </Button>
+          <Button variant="ghost" colorScheme="neutral" w="100%" onClick={handleDeny}>
+            Not now
+          </Button>
+        </>
+      }
+    >
+      <Text
+        as="p"
+        textAlign="center"
+        fontSize="2rem"
+        mb={3}
+        mt={2}
+      >
+        🔔
+      </Text>
+      <Text
+        as="p"
+        variant="body-sm"
+        color="var(--color-text-muted)"
+        textAlign="center"
+        lineHeight="1.6"
+        mb={4}
+        px={2}
+      >
+        Get notified when your trainer sends a message, even when the app is
+        closed.
+      </Text>
+    </BottomSheet>
   );
 }
 

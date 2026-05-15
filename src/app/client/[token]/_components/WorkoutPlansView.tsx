@@ -10,6 +10,7 @@ import { Button } from "@/app/components/Button";
 import { Tab, TabGroup } from "@/app/components/TabGroup";
 import type { ClientChat, ClientData } from "@/db/queries/client";
 import { ClientChatPanel } from "./ClientChatPanel";
+import { PushPermissionPrompt, shouldShowPrompt } from "./PushPermissionPrompt";
 
 type Plan = ClientData["workoutPlans"][number];
 type Workout = ClientData["workouts"][number];
@@ -178,6 +179,7 @@ function HistoryCard({ workout }: { workout: Workout }) {
                     const isDur = s.durationSeconds != null;
                     return (
                       <div
+                        // biome-ignore lint/suspicious/noArrayIndexKey: setsData items are raw JSONB with no stable ID; this list is read-only and never reordered
                         key={i}
                         className={`history-ex-set-row${!s.completed ? " skipped" : ""}`}
                       >
@@ -242,6 +244,7 @@ export function WorkoutPlansView({
   token,
   chat,
 }: Props) {
+  const [showPrompt, setShowPrompt] = useState(shouldShowPrompt());
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -451,6 +454,9 @@ export function WorkoutPlansView({
           )}
           <div style={{ height: 16 }} />
         </BottomSheet>
+      )}
+      {showPrompt && (
+        <PushPermissionPrompt onDismiss={() => setShowPrompt(false)} />
       )}
     </div>
   );

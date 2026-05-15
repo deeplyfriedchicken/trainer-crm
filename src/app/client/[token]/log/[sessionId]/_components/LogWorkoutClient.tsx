@@ -13,6 +13,7 @@ import { FeedbackModal } from "./FeedbackModal";
 interface Props {
   token: string;
   plan: PlanForLog;
+  backHref: string;
 }
 
 type SetState = { reps: number; weightLbs: number; completed: boolean };
@@ -76,7 +77,7 @@ function NumericStepper({
   );
 }
 
-export function LogWorkoutClient({ token, plan }: Props) {
+export function LogWorkoutClient({ token, plan, backHref }: Props) {
   const startTimeRef = useRef(Date.now());
   const totalPausedRef = useRef(0);
   const pausedAtRef = useRef<number | null>(null);
@@ -225,7 +226,7 @@ export function LogWorkoutClient({ token, plan }: Props) {
     <div className="client-page">
       <div className="client-topbar">
         <div className="client-topbar-inner">
-          <Link href={`/client/${token}`} className="client-back-btn">
+          <Link href={backHref} className="client-back-btn">
             <LuChevronLeft size={18} /> Cancel
           </Link>
         </div>

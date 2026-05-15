@@ -7,10 +7,14 @@ import { LogWorkoutClient } from "./_components/LogWorkoutClient";
 
 export default async function LogWorkoutPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ token: string; sessionId: string }>;
+  searchParams: Promise<{ back?: string }>;
 }) {
   const { token, sessionId: planId } = await params;
+  const { back } = await searchParams;
+  const backHref = back ? `/client/${token}?${back}` : `/client/${token}`;
 
   const traineeId = decryptUserId(token);
   if (!traineeId) notFound();
@@ -39,5 +43,5 @@ export default async function LogWorkoutPage({
     ),
   };
 
-  return <LogWorkoutClient token={token} plan={plan} />;
+  return <LogWorkoutClient token={token} plan={plan} backHref={backHref} />;
 }

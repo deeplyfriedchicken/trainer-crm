@@ -71,7 +71,7 @@ export function Tab({
         fontWeight: 600,
         background: active ? activeBg : "transparent",
         color: active ? color : "var(--color-text-muted)",
-        transition: "all 0.15s",
+        transition: "background 0.15s, color 0.15s, border-color 0.15s",
         whiteSpace: "nowrap",
         display: "inline-flex",
         alignItems: "center",

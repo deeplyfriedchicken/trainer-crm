@@ -3,7 +3,7 @@
 import { chakra } from "@chakra-ui/react";
 
 export interface StatPillProps extends React.HTMLAttributes<HTMLDivElement> {
-  label: string;
+  label: React.ReactNode;
   value: string | number;
   unit?: string;
   colorScheme?: "pink" | "cyan";

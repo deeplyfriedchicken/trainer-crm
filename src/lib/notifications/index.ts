@@ -46,11 +46,16 @@ export async function notifyRecipients(
         where: eq(pushSubscriptions.userId, chat.traineeId),
       });
 
+      const traineePayload = {
+        title: `New message from ${senderName}`,
+        body: messageText.slice(0, 80),
+      };
+
       await Promise.allSettled(
         subs.map((sub) =>
           sendToSubscription(
             { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
-            payload,
+            traineePayload,
           ),
         ),
       );

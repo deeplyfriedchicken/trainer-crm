@@ -1,7 +1,7 @@
 "use client";
 
-import styles from "./PushPermissionPrompt.module.css";
 import { registerPushSubscription } from "../actions";
+import styles from "./PushPermissionPrompt.module.css";
 
 const STORAGE_KEY = "push-prompted";
 
@@ -75,9 +75,7 @@ export function shouldShowPrompt() {
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = atob(base64);
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
 }

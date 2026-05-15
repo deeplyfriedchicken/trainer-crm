@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { LuChevronDown, LuChevronRight, LuPlus, LuVideo } from "react-icons/lu";
-import type { ClientChat, ClientData } from "@/db/queries/client";
 import { Badge } from "@/app/components/Badge";
 import { BottomSheet } from "@/app/components/BottomSheet";
 import { Button } from "@/app/components/Button";
 import { Tab, TabGroup } from "@/app/components/TabGroup";
+import type { ClientChat, ClientData } from "@/db/queries/client";
 import { ClientChatPanel } from "./ClientChatPanel";
 
 type Plan = ClientData["workoutPlans"][number];
@@ -35,12 +35,15 @@ function PlanCard({
   token,
   open,
   onToggle,
+  backParam,
 }: {
   plan: Plan;
   token: string;
   open: boolean;
   onToggle: () => void;
+  backParam: string;
 }) {
+  const back = backParam ? `?back=${encodeURIComponent(backParam)}` : "";
   return (
     <div className="client-card">
       <div className="plan-header" onClick={onToggle}>
@@ -62,7 +65,7 @@ function PlanCard({
           {plan.exercises.map((ex) => (
             <Link
               key={ex.id}
-              href={`/client/${token}/exercise/${ex.id}`}
+              href={`/client/${token}/exercise/${ex.id}${back}`}
               className="exercise-row"
             >
               <span className="ex-name">{ex.name}</span>
@@ -85,7 +88,10 @@ function PlanCard({
             </Link>
           ))}
           <div className="plan-actions">
-            <Link href={`/client/${token}/log/${plan.id}`} style={{ display: "block" }}>
+            <Link
+              href={`/client/${token}/log/${plan.id}${back}`}
+              style={{ display: "block" }}
+            >
               <Button variant="solid" colorScheme="pink" size="sm" w="100%">
                 Start Workout
               </Button>
@@ -209,7 +215,6 @@ function HistoryCard({ workout }: { workout: Workout }) {
     </div>
   );
 }
-
 
 interface Props {
   trainee: { id: string; name: string; email: string };
@@ -337,6 +342,7 @@ export function WorkoutPlansView({
                   token={token}
                   open={openIds.has(p.id)}
                   onToggle={() => togglePlan(p.id)}
+                  backParam={searchParams.toString()}
                 />
               ))
             )}
@@ -370,14 +376,16 @@ export function WorkoutPlansView({
         )}
       </div>
 
-      <button
-        className="fab"
-        onClick={() => setShowChoosePlan(true)}
-        type="button"
-        title="Log Workout"
-      >
-        <LuPlus size={24} strokeWidth={2.5} />
-      </button>
+      {tab !== "chat" && (
+        <button
+          className="fab"
+          onClick={() => setShowChoosePlan(true)}
+          type="button"
+          title="Log Workout"
+        >
+          <LuPlus size={24} strokeWidth={2.5} />
+        </button>
+      )}
 
       {showChoosePlan && (
         <BottomSheet
@@ -385,7 +393,13 @@ export function WorkoutPlansView({
           title="Choose a Workout Plan"
         >
           {workoutPlans.length === 0 ? (
-            <div style={{ padding: "20px 16px", color: "var(--color-text-muted)", fontSize: 14 }}>
+            <div
+              style={{
+                padding: "20px 16px",
+                color: "var(--color-text-muted)",
+                fontSize: 14,
+              }}
+            >
               No plans available. Your trainer will assign plans here.
             </div>
           ) : (
@@ -395,18 +409,27 @@ export function WorkoutPlansView({
                 className="sheet-plan-row"
                 onClick={() => {
                   setShowChoosePlan(false);
-                  router.push(`/client/${token}/log/${p.id}`);
+                  const back = searchParams.toString();
+                  const q = back ? `?back=${encodeURIComponent(back)}` : "";
+                  router.push(`/client/${token}/log/${p.id}${q}`);
                 }}
               >
                 <div className="sheet-plan-dot" />
                 <div style={{ flex: 1 }}>
                   <div className="sheet-plan-name">{p.name}</div>
-                  <div style={{ fontSize: 11, color: "var(--color-text-dim)", marginTop: 2 }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: "var(--color-text-dim)",
+                      marginTop: 2,
+                    }}
+                  >
                     {fmtDate(p.occurredAt)}
                   </div>
                 </div>
                 <span className="sheet-plan-count">
-                  {p.exercises.length} exercise{p.exercises.length !== 1 ? "s" : ""}
+                  {p.exercises.length} exercise
+                  {p.exercises.length !== 1 ? "s" : ""}
                 </span>
                 <span style={{ color: "var(--color-text-dim)", marginLeft: 8 }}>
                   <LuChevronRight size={14} />

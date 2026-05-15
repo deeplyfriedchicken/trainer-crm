@@ -1,19 +1,23 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { LuChevronLeft, LuVideo } from "react-icons/lu";
+import { LuChevronLeft, LuDumbbell } from "react-icons/lu";
 import { getExerciseForClient } from "@/db/queries/client";
-import { Badge } from "@/app/components/Badge";
 import { StatPill } from "@/app/components/StatPill";
 import { getClientSession } from "@/lib/client-session";
 import { decryptUserId } from "@/lib/client-token";
 import { getPresignedGetUrl } from "@/lib/s3";
+import { VideoCarousel } from "./_components/VideoCarousel";
 
 export default async function ExerciseDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ token: string; exerciseId: string }>;
+  searchParams: Promise<{ back?: string }>;
 }) {
   const { token, exerciseId } = await params;
+  const { back } = await searchParams;
+  const backHref = back ? `/client/${token}?${back}` : `/client/${token}`;
 
   const traineeId = decryptUserId(token);
   if (!traineeId) notFound();
@@ -39,13 +43,18 @@ export default async function ExerciseDetailPage({
     ),
   };
 
-  const volume = exercise.sets * exercise.reps;
+  const weightLabel = (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+      <LuDumbbell size={10} />
+      Weight
+    </span>
+  );
 
   return (
     <div className="client-page">
       <div className="client-topbar">
         <div className="client-topbar-inner">
-          <Link href={`/client/${token}`} className="client-back-btn">
+          <Link href={backHref} className="client-back-btn">
             <LuChevronLeft size={18} /> Back
           </Link>
         </div>
@@ -53,13 +62,6 @@ export default async function ExerciseDetailPage({
 
       <div className="client-inner">
         <div className="ex-detail-header">
-          <div className="ex-detail-badges">
-            {exercise.videoLinks.length > 0 && (
-              <Badge colorScheme="pink" variant="subtle">
-                <LuVideo size={10} /> Video
-              </Badge>
-            )}
-          </div>
           <h1 className="ex-detail-title">{exercise.name}</h1>
         </div>
 
@@ -71,9 +73,9 @@ export default async function ExerciseDetailPage({
             unit={exercise.type === "duration" ? "sec / set" : "per set"}
           />
           <StatPill
-            label="Volume"
-            value={volume}
-            unit="total reps"
+            label={weightLabel}
+            value={exercise.weightLbs ?? 0}
+            unit="lbs"
           />
         </div>
 
@@ -84,30 +86,15 @@ export default async function ExerciseDetailPage({
           </div>
         )}
 
-        {exercise.videoLinks.map(({ video }) => (
-          <div key={video.id}>
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 700,
-                color: "var(--text-3)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                margin: "20px 0 10px",
-              }}
-            >
-              {video.title}
-            </div>
-            <div className="video-wrap">
-              <video
-                src={video.fileUrl}
-                controls
-                playsInline
-                preload="metadata"
-              />
-            </div>
-          </div>
-        ))}
+        {exercise.videoLinks.length > 0 && (
+          <VideoCarousel
+            videos={exercise.videoLinks.map(({ video }) => ({
+              id: video.id,
+              title: video.title,
+              fileUrl: video.fileUrl,
+            }))}
+          />
+        )}
 
         <div style={{ height: 40 }} />
       </div>

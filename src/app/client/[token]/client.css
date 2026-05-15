@@ -81,6 +81,14 @@ body::after {
   min-height: 0;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  scrollbar-gutter: stable;
+}
+
+/* Prevent iOS PWA from auto-zooming focused inputs */
+.client-page input,
+.client-page textarea,
+.client-page select {
+  font-size: max(16px, 1em);
 }
 .client-inner::-webkit-scrollbar {
   width: 4px;

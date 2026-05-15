@@ -46,7 +46,7 @@ function PlanCard({
   const back = backParam ? `?back=${encodeURIComponent(backParam)}` : "";
   return (
     <div className="client-card">
-      <div className="plan-header" onClick={onToggle}>
+      <button type="button" className="plan-header" onClick={onToggle}>
         <div className="plan-dot" />
         <div style={{ flex: 1 }}>
           <div className="plan-name">{plan.name}</div>
@@ -58,7 +58,7 @@ function PlanCard({
         <div className={`plan-chevron${open ? " open" : ""}`}>
           <LuChevronDown size={16} />
         </div>
-      </div>
+      </button>
 
       {open && (
         <div className="plan-exercises">
@@ -108,8 +108,19 @@ function HistoryCard({ workout }: { workout: Workout }) {
 
   return (
     <div className="history-card">
-      <div
-        style={{ padding: 16, cursor: "pointer", userSelect: "none" }}
+      <button
+        type="button"
+        style={{
+          width: "100%",
+          padding: 16,
+          cursor: "pointer",
+          userSelect: "none",
+          background: "none",
+          border: "none",
+          color: "inherit",
+          font: "inherit",
+          textAlign: "left",
+        }}
         onClick={() => setOpen((o) => !o)}
       >
         <div className="history-top">
@@ -154,7 +165,7 @@ function HistoryCard({ workout }: { workout: Workout }) {
             </div>
           </div>
         )}
-      </div>
+      </button>
 
       {open && workout.exerciseLinks.length > 0 && (
         <div className="history-exercises">
@@ -404,8 +415,9 @@ export function WorkoutPlansView({
             </div>
           ) : (
             workoutPlans.map((p) => (
-              <div
+              <button
                 key={p.id}
+                type="button"
                 className="sheet-plan-row"
                 onClick={() => {
                   setShowChoosePlan(false);
@@ -434,7 +446,7 @@ export function WorkoutPlansView({
                 <span style={{ color: "var(--color-text-dim)", marginLeft: 8 }}>
                   <LuChevronRight size={14} />
                 </span>
-              </div>
+              </button>
             ))
           )}
           <div style={{ height: 16 }} />

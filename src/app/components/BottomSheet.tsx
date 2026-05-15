@@ -34,12 +34,11 @@ export function BottomSheet({
   return createPortal(
     <div
       className={styles.overlay}
-      onClick={onClose}
       style={zIndex !== undefined ? { zIndex } : undefined}
     >
+      <div className={styles.backdrop} onClick={onClose} aria-hidden />
       <div
         className={styles.sheet}
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? "bottom-sheet-title" : undefined}

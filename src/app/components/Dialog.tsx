@@ -70,7 +70,7 @@ export function Dialog({
 
   return createPortal(
     <div className={styles.overlay}>
-      <div className={styles.backdrop} onClick={onClose} />
+      <div className={styles.backdrop} onClick={onClose} aria-hidden />
       <div
         ref={panelRef}
         className={styles.panel}

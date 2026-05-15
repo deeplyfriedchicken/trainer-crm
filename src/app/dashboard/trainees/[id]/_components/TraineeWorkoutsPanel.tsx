@@ -97,20 +97,22 @@ export function TraineeWorkoutsPanel({
             key={w.id}
             style={{ borderBottom: "1px solid var(--color-border)" }}
           >
-            <div
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               style={{
+                width: "100%",
                 padding: "12px 18px",
                 display: "flex",
                 alignItems: "center",
                 gap: 12,
                 cursor: "pointer",
+                background: "none",
+                border: "none",
+                color: "inherit",
+                font: "inherit",
+                textAlign: "left",
               }}
               onClick={() => toggle(w.id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") toggle(w.id);
-              }}
             >
               <div
                 style={{
@@ -210,7 +212,7 @@ export function TraineeWorkoutsPanel({
                   flexShrink: 0,
                 }}
               />
-            </div>
+            </button>
 
             {isOpen && (
               <div

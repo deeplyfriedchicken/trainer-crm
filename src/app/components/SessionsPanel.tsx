@@ -337,14 +337,10 @@ export function SessionsPanel({
 
             return (
               <div key={s.id} className={styles.row}>
-                <div
+                <button
+                  type="button"
                   className={styles.rowHeader}
-                  role="button"
-                  tabIndex={0}
                   onClick={() => toggleRow(s.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") toggleRow(s.id);
-                  }}
                 >
                   {/* Left */}
                   <div
@@ -429,7 +425,7 @@ export function SessionsPanel({
                       className={`${styles.chevron}${isOpen ? ` ${styles.chevronOpen}` : ""}`}
                     />
                   </div>
-                </div>
+                </button>
 
                 <div
                   className={styles.rowBody}

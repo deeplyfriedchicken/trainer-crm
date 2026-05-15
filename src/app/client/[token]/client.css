@@ -236,6 +236,7 @@ body::after {
 
 /* ── Plan Card ───────────────────────────────────── */
 .plan-header {
+  width: 100%;
   padding: 16px;
   display: flex;
   align-items: center;
@@ -243,6 +244,11 @@ body::after {
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
 }
 .plan-dot {
   width: 8px;
@@ -914,6 +920,7 @@ body::after {
   padding: 0 16px 12px;
 }
 .sheet-plan-row {
+  width: 100%;
   padding: 14px 16px;
   display: flex;
   align-items: center;
@@ -921,7 +928,12 @@ body::after {
   cursor: pointer;
   transition: background 0.1s;
   -webkit-tap-highlight-color: transparent;
+  border: none;
   border-bottom: 1px solid var(--color-border);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
 }
 .sheet-plan-row:last-child {
   border-bottom: none;
@@ -1093,6 +1105,7 @@ body::after {
   background: transparent;
   outline: none;
   padding: 0;
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 .log-stepper-input::-webkit-outer-spin-button,

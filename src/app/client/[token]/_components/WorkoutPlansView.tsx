@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuChevronDown, LuChevronRight, LuPlus, LuVideo } from "react-icons/lu";
 import { Badge } from "@/app/components/Badge";
 import { BottomSheet } from "@/app/components/BottomSheet";
@@ -10,7 +10,8 @@ import { Button } from "@/app/components/Button";
 import { Tab, TabGroup } from "@/app/components/TabGroup";
 import type { ClientChat, ClientData } from "@/db/queries/client";
 import { ClientChatPanel } from "./ClientChatPanel";
-import { PushPermissionPrompt, shouldShowPrompt } from "./PushPermissionPrompt";
+import { InstallGuideSheet } from "./InstallGuideSheet";
+import { isPwa, PushPermissionPrompt, shouldShowPrompt } from "./PushPermissionPrompt";
 
 type Plan = ClientData["workoutPlans"][number];
 type Workout = ClientData["workouts"][number];
@@ -245,7 +246,15 @@ export function WorkoutPlansView({
   chat,
 }: Props) {
   const [showPrompt, setShowPrompt] = useState(shouldShowPrompt());
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (sessionStorage.getItem("show-install-guide") === "1") {
+      sessionStorage.removeItem("show-install-guide");
+      if (!isPwa()) setShowInstallGuide(true);
+    }
+  }, []);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -454,6 +463,9 @@ export function WorkoutPlansView({
           )}
           <div style={{ height: 16 }} />
         </BottomSheet>
+      )}
+      {showInstallGuide && (
+        <InstallGuideSheet onClose={() => setShowInstallGuide(false)} />
       )}
       {showPrompt && (
         <PushPermissionPrompt onDismiss={() => setShowPrompt(false)} />

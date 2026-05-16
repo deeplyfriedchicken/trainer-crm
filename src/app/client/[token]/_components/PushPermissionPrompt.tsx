@@ -86,8 +86,17 @@ export function PushPermissionPrompt({ onDismiss }: Props) {
   );
 }
 
+export function isPwa() {
+  if (typeof window === "undefined") return false;
+  return (
+    ("standalone" in navigator && navigator.standalone === true) ||
+    window.matchMedia("(display-mode: standalone)").matches
+  );
+}
+
 export function shouldShowPrompt() {
   if (typeof window === "undefined") return false;
+  if (!isPwa()) return false;
   if (!("Notification" in window)) return false;
   if (Notification.permission === "granted") return false;
   if (Notification.permission === "denied") return false;

@@ -58,8 +58,10 @@ export function PinModal({ token, hasPin }: Props) {
         // confirm mode
         if (pin === firstPin) {
           startTransition(async () => {
+            sessionStorage.setItem("show-install-guide", "1");
             const result = await authenticate(token, pin, true);
             if (result?.error) {
+              sessionStorage.removeItem("show-install-guide");
               setError(result.error);
               shake();
               setDigits([]);

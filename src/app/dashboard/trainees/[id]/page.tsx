@@ -9,7 +9,7 @@ import { ClientPortalLink } from "./_components/ClientPortalLink";
 import { ProfileHero } from "./_components/ProfileHero";
 import { ResetPinButton } from "./_components/ResetPinButton";
 import { TraineeChatPanel } from "./_components/TraineeChatPanel";
-import { TraineeSessionsPanel } from "./_components/TraineeSessionsPanel";
+import { TraineePlansPanel } from "./_components/TraineePlansPanel";
 import { TraineeVideosPanel } from "./_components/TraineeVideosPanel";
 import { TraineeWorkoutsPanel } from "./_components/TraineeWorkoutsPanel";
 import "./page.css";
@@ -49,15 +49,10 @@ export default async function TraineePage({
     year: "numeric",
   });
 
-  // Collect unique videos: direct trainee videos + plan/exercise/workout join-table links
+  // Collect unique direct videos for the videos panel
   const videoMap = new Map<
     string,
-    {
-      id: string;
-      title: string;
-      fileKey: string;
-      durationSeconds?: number | null;
-    }
+    { id: string; title: string; fileKey: string; durationSeconds?: number | null }
   >();
   for (const v of trainee.directVideos) {
     videoMap.set(v.id, v);
@@ -71,12 +66,17 @@ export default async function TraineePage({
     })),
   );
 
+  // Map workout plans to the shape TraineePlansPanel expects
   const plans = await Promise.all(
     trainee.workoutPlans.map(async (p) => ({
       id: p.id,
       name: p.name,
       occurredAt: p.occurredAt,
       comment: p.comment,
+      createdAt: p.createdAt,
+      versionStatus: p.versionStatus,
+      publishedAt: p.publishedAt,
+      workoutPlanGroupId: p.workoutPlanGroupId,
       exercises: await Promise.all(
         p.exercises.map(async (ex) => ({
           id: ex.id,
@@ -138,9 +138,9 @@ export default async function TraineePage({
       />
 
       <div className="crm-split-panel">
-        <TraineeSessionsPanel
+        <TraineePlansPanel
           traineeId={trainee.id}
-          sessions={plans}
+          plans={plans}
           colorVariant={colorVariant}
         />
         <TraineeChatPanel
@@ -161,14 +161,13 @@ export default async function TraineePage({
         </div>
       )}
 
-      {trainee.workouts.length > 0 && (
-        <div style={{ marginTop: 32 }}>
-          <TraineeWorkoutsPanel
-            workouts={trainee.workouts}
-            accentColor={accentColor}
-          />
-        </div>
-      )}
+      <div style={{ marginTop: 32 }}>
+        <TraineeWorkoutsPanel
+          workouts={trainee.workouts}
+          accentColor={accentColor}
+          traineeId={trainee.id}
+        />
+      </div>
     </div>
   );
 }

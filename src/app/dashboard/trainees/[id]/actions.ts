@@ -9,7 +9,7 @@ import {
   type ExerciseInput,
   updateWorkoutPlan,
 } from "@/db/queries/workout-plans";
-import { users } from "@/db/schema";
+import { users, workoutPlanGroups, workoutPlans, workouts } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function resetTraineePin(traineeId: string) {
@@ -49,6 +49,56 @@ export async function createPlan(
     createdBy: user.id,
     exerciseInputs: data.exercises,
   });
+}
+
+export async function publishDraftPlan(planId: string, traineeId: string) {
+  const user = await getCurrentUser();
+
+  await db.transaction(async (tx) => {
+    const [plan] = await tx
+      .select({
+        id: workoutPlans.id,
+        traineeId: workoutPlans.traineeId,
+        workoutPlanGroupId: workoutPlans.workoutPlanGroupId,
+      })
+      .from(workoutPlans)
+      .where(eq(workoutPlans.id, planId));
+
+    if (!plan || plan.traineeId !== traineeId) throw new Error("Not found");
+
+    const now = new Date();
+    await tx
+      .update(workoutPlans)
+      .set({ versionStatus: "published", publishedAt: now, updatedBy: user.id })
+      .where(eq(workoutPlans.id, planId));
+
+    if (plan.workoutPlanGroupId) {
+      await tx
+        .update(workoutPlanGroups)
+        .set({ currentVersionId: planId, updatedBy: user.id })
+        .where(eq(workoutPlanGroups.id, plan.workoutPlanGroupId));
+    }
+  });
+
+  revalidatePath(`/dashboard/trainees/${traineeId}`);
+}
+
+export async function updateSessionQuality(
+  workoutId: string,
+  quality: number,
+  traineeId: string,
+) {
+  const user = await getCurrentUser();
+  await db
+    .update(workouts)
+    .set({
+      sessionQuality: quality,
+      sessionQualityRatedBy: user.id,
+      sessionQualityRatedAt: new Date(),
+      updatedBy: user.id,
+    })
+    .where(eq(workouts.id, workoutId));
+  revalidatePath(`/dashboard/trainees/${traineeId}`);
 }
 
 export async function updatePlan(

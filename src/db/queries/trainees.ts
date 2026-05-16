@@ -48,7 +48,8 @@ export async function getTraineeById(id: string) {
     with: {
       roles: true,
       workoutPlans: {
-        where: (wp, { isNull }) => isNull(wp.deletedAt),
+        where: (wp, { isNull, and, ne }) =>
+          and(isNull(wp.deletedAt), ne(wp.versionStatus, "archived")),
         orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
           videoLinks: {
@@ -121,6 +122,16 @@ export async function getTraineeById(id: string) {
                   weightLbs: true,
                 },
               },
+            },
+          },
+          sets: {
+            columns: {
+              exerciseId: true,
+              completed: true,
+              weightLbs: true,
+              reps: true,
+              durationSeconds: true,
+              position: true,
             },
           },
         },

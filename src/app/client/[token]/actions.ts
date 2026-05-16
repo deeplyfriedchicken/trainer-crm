@@ -93,6 +93,9 @@ export async function completeWorkout(
   feedback: {
     pain: number | null;
     energy: number | null;
+    preEnergy: number | null;
+    preStress: number | null;
+    preSoreness: number | null;
     comment: string;
     durationSeconds: number;
     sets: SetInput[];
@@ -111,6 +114,9 @@ export async function completeWorkout(
     durationSeconds: Math.max(0, feedback.durationSeconds),
     painRating: feedback.pain,
     postSessionEnergy: feedback.energy,
+    preSessionEnergy: feedback.preEnergy,
+    preSessionStress: feedback.preStress,
+    preSessionSoreness: feedback.preSoreness,
     comment: feedback.comment || null,
     sets: feedback.sets,
     createdBy: traineeId,

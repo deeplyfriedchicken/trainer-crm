@@ -1,6 +1,13 @@
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { chats, exercises, messages, users, workoutPlans } from "@/db/schema";
+import {
+  chats,
+  exercises,
+  messages,
+  users,
+  workoutPlans,
+  workoutSets,
+} from "@/db/schema";
 
 export async function getClientData(traineeId: string) {
   const user = await db.query.users.findFirst({
@@ -38,6 +45,17 @@ export async function getClientData(traineeId: string) {
       },
       workouts: {
         orderBy: (w, { desc }) => [desc(w.createdAt)],
+        columns: {
+          id: true,
+          durationSeconds: true,
+          painRating: true,
+          postSessionEnergy: true,
+          preSessionEnergy: true,
+          preSessionSoreness: true,
+          preSessionStress: true,
+          comment: true,
+          createdAt: true,
+        },
         with: {
           workoutPlan: { columns: { id: true, name: true, occurredAt: true } },
           exerciseLinks: {
@@ -53,6 +71,22 @@ export async function getClientData(traineeId: string) {
                   weightLbs: true,
                 },
               },
+            },
+          },
+          sets: {
+            orderBy: [
+              asc(workoutSets.exerciseId),
+              asc(workoutSets.position),
+            ],
+            columns: {
+              id: true,
+              exerciseId: true,
+              position: true,
+              reps: true,
+              durationSeconds: true,
+              weightLbs: true,
+              completed: true,
+              metadata: true,
             },
           },
         },

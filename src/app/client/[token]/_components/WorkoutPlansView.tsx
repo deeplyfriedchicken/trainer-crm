@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LuChevronDown, LuChevronRight, LuPlus, LuVideo } from "react-icons/lu";
+import {
+  LuChevronDown,
+  LuChevronRight,
+  LuClock,
+  LuDumbbell,
+  LuPlus,
+  LuVideo,
+  LuWeight,
+} from "react-icons/lu";
 import { Badge } from "@/app/components/Badge";
 import { BottomSheet } from "@/app/components/BottomSheet";
 import { Button } from "@/app/components/Button";
@@ -105,8 +113,111 @@ function PlanCard({
   );
 }
 
+type SetMeta = { cancelled?: boolean; wasPaused?: boolean } | null | unknown;
+
+function getSetStatus(
+  completed: boolean,
+  meta: SetMeta,
+): "done" | "donePaused" | "cancelled" | "pending" {
+  const m = meta as { cancelled?: boolean; wasPaused?: boolean } | null;
+  if (completed && m?.wasPaused) return "donePaused";
+  if (completed) return "done";
+  if (m?.cancelled) return "cancelled";
+  return "pending";
+}
+
+function SetCheck({ status }: { status: ReturnType<typeof getSetStatus> }) {
+  if (status === "done") {
+    return (
+      <span className="history-ex-set-check">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M2 6l3 3 5-5" />
+        </svg>
+      </span>
+    );
+  }
+  if (status === "donePaused") {
+    return (
+      <span className="history-ex-set-check paused">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M2 6l3 3 5-5" />
+        </svg>
+      </span>
+    );
+  }
+  if (status === "cancelled") {
+    return (
+      <span className="history-ex-set-cancel">
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        >
+          <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
+        </svg>
+      </span>
+    );
+  }
+  return <span className="history-ex-set-skip">—</span>;
+}
+
 function HistoryCard({ workout }: { workout: Workout }) {
   const [open, setOpen] = useState(false);
+
+  // Compute stats from sets
+  const allSets = workout.sets ?? [];
+  const completedSets = allSets.filter((s) => s.completed).length;
+  const totalSets = allSets.length;
+  const totalVolume = allSets.reduce((acc, s) => {
+    if (!s.completed) return acc;
+    const reps = s.reps ?? 0;
+    const weight = s.weightLbs ?? 0;
+    return acc + reps * weight;
+  }, 0);
+  const volumeLabel =
+    totalVolume >= 1000
+      ? `${(totalVolume / 1000).toFixed(totalVolume >= 10000 ? 0 : 1)}k lbs`
+      : totalVolume > 0
+        ? `${Math.round(totalVolume)} lbs`
+        : null;
+
+  // Group sets by exerciseId for the expanded view
+  const setsByExercise = new Map<string, typeof allSets>();
+  for (const s of allSets) {
+    const arr = setsByExercise.get(s.exerciseId) ?? [];
+    arr.push(s);
+    setsByExercise.set(s.exerciseId, arr);
+  }
+
+  const hasFeedback =
+    workout.comment ||
+    workout.painRating != null ||
+    workout.postSessionEnergy != null ||
+    workout.preSessionEnergy != null ||
+    workout.preSessionStress != null ||
+    workout.preSessionSoreness != null;
 
   return (
     <div className="history-card">
@@ -133,12 +244,14 @@ function HistoryCard({ workout }: { workout: Workout }) {
             <div className="history-date">{fmtDate(workout.createdAt)}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Badge colorScheme="cyan" variant="subtle">
-              {fmtDuration(workout.durationSeconds)}
-            </Badge>
+            {totalSets > 0 && (
+              <Badge colorScheme="cyan" variant="subtle">
+                {completedSets}/{totalSets} sets
+              </Badge>
+            )}
             <span
               style={{
-                color: "var(--text-3)",
+                color: "var(--color-text-dim)",
                 display: "inline-flex",
                 transform: open ? "rotate(180deg)" : "none",
                 transition: "transform 0.2s",
@@ -148,51 +261,178 @@ function HistoryCard({ workout }: { workout: Workout }) {
             </span>
           </div>
         </div>
-        {(workout.comment || workout.painRating || workout.postSessionEnergy) && (
+
+        {/* Stats row */}
+        <div className="history-stats">
+          <span className="history-stat">
+            <LuClock size={13} style={{ opacity: 0.6 }} />
+            <strong>{fmtDuration(workout.durationSeconds)}</strong>
+          </span>
+          {totalSets > 0 && (
+            <span className="history-stat">
+              <LuDumbbell size={13} style={{ opacity: 0.6 }} />
+              <strong>
+                {completedSets}/{totalSets}
+              </strong>
+              <span
+                style={{
+                  color: "var(--color-text-dim)",
+                  fontSize: 11,
+                  marginLeft: 1,
+                }}
+              >
+                sets
+              </span>
+            </span>
+          )}
+          {volumeLabel && (
+            <span className="history-stat">
+              <LuWeight size={13} style={{ opacity: 0.6 }} />
+              <strong>{volumeLabel}</strong>
+              <span
+                style={{
+                  color: "var(--color-text-dim)",
+                  fontSize: 11,
+                  marginLeft: 1,
+                }}
+              >
+                volume
+              </span>
+            </span>
+          )}
+        </div>
+
+        {/* Feedback summary */}
+        {hasFeedback && (
           <div className="history-feedback">
             {workout.comment && (
               <div className="history-comment">"{workout.comment}"</div>
             )}
-            <div className="scales-row">
-              {workout.painRating != null && (
-                <Badge colorScheme="red" variant="subtle">
-                  Pain {workout.painRating}/10
-                </Badge>
-              )}
-              {workout.postSessionEnergy != null && (
-                <Badge colorScheme="pink" variant="subtle">
-                  Energy {workout.postSessionEnergy}/10
-                </Badge>
-              )}
-            </div>
+            {(workout.preSessionEnergy != null ||
+              workout.preSessionStress != null ||
+              workout.preSessionSoreness != null) && (
+              <>
+                <div className="history-session-label">Pre-session</div>
+                <div className="scales-row">
+                  {workout.preSessionEnergy != null && (
+                    <span
+                      className="scale-badge"
+                      style={{
+                        background: "rgba(167,139,250,0.12)",
+                        color: "#a78bfa",
+                        border: "1px solid rgba(167,139,250,0.28)",
+                      }}
+                    >
+                      Energy {workout.preSessionEnergy}/10
+                    </span>
+                  )}
+                  {workout.preSessionStress != null && (
+                    <span
+                      className="scale-badge"
+                      style={{
+                        background: "rgba(167,139,250,0.12)",
+                        color: "#a78bfa",
+                        border: "1px solid rgba(167,139,250,0.28)",
+                      }}
+                    >
+                      Stress {workout.preSessionStress}/10
+                    </span>
+                  )}
+                  {workout.preSessionSoreness != null && (
+                    <span
+                      className="scale-badge"
+                      style={{
+                        background: "rgba(167,139,250,0.12)",
+                        color: "#a78bfa",
+                        border: "1px solid rgba(167,139,250,0.28)",
+                      }}
+                    >
+                      Soreness {workout.preSessionSoreness}/10
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
+            {(workout.painRating != null ||
+              workout.postSessionEnergy != null) && (
+              <>
+                <div className="history-session-label" style={{ marginTop: 8 }}>
+                  Post-session
+                </div>
+                <div className="scales-row">
+                  {workout.painRating != null && (
+                    <Badge colorScheme="red" variant="subtle">
+                      Pain {workout.painRating}/10
+                    </Badge>
+                  )}
+                  {workout.postSessionEnergy != null && (
+                    <Badge colorScheme="pink" variant="subtle">
+                      Energy {workout.postSessionEnergy}/10
+                    </Badge>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
       </button>
 
-      {open && workout.exerciseLinks.length > 0 && (
+      {open && (
         <div className="history-exercises">
-          {workout.exerciseLinks.map(({ exercise }) => (
-            <div key={exercise.id} className="history-ex-card">
-              <div className="history-ex-card-name">{exercise.name}</div>
-              <div className="history-ex-set-rows">
-                <div className="history-ex-set-row">
-                  <span className="history-ex-set-label">PLAN</span>
-                  <span className="history-ex-set-val">
-                    {exercise.type === "duration"
-                      ? exercise.durationSeconds
-                      : exercise.reps}
-                    <span className="history-ex-set-unit">
-                      {exercise.type === "duration" ? "SEC" : "REPS"}
-                    </span>
-                  </span>
-                  <span className="history-ex-set-weight">
-                    {exercise.sets} sets
-                  </span>
-                  <span />
+          {workout.exerciseLinks.map(({ exercise }) => {
+            const exSets = (setsByExercise.get(exercise.id) ?? []).filter(
+              (s) => s.completed || (s.metadata as SetMeta as { cancelled?: boolean })?.cancelled,
+            );
+            return (
+              <div key={exercise.id} className="history-ex-card">
+                <div className="history-ex-card-name">{exercise.name}</div>
+                <div className="history-ex-set-rows">
+                  {exSets.length === 0 ? (
+                    <div
+                      style={{
+                        padding: "8px 10px",
+                        fontSize: 11,
+                        color: "var(--color-text-dim)",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      No sets completed
+                    </div>
+                  ) : (
+                    exSets.map((s) => {
+                      const status = getSetStatus(s.completed, s.metadata);
+                      const unit =
+                        exercise.type === "duration" ? "SEC" : "REPS";
+                      const val =
+                        exercise.type === "duration"
+                          ? s.durationSeconds
+                          : s.reps;
+                      return (
+                        <div
+                          key={s.id}
+                          className={`history-ex-set-row${status === "cancelled" ? " cancelled" : ""}`}
+                        >
+                          <span className="history-ex-set-label">
+                            SET {s.position + 1}
+                          </span>
+                          <span className="history-ex-set-val">
+                            {val ?? "—"}
+                            <span className="history-ex-set-unit"> {unit}</span>
+                          </span>
+                          <span className="history-ex-set-weight">
+                            {s.weightLbs != null && s.weightLbs > 0
+                              ? `${s.weightLbs} lbs`
+                              : ""}
+                          </span>
+                          <SetCheck status={status} />
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

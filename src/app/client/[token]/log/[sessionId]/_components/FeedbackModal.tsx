@@ -12,6 +12,9 @@ interface Props {
   planId: string;
   sets: SetInput[];
   duration: number;
+  preEnergy: number | null;
+  preStress: number | null;
+  preSoreness: number | null;
   onCancel: () => void;
 }
 
@@ -28,6 +31,9 @@ export function FeedbackModal({
   planId,
   sets,
   duration,
+  preEnergy,
+  preStress,
+  preSoreness,
   onCancel,
 }: Props) {
   const [pain, setPain] = useState<number | null>(null);
@@ -42,6 +48,9 @@ export function FeedbackModal({
       const result = await completeWorkout(token, planId, {
         pain,
         energy,
+        preEnergy,
+        preStress,
+        preSoreness,
         comment,
         durationSeconds: duration,
         sets,
@@ -88,7 +97,7 @@ export function FeedbackModal({
                 key={n}
                 type="button"
                 className={`scale-btn${pain === n ? " active-pain" : ""}`}
-                onClick={() => setPain(n)}
+                onClick={() => setPain(pain === n ? null : n)}
               >
                 {n}
               </button>
@@ -108,7 +117,7 @@ export function FeedbackModal({
                 key={n}
                 type="button"
                 className={`scale-btn${energy === n ? " active-energy" : ""}`}
-                onClick={() => setEnergy(n)}
+                onClick={() => setEnergy(energy === n ? null : n)}
               >
                 {n}
               </button>

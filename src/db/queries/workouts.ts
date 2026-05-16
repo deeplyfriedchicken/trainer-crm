@@ -9,6 +9,8 @@ export type SetInput = {
   durationSeconds?: number | null;
   weightLbs?: number | null;
   completed: boolean;
+  cancelled?: boolean;
+  wasPaused?: boolean;
   startedAt?: Date | null;
   endedAt?: Date | null;
   rpe?: number | null;
@@ -128,6 +130,10 @@ export async function createWorkout({
           durationSeconds: s.durationSeconds ?? null,
           weightLbs: s.weightLbs ?? null,
           completed: s.completed,
+          metadata:
+            s.cancelled ? { cancelled: true }
+            : s.wasPaused ? { wasPaused: true }
+            : null,
           startedAt: s.startedAt ?? null,
           endedAt: s.endedAt ?? null,
           rpe: s.rpe ?? null,

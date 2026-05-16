@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { createMessage } from "@/db/queries/chats";
-import { createWorkout, type ExerciseLogEntry } from "@/db/queries/workouts";
+import { createWorkout, type SetInput } from "@/db/queries/workouts";
 import { users } from "@/db/schema";
 import { hashPin, verifyPin } from "@/lib/client-pin";
 import {
@@ -95,7 +95,7 @@ export async function completeWorkout(
     energy: number | null;
     comment: string;
     durationSeconds: number;
-    exerciseLogs: ExerciseLogEntry[];
+    sets: SetInput[];
   },
 ): Promise<{ error?: string }> {
   const traineeId = decryptUserId(token);
@@ -110,9 +110,9 @@ export async function completeWorkout(
     workoutPlanId: planId,
     durationSeconds: Math.max(0, feedback.durationSeconds),
     painRating: feedback.pain,
-    energyRating: feedback.energy,
+    postSessionEnergy: feedback.energy,
     comment: feedback.comment || null,
-    exerciseLogs: feedback.exerciseLogs,
+    sets: feedback.sets,
     createdBy: traineeId,
   });
 

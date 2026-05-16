@@ -62,6 +62,20 @@ export async function PATCH(
   if (!existing)
     return Response.json({ error: "Plan not found" }, { status: 404 });
 
+  if (
+    (existing.versionStatus === "published" ||
+      existing.versionStatus === "archived") &&
+    body.exercises !== undefined
+  ) {
+    return Response.json(
+      {
+        error:
+          "Cannot edit exercises of a published plan. Publish a new version instead.",
+      },
+      { status: 400 },
+    );
+  }
+
   const plan = await updateWorkoutPlan({
     planId: id,
     name: body.name.trim(),

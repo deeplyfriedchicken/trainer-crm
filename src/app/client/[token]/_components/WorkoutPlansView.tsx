@@ -148,7 +148,7 @@ function HistoryCard({ workout }: { workout: Workout }) {
             </span>
           </div>
         </div>
-        {(workout.comment || workout.painRating || workout.energyRating) && (
+        {(workout.comment || workout.painRating || workout.postSessionEnergy) && (
           <div className="history-feedback">
             {workout.comment && (
               <div className="history-comment">"{workout.comment}"</div>
@@ -159,9 +159,9 @@ function HistoryCard({ workout }: { workout: Workout }) {
                   Pain {workout.painRating}/10
                 </Badge>
               )}
-              {workout.energyRating != null && (
+              {workout.postSessionEnergy != null && (
                 <Badge colorScheme="pink" variant="subtle">
-                  Energy {workout.energyRating}/10
+                  Energy {workout.postSessionEnergy}/10
                 </Badge>
               )}
             </div>
@@ -171,56 +171,25 @@ function HistoryCard({ workout }: { workout: Workout }) {
 
       {open && workout.exerciseLinks.length > 0 && (
         <div className="history-exercises">
-          {workout.exerciseLinks.map(({ exercise, setsData }) => (
+          {workout.exerciseLinks.map(({ exercise }) => (
             <div key={exercise.id} className="history-ex-card">
               <div className="history-ex-card-name">{exercise.name}</div>
               <div className="history-ex-set-rows">
-                {setsData && setsData.length > 0 ? (
-                  setsData.map((s, i) => {
-                    const isDur = s.durationSeconds != null;
-                    return (
-                      <div
-                        // biome-ignore lint/suspicious/noArrayIndexKey: setsData items are raw JSONB with no stable ID; this list is read-only and never reordered
-                        key={i}
-                        className={`history-ex-set-row${!s.completed ? " skipped" : ""}`}
-                      >
-                        <span className="history-ex-set-label">
-                          SET {i + 1}
-                        </span>
-                        <span className="history-ex-set-val">
-                          {isDur ? s.durationSeconds : s.reps}
-                          <span className="history-ex-set-unit">
-                            {isDur ? "SEC" : "REPS"}
-                          </span>
-                        </span>
-                        <span className="history-ex-set-weight">
-                          {s.weightLbs ? `${s.weightLbs} lbs` : "—"}
-                        </span>
-                        {s.completed ? (
-                          <span className="history-ex-set-check">✓</span>
-                        ) : (
-                          <span className="history-ex-set-skip">✕</span>
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="history-ex-set-row">
-                    <span className="history-ex-set-label">PLAN</span>
-                    <span className="history-ex-set-val">
-                      {exercise.type === "duration"
-                        ? exercise.durationSeconds
-                        : exercise.reps}
-                      <span className="history-ex-set-unit">
-                        {exercise.type === "duration" ? "SEC" : "REPS"}
-                      </span>
+                <div className="history-ex-set-row">
+                  <span className="history-ex-set-label">PLAN</span>
+                  <span className="history-ex-set-val">
+                    {exercise.type === "duration"
+                      ? exercise.durationSeconds
+                      : exercise.reps}
+                    <span className="history-ex-set-unit">
+                      {exercise.type === "duration" ? "SEC" : "REPS"}
                     </span>
-                    <span className="history-ex-set-weight">
-                      {exercise.sets} sets
-                    </span>
-                    <span />
-                  </div>
-                )}
+                  </span>
+                  <span className="history-ex-set-weight">
+                    {exercise.sets} sets
+                  </span>
+                  <span />
+                </div>
               </div>
             </div>
           ))}

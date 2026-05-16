@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { ExerciseLogEntry } from "@/db/queries/workouts";
+import type { SetInput } from "@/db/queries/workouts";
 import { BottomSheet } from "@/app/components/BottomSheet";
 import { Button } from "@/app/components/Button";
 import { Textarea } from "@/app/components/Textarea";
@@ -10,7 +10,7 @@ import { completeWorkout } from "../../../actions";
 interface Props {
   token: string;
   planId: string;
-  exerciseLogs: ExerciseLogEntry[];
+  sets: SetInput[];
   duration: number;
   onCancel: () => void;
 }
@@ -26,7 +26,7 @@ function fmtDuration(secs: number): string {
 export function FeedbackModal({
   token,
   planId,
-  exerciseLogs,
+  sets,
   duration,
   onCancel,
 }: Props) {
@@ -44,7 +44,7 @@ export function FeedbackModal({
         energy,
         comment,
         durationSeconds: duration,
-        exerciseLogs,
+        sets,
       });
       if (result?.error) setError(result.error);
     });

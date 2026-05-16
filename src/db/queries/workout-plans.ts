@@ -1,6 +1,11 @@
 import { eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
-import { exercises, exerciseVideos, workoutPlans } from "@/db/schema";
+import {
+  exercises,
+  exerciseVideos,
+  workoutPlanGroups,
+  workoutPlans,
+} from "@/db/schema";
 
 export type ExerciseInput = {
   id?: string;
@@ -10,11 +15,12 @@ export type ExerciseInput = {
   reps?: number | null;
   durationSeconds?: number | null;
   weightLbs?: number | null;
+  isHidden?: boolean;
   comment?: string | null;
   videoIds?: string[];
 };
 
-async function insertExercises(
+export async function insertExercises(
   tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
   workoutPlanId: string,
   inputs: { input: ExerciseInput; position: number }[],
@@ -33,6 +39,7 @@ async function insertExercises(
           ex.type === "duration" ? (ex.durationSeconds ?? null) : null,
         weightLbs: ex.weightLbs ?? null,
         position,
+        isHidden: ex.isHidden ?? false,
         comment: ex.comment ?? null,
         createdBy: userId,
         updatedBy: userId,
@@ -57,6 +64,7 @@ export async function createWorkoutPlan({
   comment,
   createdBy,
   exerciseInputs,
+  workoutPlanGroupId,
 }: {
   traineeId: string;
   name: string;
@@ -64,15 +72,29 @@ export async function createWorkoutPlan({
   comment?: string | null;
   createdBy: string;
   exerciseInputs: ExerciseInput[];
+  workoutPlanGroupId?: string;
 }) {
   return db.transaction(async (tx) => {
+    // Auto-create a group if one wasn't supplied.
+    let groupId = workoutPlanGroupId;
+    if (!groupId) {
+      const [group] = await tx
+        .insert(workoutPlanGroups)
+        .values({ traineeId, name, createdBy, updatedBy: createdBy })
+        .returning();
+      groupId = group.id;
+    }
+
     const [plan] = await tx
       .insert(workoutPlans)
       .values({
         traineeId,
+        workoutPlanGroupId: groupId,
         name,
         occurredAt,
         comment: comment ?? null,
+        versionStatus: "draft",
+        versionNumber: 1,
         createdBy,
         updatedBy: createdBy,
       })
@@ -84,6 +106,13 @@ export async function createWorkoutPlan({
       exerciseInputs.map((input, position) => ({ input, position })),
       createdBy,
     );
+
+    // Point the group at this first plan as its current version.
+    await tx
+      .update(workoutPlanGroups)
+      .set({ currentVersionId: plan.id, updatedBy: createdBy })
+      .where(eq(workoutPlanGroups.id, groupId));
+
     return plan;
   });
 }
@@ -110,9 +139,6 @@ export async function updateWorkoutPlan({
       .where(eq(workoutPlans.id, planId))
       .returning();
 
-    // Tag each input with its array index — that index is the new `position`,
-    // applied to both updates and inserts so the array order becomes the
-    // canonical display order.
     const indexed = exerciseInputs.map((input, position) => ({
       input,
       position,
@@ -121,7 +147,6 @@ export async function updateWorkoutPlan({
     const toInsert = indexed.filter((e) => e.input.id == null);
     const retainedIds = new Set(toUpdate.map((e) => e.input.id!));
 
-    // Fetch current active exercises to find which ones were removed.
     // Soft-delete removed exercises instead of hard-deleting — hard deletes
     // cascade into workout_exercises and permanently erase logged workout history.
     const current = await tx
@@ -140,8 +165,6 @@ export async function updateWorkoutPlan({
         .where(inArray(exercises.id, toSoftDelete));
     }
 
-    // Update existing exercises in place — preserves their IDs so
-    // workout_exercises rows (logged workout history) remain linked.
     for (const { input: ex, position } of toUpdate) {
       await tx
         .update(exercises)
@@ -154,6 +177,7 @@ export async function updateWorkoutPlan({
             ex.type === "duration" ? (ex.durationSeconds ?? null) : null,
           weightLbs: ex.weightLbs ?? null,
           position,
+          isHidden: ex.isHidden ?? false,
           comment: ex.comment ?? null,
           deletedAt: null,
           updatedBy,

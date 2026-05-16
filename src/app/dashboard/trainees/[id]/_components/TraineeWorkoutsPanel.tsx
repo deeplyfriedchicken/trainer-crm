@@ -186,10 +186,10 @@ export function TraineeWorkoutsPanel({
                   >
                     <LuClock size={10} /> {fmtDuration(w.durationSeconds)}
                   </span>
-                  {w.energyRating != null && (
+                  {w.postSessionEnergy != null && (
                     <RatingBadge
                       label="Energy"
-                      value={w.energyRating}
+                      value={w.postSessionEnergy}
                       color={accentColor}
                     />
                   )}
@@ -244,7 +244,7 @@ export function TraineeWorkoutsPanel({
                       marginTop: w.comment ? 8 : 12,
                     }}
                   >
-                    {w.exerciseLinks.map(({ exercise, setsData }) => (
+                    {w.exerciseLinks.map(({ exercise }) => (
                       <div
                         key={exercise.id}
                         style={{
@@ -268,131 +268,55 @@ export function TraineeWorkoutsPanel({
                         >
                           {exercise.name}
                         </div>
-                        <div>
-                          {setsData && setsData.length > 0 ? (
-                            setsData.map((s, i) => {
-                              const isDur = s.durationSeconds != null;
-                              return (
-                                <div
-                                  key={i}
-                                  style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "42px 1fr 1fr 20px",
-                                    alignItems: "center",
-                                    gap: 8,
-                                    padding: "5px 12px",
-                                    borderBottom:
-                                      i < setsData.length - 1
-                                        ? "1px solid rgba(255,255,255,0.04)"
-                                        : "none",
-                                    opacity: s.completed ? 1 : 0.35,
-                                    fontFamily: "var(--font-mono)",
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      fontSize: 9,
-                                      fontWeight: 700,
-                                      color: "rgba(255,255,255,0.3)",
-                                    }}
-                                  >
-                                    SET {i + 1}
-                                  </span>
-                                  <span
-                                    style={{
-                                      fontSize: 12,
-                                      fontWeight: 700,
-                                      color: "#fff",
-                                    }}
-                                  >
-                                    {isDur ? s.durationSeconds : s.reps}
-                                    <span
-                                      style={{
-                                        fontSize: 9,
-                                        color: "rgba(255,255,255,0.35)",
-                                        marginLeft: 3,
-                                        fontWeight: 400,
-                                      }}
-                                    >
-                                      {isDur ? "SEC" : "REPS"}
-                                    </span>
-                                  </span>
-                                  <span
-                                    style={{
-                                      fontSize: 11,
-                                      color: "rgba(255,255,255,0.4)",
-                                    }}
-                                  >
-                                    {s.weightLbs ? `${s.weightLbs} lbs` : "—"}
-                                  </span>
-                                  <span
-                                    style={{
-                                      fontSize: 11,
-                                      color: s.completed
-                                        ? accentColor
-                                        : "rgba(255,255,255,0.2)",
-                                      justifySelf: "end",
-                                    }}
-                                  >
-                                    {s.completed ? "✓" : "✕"}
-                                  </span>
-                                </div>
-                              );
-                            })
-                          ) : (
-                            <div
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "42px 1fr 1fr 20px",
+                            alignItems: "center",
+                            gap: 8,
+                            padding: "5px 12px",
+                            fontFamily: "var(--font-mono)",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: 9,
+                              fontWeight: 700,
+                              color: "rgba(255,255,255,0.3)",
+                            }}
+                          >
+                            PLAN
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 700,
+                              color: "#fff",
+                            }}
+                          >
+                            {exercise.type === "duration"
+                              ? exercise.durationSeconds
+                              : exercise.reps}
+                            <span
                               style={{
-                                display: "grid",
-                                gridTemplateColumns: "42px 1fr 1fr 20px",
-                                alignItems: "center",
-                                gap: 8,
-                                padding: "5px 12px",
-                                fontFamily: "var(--font-mono)",
+                                fontSize: 9,
+                                color: "rgba(255,255,255,0.35)",
+                                marginLeft: 3,
+                                fontWeight: 400,
                               }}
                             >
-                              <span
-                                style={{
-                                  fontSize: 9,
-                                  fontWeight: 700,
-                                  color: "rgba(255,255,255,0.3)",
-                                }}
-                              >
-                                PLAN
-                              </span>
-                              <span
-                                style={{
-                                  fontSize: 12,
-                                  fontWeight: 700,
-                                  color: "#fff",
-                                }}
-                              >
-                                {exercise.type === "duration"
-                                  ? exercise.durationSeconds
-                                  : exercise.reps}
-                                <span
-                                  style={{
-                                    fontSize: 9,
-                                    color: "rgba(255,255,255,0.35)",
-                                    marginLeft: 3,
-                                    fontWeight: 400,
-                                  }}
-                                >
-                                  {exercise.type === "duration"
-                                    ? "SEC"
-                                    : "REPS"}
-                                </span>
-                              </span>
-                              <span
-                                style={{
-                                  fontSize: 11,
-                                  color: "rgba(255,255,255,0.4)",
-                                }}
-                              >
-                                {exercise.sets} sets
-                              </span>
-                              <span />
-                            </div>
-                          )}
+                              {exercise.type === "duration" ? "SEC" : "REPS"}
+                            </span>
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 11,
+                              color: "rgba(255,255,255,0.4)",
+                            }}
+                          >
+                            {exercise.sets} sets
+                          </span>
+                          <span />
                         </div>
                       </div>
                     ))}

@@ -3,6 +3,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   type AnyPgColumn,
   bigint,
+  boolean,
   check,
   index,
   integer,
@@ -36,6 +37,15 @@ const authorship = {
     .notNull()
     .references((): AnyPgColumn => users.id, { onDelete: "restrict" }),
   updatedBy: text("updated_by")
+    .notNull()
+    .references((): AnyPgColumn => users.id, { onDelete: "restrict" }),
+};
+
+const createdByOnly = {
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  createdBy: text("created_by")
     .notNull()
     .references((): AnyPgColumn => users.id, { onDelete: "restrict" }),
 };
@@ -122,6 +132,30 @@ export const videos = pgTable(
   ],
 );
 
+/* ──────────────────── Workout Plan Groups ──────────────────────── */
+// Declared before workoutPlans to allow the lazy circular FK on currentVersionId.
+
+export const workoutPlanGroups = pgTable(
+  "workout_plan_groups",
+  {
+    id: id(),
+    traineeId: text("trainee_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    currentVersionId: text("current_version_id").references(
+      (): AnyPgColumn => workoutPlans.id,
+      { onDelete: "set null" },
+    ),
+    ...timestamps,
+    ...authorship,
+  },
+  (t) => [
+    index("workout_plan_groups_trainee_idx").on(t.traineeId),
+    index("workout_plan_groups_current_version_idx").on(t.currentVersionId),
+  ],
+);
+
 /* ───────────────────── Workout Plans ───────────────────── */
 
 export const workoutPlans = pgTable(
@@ -131,15 +165,23 @@ export const workoutPlans = pgTable(
     traineeId: text("trainee_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    workoutPlanGroupId: text("workout_plan_group_id").references(
+      () => workoutPlanGroups.id,
+      { onDelete: "cascade" },
+    ),
     name: text("name").notNull().default(""),
     occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
     comment: text("comment"),
+    versionStatus: text("version_status").notNull().default("draft"),
+    versionNumber: integer("version_number").notNull().default(1),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
     ...authorship,
   },
   (t) => [
     index("workout_plans_trainee_idx").on(t.traineeId),
+    index("workout_plans_group_idx").on(t.workoutPlanGroupId),
     index("workout_plans_occurred_at_idx").on(t.occurredAt),
     index("workout_plans_created_by_idx").on(t.createdBy),
   ],
@@ -166,6 +208,7 @@ export const exercises = pgTable(
     weightLbs: real("weight_lbs"),
     position: integer("position").notNull(),
     comment: text("comment"),
+    isHidden: boolean("is_hidden").notNull().default(false),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
     ...authorship,
@@ -237,8 +280,31 @@ export const workouts = pgTable(
     }),
     durationSeconds: integer("duration_seconds").notNull(),
     painRating: integer("pain_rating"),
-    energyRating: integer("energy_rating"),
+    preSessionEnergy: integer("pre_session_energy"),
+    preSessionSoreness: integer("pre_session_soreness"),
+    preSessionStress: integer("pre_session_stress"),
+    preSessionNote: text("pre_session_note"),
+    postSessionEnergy: integer("post_session_energy"),
+    sessionQuality: integer("session_quality"),
+    sessionQualityRatedBy: text("session_quality_rated_by").references(
+      () => users.id,
+      { onDelete: "set null" },
+    ),
+    sessionQualityRatedAt: timestamp("session_quality_rated_at", {
+      withTimezone: true,
+    }),
+    traineeRating: integer("trainee_rating"),
+    traineeRatingRatedAt: timestamp("trainee_rating_rated_at", {
+      withTimezone: true,
+    }),
+    totalVolumeLbs: real("total_volume_lbs"),
+    totalWorkSeconds: integer("total_work_seconds"),
+    totalRestSeconds: integer("total_rest_seconds"),
+    adherencePercent: real("adherence_percent"),
+    averageRpe: real("average_rpe"),
+    painFlagCount: integer("pain_flag_count"),
     comment: text("comment"),
+    metadata: jsonb("metadata"),
     ...timestamps,
     ...authorship,
   },
@@ -247,24 +313,37 @@ export const workouts = pgTable(
     index("workouts_plan_idx").on(t.workoutPlanId),
     index("workouts_created_at_idx").on(t.createdAt),
     check(
-      "workouts_energy_rating_range",
-      sql`${t.energyRating} IS NULL OR (${t.energyRating} BETWEEN 1 AND 10)`,
-    ),
-    check(
       "workouts_pain_rating_range",
       sql`${t.painRating} IS NULL OR (${t.painRating} BETWEEN 1 AND 10)`,
+    ),
+    check(
+      "workouts_post_session_energy_range",
+      sql`${t.postSessionEnergy} IS NULL OR (${t.postSessionEnergy} BETWEEN 1 AND 10)`,
+    ),
+    check(
+      "workouts_pre_session_energy_range",
+      sql`${t.preSessionEnergy} IS NULL OR (${t.preSessionEnergy} BETWEEN 1 AND 10)`,
+    ),
+    check(
+      "workouts_pre_session_soreness_range",
+      sql`${t.preSessionSoreness} IS NULL OR (${t.preSessionSoreness} BETWEEN 1 AND 10)`,
+    ),
+    check(
+      "workouts_pre_session_stress_range",
+      sql`${t.preSessionStress} IS NULL OR (${t.preSessionStress} BETWEEN 1 AND 10)`,
+    ),
+    check(
+      "workouts_session_quality_range",
+      sql`${t.sessionQuality} IS NULL OR (${t.sessionQuality} BETWEEN 1 AND 10)`,
+    ),
+    check(
+      "workouts_trainee_rating_range",
+      sql`${t.traineeRating} IS NULL OR (${t.traineeRating} BETWEEN 1 AND 10)`,
     ),
   ],
 );
 
 /* ──────────────── Workout ↔ Exercise links ─────────────────────── */
-
-export type WorkoutSetLog = {
-  reps?: number;
-  durationSeconds?: number;
-  weightLbs?: number;
-  completed: boolean;
-};
 
 export const workoutExercises = pgTable(
   "workout_exercises",
@@ -275,7 +354,6 @@ export const workoutExercises = pgTable(
     exerciseId: text("exercise_id")
       .notNull()
       .references(() => exercises.id, { onDelete: "cascade" }),
-    setsData: jsonb("sets_data").$type<WorkoutSetLog[]>(),
     ...timestamps,
     ...authorship,
   },
@@ -283,6 +361,106 @@ export const workoutExercises = pgTable(
     primaryKey({ columns: [t.workoutId, t.exerciseId] }),
     index("workout_exercises_exercise_idx").on(t.exerciseId),
     index("workout_exercises_created_by_idx").on(t.createdBy),
+  ],
+);
+
+/* ───────────────────────── Workout Sets ───────────────────────── */
+
+export const workoutSets = pgTable(
+  "workout_sets",
+  {
+    id: id(),
+    workoutId: text("workout_id")
+      .notNull()
+      .references(() => workouts.id, { onDelete: "cascade" }),
+    exerciseId: text("exercise_id")
+      .notNull()
+      .references(() => exercises.id, { onDelete: "cascade" }),
+    position: integer("position").notNull(),
+    reps: integer("reps"),
+    durationSeconds: integer("duration_seconds"),
+    weightLbs: real("weight_lbs"),
+    completed: boolean("completed").notNull().default(false),
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    endedAt: timestamp("ended_at", { withTimezone: true }),
+    rpe: integer("rpe"),
+    rir: integer("rir"),
+    videoId: text("video_id").references(() => videos.id, {
+      onDelete: "set null",
+    }),
+    comment: text("comment"),
+    metadata: jsonb("metadata"),
+    ...timestamps,
+    ...authorship,
+  },
+  (t) => [
+    index("workout_sets_workout_exercise_idx").on(
+      t.workoutId,
+      t.exerciseId,
+      t.position,
+    ),
+    index("workout_sets_workout_idx").on(t.workoutId),
+    index("workout_sets_exercise_idx").on(t.exerciseId),
+    index("workout_sets_video_idx").on(t.videoId),
+    check(
+      "workout_sets_rpe_range",
+      sql`${t.rpe} IS NULL OR (${t.rpe} BETWEEN 1 AND 10)`,
+    ),
+    check(
+      "workout_sets_rir_range",
+      sql`${t.rir} IS NULL OR (${t.rir} BETWEEN 0 AND 10)`,
+    ),
+  ],
+);
+
+/* ───────────────────────── Pain Flags ─────────────────────────── */
+
+export const painFlags = pgTable(
+  "pain_flags",
+  {
+    id: id(),
+    workoutId: text("workout_id")
+      .notNull()
+      .references(() => workouts.id, { onDelete: "cascade" }),
+    exerciseId: text("exercise_id").references(() => exercises.id, {
+      onDelete: "set null",
+    }),
+    workoutSetId: text("workout_set_id").references(() => workoutSets.id, {
+      onDelete: "set null",
+    }),
+    location: text("location").notNull(),
+    severity: integer("severity").notNull(),
+    isRecurring: boolean("is_recurring").notNull().default(false),
+    note: text("note"),
+    ...createdByOnly,
+  },
+  (t) => [
+    index("pain_flags_workout_idx").on(t.workoutId),
+    index("pain_flags_exercise_idx").on(t.exerciseId),
+    index("pain_flags_workout_set_idx").on(t.workoutSetId),
+    check(
+      "pain_flags_severity_range",
+      sql`${t.severity} BETWEEN 1 AND 10`,
+    ),
+  ],
+);
+
+/* ───────────────────────── Workout Tags ───────────────────────── */
+
+export const workoutTags = pgTable(
+  "workout_tags",
+  {
+    workoutId: text("workout_id")
+      .notNull()
+      .references(() => workouts.id, { onDelete: "cascade" }),
+    tagId: text("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
+    ...createdByOnly,
+  },
+  (t) => [
+    primaryKey({ columns: [t.workoutId, t.tagId] }),
+    index("workout_tags_tag_idx").on(t.tagId),
   ],
 );
 
@@ -383,7 +561,7 @@ export const pushSubscriptions = pgTable(
   ],
 );
 
-/* ─────────────────────────── Video Tags ────────────────────────── */
+/* ─────────────────────────── Tags ─────────────────────────────── */
 
 export const tags = pgTable(
   "tags",
@@ -422,6 +600,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   roles: many(userRoles),
   uploadedVideos: many(videos, { relationName: "videos_uploader" }),
   directVideos: many(videos, { relationName: "videos_trainee" }),
+  workoutPlanGroups: many(workoutPlanGroups, {
+    relationName: "workout_plan_groups_trainee",
+  }),
   workoutPlans: many(workoutPlans, { relationName: "workout_plans_trainee" }),
   workouts: many(workouts, { relationName: "workouts_trainee" }),
 }));
@@ -445,11 +626,44 @@ export const videosRelations = relations(videos, ({ one, many }) => ({
   workoutPlanLinks: many(workoutPlanVideos),
   workoutLinks: many(workoutVideos),
   videoTags: many(videoTags),
+  workoutSets: many(workoutSets),
 }));
+
+export const workoutPlanGroupsRelations = relations(
+  workoutPlanGroups,
+  ({ one, many }) => ({
+    trainee: one(users, {
+      fields: [workoutPlanGroups.traineeId],
+      references: [users.id],
+      relationName: "workout_plan_groups_trainee",
+    }),
+    currentVersion: one(workoutPlans, {
+      fields: [workoutPlanGroups.currentVersionId],
+      references: [workoutPlans.id],
+      relationName: "workout_plan_groups_current_version",
+    }),
+    versions: many(workoutPlans, { relationName: "workout_plans_group" }),
+    creator: one(users, {
+      fields: [workoutPlanGroups.createdBy],
+      references: [users.id],
+      relationName: "workout_plan_groups_creator",
+    }),
+    updater: one(users, {
+      fields: [workoutPlanGroups.updatedBy],
+      references: [users.id],
+      relationName: "workout_plan_groups_updater",
+    }),
+  }),
+);
 
 export const workoutPlansRelations = relations(
   workoutPlans,
   ({ one, many }) => ({
+    group: one(workoutPlanGroups, {
+      fields: [workoutPlans.workoutPlanGroupId],
+      references: [workoutPlanGroups.id],
+      relationName: "workout_plans_group",
+    }),
     trainee: one(users, {
       fields: [workoutPlans.traineeId],
       references: [users.id],
@@ -502,6 +716,8 @@ export const exercisesRelations = relations(exercises, ({ one, many }) => ({
   }),
   videoLinks: many(exerciseVideos),
   workoutLinks: many(workoutExercises),
+  sets: many(workoutSets),
+  painFlags: many(painFlags),
 }));
 
 export const exerciseVideosRelations = relations(exerciseVideos, ({ one }) => ({
@@ -535,8 +751,16 @@ export const workoutsRelations = relations(workouts, ({ one, many }) => ({
     references: [users.id],
     relationName: "workouts_updater",
   }),
+  sessionQualityRater: one(users, {
+    fields: [workouts.sessionQualityRatedBy],
+    references: [users.id],
+    relationName: "workouts_session_quality_rater",
+  }),
   exerciseLinks: many(workoutExercises),
   videoLinks: many(workoutVideos),
+  sets: many(workoutSets),
+  painFlags: many(painFlags),
+  tags: many(workoutTags),
 }));
 
 export const workoutExercisesRelations = relations(
@@ -552,6 +776,67 @@ export const workoutExercisesRelations = relations(
     }),
   }),
 );
+
+export const workoutSetsRelations = relations(workoutSets, ({ one }) => ({
+  workout: one(workouts, {
+    fields: [workoutSets.workoutId],
+    references: [workouts.id],
+  }),
+  exercise: one(exercises, {
+    fields: [workoutSets.exerciseId],
+    references: [exercises.id],
+  }),
+  video: one(videos, {
+    fields: [workoutSets.videoId],
+    references: [videos.id],
+  }),
+  creator: one(users, {
+    fields: [workoutSets.createdBy],
+    references: [users.id],
+    relationName: "workout_sets_creator",
+  }),
+  updater: one(users, {
+    fields: [workoutSets.updatedBy],
+    references: [users.id],
+    relationName: "workout_sets_updater",
+  }),
+}));
+
+export const painFlagsRelations = relations(painFlags, ({ one }) => ({
+  workout: one(workouts, {
+    fields: [painFlags.workoutId],
+    references: [workouts.id],
+  }),
+  exercise: one(exercises, {
+    fields: [painFlags.exerciseId],
+    references: [exercises.id],
+  }),
+  workoutSet: one(workoutSets, {
+    fields: [painFlags.workoutSetId],
+    references: [workoutSets.id],
+  }),
+  creator: one(users, {
+    fields: [painFlags.createdBy],
+    references: [users.id],
+    relationName: "pain_flags_creator",
+  }),
+}));
+
+export const workoutTagsRelations = relations(workoutTags, ({ one }) => ({
+  workout: one(workouts, {
+    fields: [workoutTags.workoutId],
+    references: [workouts.id],
+  }),
+  tag: one(tags, {
+    fields: [workoutTags.tagId],
+    references: [tags.id],
+  }),
+  creator: one(users, {
+    fields: [workoutTags.createdBy],
+    references: [users.id],
+    relationName: "workout_tags_creator",
+  }),
+}));
 
 export const workoutVideosRelations = relations(workoutVideos, ({ one }) => ({
   workout: one(workouts, {
@@ -587,6 +872,7 @@ export const messagesRelations = relations(messages, ({ one }) => ({
 
 export const tagsRelations = relations(tags, ({ many }) => ({
   videoTags: many(videoTags),
+  workoutTags: many(workoutTags),
 }));
 
 export const videoTagsRelations = relations(videoTags, ({ one }) => ({
@@ -623,6 +909,8 @@ export type Video = typeof videos.$inferSelect;
 export type NewVideo = typeof videos.$inferInsert;
 export type VideoStatus = (typeof videoStatus.enumValues)[number];
 export type ExerciseType = (typeof exerciseType.enumValues)[number];
+export type WorkoutPlanGroup = typeof workoutPlanGroups.$inferSelect;
+export type NewWorkoutPlanGroup = typeof workoutPlanGroups.$inferInsert;
 export type WorkoutPlan = typeof workoutPlans.$inferSelect;
 export type NewWorkoutPlan = typeof workoutPlans.$inferInsert;
 export type Exercise = typeof exercises.$inferSelect;
@@ -635,6 +923,12 @@ export type Workout = typeof workouts.$inferSelect;
 export type NewWorkout = typeof workouts.$inferInsert;
 export type WorkoutExercise = typeof workoutExercises.$inferSelect;
 export type NewWorkoutExercise = typeof workoutExercises.$inferInsert;
+export type WorkoutSet = typeof workoutSets.$inferSelect;
+export type NewWorkoutSet = typeof workoutSets.$inferInsert;
+export type PainFlag = typeof painFlags.$inferSelect;
+export type NewPainFlag = typeof painFlags.$inferInsert;
+export type WorkoutTag = typeof workoutTags.$inferSelect;
+export type NewWorkoutTag = typeof workoutTags.$inferInsert;
 export type WorkoutVideo = typeof workoutVideos.$inferSelect;
 export type NewWorkoutVideo = typeof workoutVideos.$inferInsert;
 export type Chat = typeof chats.$inferSelect;

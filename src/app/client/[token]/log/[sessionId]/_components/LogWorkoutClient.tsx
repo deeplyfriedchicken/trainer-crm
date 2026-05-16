@@ -210,17 +210,18 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
     year: "numeric",
   });
 
-  const buildExerciseLogs = () =>
-    plan.exercises.map((ex, exIdx) => ({
-      exerciseId: ex.id,
-      sets: log[exIdx].sets.map((s) => ({
+  const buildSets = () =>
+    plan.exercises.flatMap((ex, exIdx) =>
+      log[exIdx].sets.map((s, setIdx) => ({
+        exerciseId: ex.id,
+        position: setIdx,
         ...(ex.type === "duration"
           ? { durationSeconds: s.reps }
           : { reps: s.reps }),
         ...(s.weightLbs > 0 ? { weightLbs: s.weightLbs } : {}),
         completed: s.completed,
       })),
-    }));
+    );
 
   return (
     <div className="client-page">
@@ -345,7 +346,7 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
         <FeedbackModal
           token={token}
           planId={plan.id}
-          exerciseLogs={buildExerciseLogs()}
+          sets={buildSets()}
           duration={elapsed}
           onCancel={() => setShowFeedback(false)}
         />

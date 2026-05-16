@@ -10,7 +10,7 @@ import { Sidebar } from "./_components/Sidebar";
 import { Topbar } from "./_components/Topbar";
 import "./crm.css";
 
-const OG_IMAGE = "https://tbd.fit/wp-content/uploads/2025/03/tbd-logo-1000.png";
+const OG_IMAGE = "/og-image.jpg";
 const DESCRIPTION =
   "Personal training grounded in physical therapy, from recovery to peak performance";
 

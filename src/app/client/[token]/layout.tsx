@@ -12,7 +12,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const OG_IMAGE = "https://tbd.fit/wp-content/uploads/2025/03/tbd-logo-1000.png";
+const OG_IMAGE = "/og-image.jpg";
 
 export async function generateMetadata({
   params,

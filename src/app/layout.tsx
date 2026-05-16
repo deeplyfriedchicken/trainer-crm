@@ -13,23 +13,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const OG_IMAGE = "https://tbd.fit/wp-content/uploads/2025/03/tbd-logo-1000.png";
+const OG_IMAGE = "/og-image.jpg";
+const DESCRIPTION =
+  "Personal training grounded in physical therapy, from recovery to peak performance";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ??
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000"),
+  ),
   title: "TBDFit",
-  description:
-    "Personal training grounded in physical therapy, from recovery to peak performance",
+  description: DESCRIPTION,
   openGraph: {
     title: "TBDFit",
-    description:
-      "Personal training grounded in physical therapy, from recovery to peak performance",
-    images: [{ url: OG_IMAGE, width: 1000, height: 1000, alt: "TBDFit" }],
+    description: DESCRIPTION,
+    images: [{ url: OG_IMAGE, width: 1080, height: 1080, alt: "TBDFit" }],
   },
   twitter: {
     card: "summary",
     title: "TBDFit",
-    description:
-      "Personal training grounded in physical therapy, from recovery to peak performance",
+    description: DESCRIPTION,
     images: [OG_IMAGE],
   },
 };

@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
+import { deleteTrainee as dbDeleteTrainee } from "@/db/queries/trainees";
 import { userRoles, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -33,4 +34,15 @@ export async function createTrainee(data: { name: string; email: string }) {
 
   revalidatePath("/dashboard/trainees");
   return { success: true };
+}
+
+export async function deleteTrainee(id: string) {
+  const currentUser = await getCurrentUser();
+  const canDelete = currentUser.roles.some((r) =>
+    (["admin", "trainer_manager"] as const).includes(r as never),
+  );
+  if (!canDelete) throw new Error("Unauthorized");
+
+  await dbDeleteTrainee(id);
+  revalidatePath("/dashboard/trainees");
 }

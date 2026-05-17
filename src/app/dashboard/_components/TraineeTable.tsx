@@ -2,13 +2,15 @@
 
 import { HStack } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { LuSearch, LuUserPlus } from "react-icons/lu";
+import { useState, useTransition } from "react";
+import { LuSearch, LuTrash2, LuUserPlus } from "react-icons/lu";
 import { Button } from "@/app/components/Button";
+import { Dialog, DialogBody } from "@/app/components/Dialog";
 import { Input } from "@/app/components/Input";
 import { PageHeader } from "@/app/components/PageHeader";
 import { type ColumnDef, Table } from "@/app/components/Table";
 import type { TraineeRow } from "@/db/queries/trainees";
+import { deleteTrainee } from "../trainees/actions";
 import { usePermissions } from "../_hooks/usePermissions";
 import { AddTraineeModal } from "./AddTraineeModal";
 
@@ -108,14 +110,67 @@ const COLUMNS: ColumnDef<Trainee>[] = [
 ];
 
 export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
-  const { canAddClient } = usePermissions();
+  const { canAddClient, canDeleteClient } = usePermissions();
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<Trainee | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const filtered = trainees.filter((t) =>
     `${t.name} ${t.email}`.toLowerCase().includes(search.toLowerCase()),
   );
+
+  function confirmDelete() {
+    if (!toDelete) return;
+    startTransition(async () => {
+      await deleteTrainee(toDelete.id);
+      setToDelete(null);
+    });
+  }
+
+  const columns: ColumnDef<Trainee>[] = [
+    ...COLUMNS,
+    ...(canDeleteClient
+      ? [
+          {
+            key: "id" as const,
+            label: "",
+            render: (row: Trainee) => (
+              <button
+                type="button"
+                aria-label={`Delete ${row.name}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setToDelete(row);
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "rgba(248,113,113,0.5)",
+                  padding: "4px 6px",
+                  borderRadius: 6,
+                  display: "flex",
+                  alignItems: "center",
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={(e) =>
+                  ((e.currentTarget as HTMLButtonElement).style.color =
+                    "#f87171")
+                }
+                onMouseLeave={(e) =>
+                  ((e.currentTarget as HTMLButtonElement).style.color =
+                    "rgba(248,113,113,0.5)")
+                }
+              >
+                <LuTrash2 size={14} />
+              </button>
+            ),
+          },
+        ]
+      : []),
+  ];
 
   return (
     <>
@@ -158,7 +213,7 @@ export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
       )}
 
       <Table
-        columns={COLUMNS}
+        columns={columns}
         rows={filtered}
         getRowKey={(t) => t.id}
         defaultSortKey="name"
@@ -166,6 +221,41 @@ export function TraineeTable({ trainees }: { trainees: Trainee[] }) {
         onRowClick={(t) => router.push(`/dashboard/trainees/${t.id}`)}
         className="crm-trainee-table"
       />
+
+      <Dialog
+        isOpen={!!toDelete}
+        onClose={() => !isPending && setToDelete(null)}
+        title="Delete client?"
+        maxWidth={400}
+      >
+        <DialogBody>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
+            <strong style={{ color: "#fff" }}>{toDelete?.name}</strong> will be
+            soft-deleted. Their workout history is preserved but they will lose
+            access to their client portal immediately.
+          </p>
+          <HStack justifyContent="flex-end" gap="10px">
+            <Button
+              variant="ghost"
+              colorScheme="neutral"
+              size="sm"
+              onClick={() => setToDelete(null)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="solid"
+              colorScheme="red"
+              size="sm"
+              onClick={confirmDelete}
+              disabled={isPending}
+            >
+              {isPending ? "Deleting…" : "Delete"}
+            </Button>
+          </HStack>
+        </DialogBody>
+      </Dialog>
     </>
   );
 }

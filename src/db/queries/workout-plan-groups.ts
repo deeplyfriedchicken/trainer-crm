@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   exercises,
@@ -145,13 +145,20 @@ export async function publishNewVersion({
       publishedBy,
     );
 
-    // Archive the previously-current version.
-    if (group.currentVersionId) {
-      await tx
-        .update(workoutPlans)
-        .set({ versionStatus: "archived", updatedBy: publishedBy })
-        .where(eq(workoutPlans.id, group.currentVersionId));
-    }
+    // Archive the previously-current version and any remaining drafts in the
+    // group. The newly inserted plan is "published" so it is unaffected by the
+    // draft filter; the currentVersionId guard keeps the old published plan
+    // archived too even if it was not a draft.
+    await tx
+      .update(workoutPlans)
+      .set({ versionStatus: "archived", updatedBy: publishedBy })
+      .where(
+        and(
+          eq(workoutPlans.workoutPlanGroupId, groupId),
+          sql`${workoutPlans.versionStatus} IN ('draft', 'published')`,
+          ne(workoutPlans.id, newPlan.id),
+        ),
+      );
 
     // Point the group at the new published version.
     await tx

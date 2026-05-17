@@ -128,7 +128,7 @@ export async function PATCH(
 }
 
 // @invokes db.update(workoutPlans).set({ deletedAt }) WHERE id — soft delete, preserves exercises and workout history
-// @errors 401 unauthorized | 204 no content
+// @errors 401 unauthorized | 404 plan not found | 409 cannot delete published plan | 204 no content
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -138,9 +138,23 @@ export async function DELETE(
 
   const { id } = await params;
 
+  const plan = await db.query.workoutPlans.findFirst({
+    where: eq(workoutPlans.id, id),
+    columns: { id: true, versionStatus: true },
+  });
+  if (!plan)
+    return Response.json({ error: "Plan not found" }, { status: 404 });
+
+  if (plan.versionStatus === "published") {
+    return Response.json(
+      { error: "Cannot delete a published plan." },
+      { status: 409 },
+    );
+  }
+
   await db
     .update(workoutPlans)
-    .set({ deletedAt: new Date() })
+    .set({ deletedAt: new Date(), updatedBy: user.id })
     .where(eq(workoutPlans.id, id));
 
   return new Response(null, { status: 204 });

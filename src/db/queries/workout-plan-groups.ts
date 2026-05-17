@@ -1,15 +1,25 @@
-import { desc, eq, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   exercises,
   workoutPlanGroups,
   workoutPlans,
 } from "@/db/schema";
+
+export class PublishedPlanDeleteError extends Error {
+  constructor() {
+    super("Cannot delete a group that contains a published plan.");
+    this.name = "PublishedPlanDeleteError";
+  }
+}
 import { type ExerciseInput, insertExercises } from "./workout-plans";
 
 export async function listWorkoutPlanGroupsForTrainee(traineeId: string) {
   return db.query.workoutPlanGroups.findMany({
-    where: eq(workoutPlanGroups.traineeId, traineeId),
+    where: and(
+      eq(workoutPlanGroups.traineeId, traineeId),
+      isNull(workoutPlanGroups.deletedAt),
+    ),
     orderBy: [desc(workoutPlanGroups.createdAt)],
     with: {
       currentVersion: {
@@ -28,7 +38,7 @@ export async function listWorkoutPlanGroupsForTrainee(traineeId: string) {
 
 export async function getWorkoutPlanGroup(groupId: string) {
   return db.query.workoutPlanGroups.findFirst({
-    where: eq(workoutPlanGroups.id, groupId),
+    where: and(eq(workoutPlanGroups.id, groupId), isNull(workoutPlanGroups.deletedAt)),
     with: {
       versions: {
         orderBy: [desc(workoutPlans.versionNumber)],
@@ -40,6 +50,40 @@ export async function getWorkoutPlanGroup(groupId: string) {
         },
       },
     },
+  });
+}
+
+// Soft-deletes a group and all its non-published plans.
+// Throws PublishedPlanDeleteError if the group has a published plan.
+export async function softDeletePlanGroup(groupId: string, deletedBy: string) {
+  await db.transaction(async (tx) => {
+    const hasPublished = await tx.query.workoutPlans.findFirst({
+      where: and(
+        eq(workoutPlans.workoutPlanGroupId, groupId),
+        eq(workoutPlans.versionStatus, "published"),
+        isNull(workoutPlans.deletedAt),
+      ),
+      columns: { id: true },
+    });
+    if (hasPublished) throw new PublishedPlanDeleteError();
+
+    const now = new Date();
+
+    // Soft-delete all draft/archived plans in the group.
+    await tx
+      .update(workoutPlans)
+      .set({ deletedAt: now, updatedBy: deletedBy })
+      .where(
+        and(
+          eq(workoutPlans.workoutPlanGroupId, groupId),
+          isNull(workoutPlans.deletedAt),
+        ),
+      );
+
+    await tx
+      .update(workoutPlanGroups)
+      .set({ deletedAt: now, updatedBy: deletedBy })
+      .where(eq(workoutPlanGroups.id, groupId));
   });
 }
 

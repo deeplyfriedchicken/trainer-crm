@@ -147,6 +147,7 @@ export const workoutPlanGroups = pgTable(
       (): AnyPgColumn => workoutPlans.id,
       { onDelete: "set null" },
     ),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
     ...authorship,
   },

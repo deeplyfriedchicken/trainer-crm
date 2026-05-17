@@ -19,23 +19,25 @@ export async function getClientData(traineeId: string) {
       pin: true,
     },
     with: {
-      workoutPlans: {
-        where: (wp, { isNull, and, eq }) =>
-          and(isNull(wp.deletedAt), eq(wp.versionStatus, "published")),
-        orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
+      workoutPlanGroups: {
+        where: (g, { isNull }) => isNull(g.deletedAt),
         with: {
-          exercises: {
-            where: (ex, { isNull }) => isNull(ex.deletedAt),
-            orderBy: (ex, { asc }) => [asc(ex.position)],
+          currentVersion: {
             with: {
-              videoLinks: {
+              exercises: {
+                where: (ex, { isNull }) => isNull(ex.deletedAt),
+                orderBy: (ex, { asc }) => [asc(ex.position)],
                 with: {
-                  video: {
-                    columns: {
-                      id: true,
-                      title: true,
-                      fileKey: true,
-                      fileUrl: true,
+                  videoLinks: {
+                    with: {
+                      video: {
+                        columns: {
+                          id: true,
+                          title: true,
+                          fileKey: true,
+                          fileUrl: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -97,12 +99,20 @@ export async function getClientData(traineeId: string) {
 
   if (!user) return null;
 
+  const workoutPlans = user.workoutPlanGroups
+    .map((g) => g.currentVersion)
+    .filter((v) => v !== null)
+    .sort(
+      (a, b) =>
+        new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
+    );
+
   return {
     id: user.id,
     name: user.name,
     email: user.email,
     hasPin: user.pin !== null,
-    workoutPlans: user.workoutPlans,
+    workoutPlans,
     workouts: user.workouts,
   };
 }

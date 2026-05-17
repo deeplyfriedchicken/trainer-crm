@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
     occurredAt?: string;
     comment?: string;
     exercises?: ExerciseInput[];
+    workoutPlanGroupId?: string;
   };
 
   if (!body.traineeId || !body.name?.trim()) {
@@ -69,6 +70,7 @@ export async function POST(request: NextRequest) {
     comment: body.comment,
     createdBy: user.id,
     exerciseInputs: body.exercises ?? [],
+    workoutPlanGroupId: body.workoutPlanGroupId,
   });
 
   return Response.json({ data: plan }, { status: 201 });

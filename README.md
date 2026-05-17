@@ -1,4 +1,4 @@
-# TBDFit
+# TBDFit Trainer + PWA Client App
 
 A coaching management platform for trainers to manage clients, log workouts, and share videos.
 

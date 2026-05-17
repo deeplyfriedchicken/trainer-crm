@@ -7,13 +7,14 @@ import {
   LuDumbbell,
   LuPencil,
   LuPlus,
+  LuTrash2,
 } from "react-icons/lu";
 import type {
   ColorVariant,
   SessionEntry,
 } from "@/app/components/SessionsPanel";
 import { SessionFormModal } from "@/app/dashboard/_components/SessionFormModal";
-import { publishDraftPlan } from "../actions";
+import { deleteExercise, publishDraftPlan } from "../actions";
 
 export type PlanExercise = {
   id: string;
@@ -109,6 +110,10 @@ export function TraineePlansPanel({
   const [planViewMode, setPlanViewMode] = useState<
     Record<string, "draft" | "published">
   >({});
+  const [deleteExerciseTarget, setDeleteExerciseTarget] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const accentColor =
     colorVariant === "secondary"
@@ -187,6 +192,14 @@ export function TraineePlansPanel({
     startTransition(async () => {
       await publishDraftPlan(plan.id, traineeId);
       setPublishTarget(null);
+    });
+  }
+
+  function doDeleteExercise() {
+    if (!deleteExerciseTarget) return;
+    startTransition(async () => {
+      await deleteExercise(deleteExerciseTarget.id, traineeId);
+      setDeleteExerciseTarget(null);
     });
   }
 
@@ -524,6 +537,28 @@ export function TraineePlansPanel({
                           {fmtSets(ex)}
                         </div>
                       </div>
+                      {isDraft && (
+                        <button
+                          type="button"
+                          aria-label={`Delete ${ex.name}`}
+                          onClick={() =>
+                            setDeleteExerciseTarget({ id: ex.id, name: ex.name })
+                          }
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "rgba(248,113,113,0.45)",
+                            padding: 4,
+                            borderRadius: 6,
+                            display: "flex",
+                            alignItems: "center",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <LuTrash2 size={13} />
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -771,6 +806,120 @@ export function TraineePlansPanel({
                 }}
               >
                 {isPending ? "Publishing…" : "Publish now"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete exercise confirm modal */}
+      {deleteExerciseTarget && (
+        <div
+          onClick={() => !isPending && setDeleteExerciseTarget(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.7)",
+            backdropFilter: "blur(6px)",
+            zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 24,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 380,
+              background: "rgba(20,18,40,0.98)",
+              border: "1px solid rgba(248,113,113,0.32)",
+              borderRadius: 16,
+              padding: "24px 22px 18px",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 14,
+                background: "rgba(248,113,113,0.12)",
+                border: "1px solid rgba(248,113,113,0.35)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 14px",
+                color: "#f87171",
+              }}
+            >
+              <LuTrash2 size={20} />
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 20,
+                fontWeight: 800,
+                color: "#fff",
+                marginBottom: 8,
+              }}
+            >
+              Delete exercise?
+            </div>
+            <div
+              style={{
+                fontSize: 13,
+                color: "rgba(255,255,255,0.6)",
+                lineHeight: 1.55,
+                marginBottom: 20,
+              }}
+            >
+              <strong style={{ color: "#fff" }}>
+                "{deleteExerciseTarget.name}"
+              </strong>{" "}
+              will be removed from this draft plan. This cannot be undone.
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                type="button"
+                onClick={() => setDeleteExerciseTarget(null)}
+                disabled={isPending}
+                style={{
+                  flex: 1,
+                  padding: 11,
+                  borderRadius: 10,
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  color: "#fff",
+                  fontFamily: "var(--font-body)",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: isPending ? "not-allowed" : "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={doDeleteExercise}
+                disabled={isPending}
+                style={{
+                  flex: 1,
+                  padding: 11,
+                  borderRadius: 10,
+                  background: "rgba(248,113,113,0.18)",
+                  border: "1px solid rgba(248,113,113,0.45)",
+                  color: "#f87171",
+                  fontFamily: "var(--font-body)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: isPending ? "not-allowed" : "pointer",
+                  opacity: isPending ? 0.7 : 1,
+                }}
+              >
+                {isPending ? "Deleting…" : "Delete"}
               </button>
             </div>
           </div>

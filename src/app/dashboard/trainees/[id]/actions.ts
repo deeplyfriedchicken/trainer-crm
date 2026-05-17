@@ -10,7 +10,13 @@ import {
   forkDraftFromPublished,
   updateWorkoutPlan,
 } from "@/db/queries/workout-plans";
-import { users, workoutPlanGroups, workoutPlans, workouts } from "@/db/schema";
+import {
+  exercises,
+  users,
+  workoutPlanGroups,
+  workoutPlans,
+  workouts,
+} from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function resetTraineePin(traineeId: string) {
@@ -113,6 +119,31 @@ export async function updateSessionQuality(
       updatedBy: user.id,
     })
     .where(eq(workouts.id, workoutId));
+  revalidatePath(`/dashboard/trainees/${traineeId}`);
+}
+
+export async function deleteExercise(exerciseId: string, traineeId: string) {
+  const user = await getCurrentUser();
+
+  const exercise = await db.query.exercises.findFirst({
+    where: eq(exercises.id, exerciseId),
+    columns: { id: true, workoutPlanId: true, deletedAt: true },
+    with: {
+      workoutPlan: { columns: { versionStatus: true, traineeId: true } },
+    },
+  });
+
+  if (!exercise || exercise.deletedAt !== null) throw new Error("Not found");
+  if (exercise.workoutPlan.traineeId !== traineeId) throw new Error("Not found");
+  if (exercise.workoutPlan.versionStatus !== "draft") {
+    throw new Error("Can only delete exercises from a draft plan");
+  }
+
+  await db
+    .update(exercises)
+    .set({ deletedAt: new Date(), updatedBy: user.id })
+    .where(eq(exercises.id, exerciseId));
+
   revalidatePath(`/dashboard/trainees/${traineeId}`);
 }
 

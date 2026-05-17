@@ -1,1 +1,0 @@
-DROP TABLE "trainer_assignments" CASCADE;

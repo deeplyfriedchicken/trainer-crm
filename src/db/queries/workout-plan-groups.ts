@@ -6,12 +6,6 @@ import {
   workoutPlans,
 } from "@/db/schema";
 
-export class PublishedPlanDeleteError extends Error {
-  constructor() {
-    super("Cannot delete a group that contains a published plan.");
-    this.name = "PublishedPlanDeleteError";
-  }
-}
 import { type ExerciseInput, insertExercises } from "./workout-plans";
 
 export async function listWorkoutPlanGroupsForTrainee(traineeId: string) {
@@ -53,23 +47,11 @@ export async function getWorkoutPlanGroup(groupId: string) {
   });
 }
 
-// Soft-deletes a group and all its non-published plans.
-// Throws PublishedPlanDeleteError if the group has a published plan.
+// Soft-deletes a group and all its plans (draft, published, or archived).
 export async function softDeletePlanGroup(groupId: string, deletedBy: string) {
   await db.transaction(async (tx) => {
-    const hasPublished = await tx.query.workoutPlans.findFirst({
-      where: and(
-        eq(workoutPlans.workoutPlanGroupId, groupId),
-        eq(workoutPlans.versionStatus, "published"),
-        isNull(workoutPlans.deletedAt),
-      ),
-      columns: { id: true },
-    });
-    if (hasPublished) throw new PublishedPlanDeleteError();
-
     const now = new Date();
 
-    // Soft-delete all draft/archived plans in the group.
     await tx
       .update(workoutPlans)
       .set({ deletedAt: now, updatedBy: deletedBy })

@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import {
   getWorkoutPlanGroup,
-  PublishedPlanDeleteError,
   softDeletePlanGroup,
   updateWorkoutPlanGroupName,
 } from "@/db/queries/workout-plan-groups";
@@ -45,8 +44,8 @@ export async function PATCH(
   return Response.json({ data: group });
 }
 
-// @invokes softDeletePlanGroup — rejects with 409 if the group has a published plan
-// @errors 401 unauthorized | 404 group not found | 409 published plan exists
+// @invokes softDeletePlanGroup — soft-deletes the group and all its plans
+// @errors 401 unauthorized | 404 group not found | 204 no content
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -60,14 +59,7 @@ export async function DELETE(
   if (!group)
     return Response.json({ error: "Group not found" }, { status: 404 });
 
-  try {
-    await softDeletePlanGroup(id, user.id);
-  } catch (err) {
-    if (err instanceof PublishedPlanDeleteError) {
-      return Response.json({ error: err.message }, { status: 409 });
-    }
-    throw err;
-  }
+  await softDeletePlanGroup(id, user.id);
 
   return new Response(null, { status: 204 });
 }

@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { publishNewVersion } from "@/db/queries/workout-plan-groups";
-import { type ExerciseInput } from "@/db/queries/workout-plans";
+import type { ExerciseInput } from "@/db/queries/workout-plans";
 import { getRequestUser } from "@/lib/request-auth";
 
 export async function POST(

@@ -1,12 +1,13 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { createMessage } from "@/db/queries/chats";
 import {
   createWorkoutPlan,
   type ExerciseInput,
+  forkDraftFromPublished,
   updateWorkoutPlan,
 } from "@/db/queries/workout-plans";
 import { users, workoutPlanGroups, workoutPlans, workouts } from "@/db/schema";
@@ -67,6 +68,20 @@ export async function publishDraftPlan(planId: string, traineeId: string) {
     if (!plan || plan.traineeId !== traineeId) throw new Error("Not found");
 
     const now = new Date();
+
+    // Archive the current published version in this group before promoting.
+    if (plan.workoutPlanGroupId) {
+      await tx
+        .update(workoutPlans)
+        .set({ versionStatus: "archived", updatedBy: user.id })
+        .where(
+          and(
+            eq(workoutPlans.workoutPlanGroupId, plan.workoutPlanGroupId),
+            eq(workoutPlans.versionStatus, "published"),
+          ),
+        );
+    }
+
     await tx
       .update(workoutPlans)
       .set({ versionStatus: "published", publishedAt: now, updatedBy: user.id })
@@ -111,12 +126,63 @@ export async function updatePlan(
   },
 ) {
   const user = await getCurrentUser();
-  return updateWorkoutPlan({
-    planId,
+
+  const existing = await db.query.workoutPlans.findFirst({
+    where: eq(workoutPlans.id, planId),
+    columns: {
+      id: true,
+      versionStatus: true,
+      workoutPlanGroupId: true,
+      occurredAt: true,
+      comment: true,
+    },
+  });
+  if (!existing) throw new Error("Plan not found");
+
+  if (existing.versionStatus === "archived") {
+    throw new Error("Cannot edit an archived plan");
+  }
+
+  if (existing.versionStatus === "draft") {
+    return updateWorkoutPlan({
+      planId,
+      name: data.name,
+      occurredAt: data.occurredAt,
+      comment: data.comment,
+      updatedBy: user.id,
+      exerciseInputs: data.exercises,
+    });
+  }
+
+  // Published — find or create a draft in the same group.
+  const groupId = existing.workoutPlanGroupId;
+  const existingDraft = groupId
+    ? await db.query.workoutPlans.findFirst({
+        where: and(
+          eq(workoutPlans.workoutPlanGroupId, groupId),
+          eq(workoutPlans.versionStatus, "draft"),
+          isNull(workoutPlans.deletedAt),
+        ),
+      })
+    : null;
+
+  if (existingDraft) {
+    return updateWorkoutPlan({
+      planId: existingDraft.id,
+      name: data.name,
+      occurredAt: data.occurredAt,
+      comment: data.comment,
+      updatedBy: user.id,
+      exerciseInputs: data.exercises,
+    });
+  }
+
+  return forkDraftFromPublished({
+    publishedPlanId: planId,
     name: data.name,
     occurredAt: data.occurredAt,
     comment: data.comment,
-    updatedBy: user.id,
     exerciseInputs: data.exercises,
+    createdBy: user.id,
   });
 }

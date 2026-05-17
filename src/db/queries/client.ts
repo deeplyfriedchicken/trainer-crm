@@ -20,7 +20,8 @@ export async function getClientData(traineeId: string) {
     },
     with: {
       workoutPlans: {
-        where: (wp, { isNull }) => isNull(wp.deletedAt),
+        where: (wp, { isNull, and, eq }) =>
+          and(isNull(wp.deletedAt), eq(wp.versionStatus, "published")),
         orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         with: {
           exercises: {

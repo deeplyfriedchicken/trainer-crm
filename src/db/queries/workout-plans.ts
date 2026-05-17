@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   exercises,
@@ -130,7 +130,7 @@ export async function updateWorkoutPlan({
   occurredAt: Date;
   comment?: string | null;
   updatedBy: string;
-  exerciseInputs: ExerciseInput[];
+  exerciseInputs?: ExerciseInput[]; // undefined = leave exercises untouched
 }) {
   return db.transaction(async (tx) => {
     const [plan] = await tx
@@ -138,6 +138,8 @@ export async function updateWorkoutPlan({
       .set({ name, occurredAt, comment: comment ?? null, updatedBy })
       .where(eq(workoutPlans.id, planId))
       .returning();
+
+    if (exerciseInputs === undefined) return plan;
 
     const indexed = exerciseInputs.map((input, position) => ({
       input,
@@ -199,5 +201,83 @@ export async function updateWorkoutPlan({
 
     await insertExercises(tx, planId, toInsert, updatedBy);
     return plan;
+  });
+}
+
+// Creates a draft in the same group as `publishedPlanId`, copying its
+// exercises (unless `exerciseInputs` is provided). Returns the new draft.
+export async function forkDraftFromPublished({
+  publishedPlanId,
+  name,
+  occurredAt,
+  comment,
+  exerciseInputs,
+  createdBy,
+}: {
+  publishedPlanId: string;
+  name: string;
+  occurredAt: Date;
+  comment?: string | null;
+  exerciseInputs?: ExerciseInput[];
+  createdBy: string;
+}) {
+  return db.transaction(async (tx) => {
+    const published = await tx.query.workoutPlans.findFirst({
+      where: eq(workoutPlans.id, publishedPlanId),
+      with: {
+        exercises: {
+          where: isNull(exercises.deletedAt),
+          orderBy: [exercises.position],
+          with: { videoLinks: { columns: { videoId: true } } },
+        },
+      },
+    });
+    if (!published) throw new Error("Published plan not found");
+
+    const groupId = published.workoutPlanGroupId;
+
+    const [{ maxVersion }] = await tx
+      .select({
+        maxVersion: sql<number>`COALESCE(MAX(${workoutPlans.versionNumber}), 0)`,
+      })
+      .from(workoutPlans)
+      .where(eq(workoutPlans.workoutPlanGroupId, groupId!));
+
+    const [draft] = await tx
+      .insert(workoutPlans)
+      .values({
+        traineeId: published.traineeId,
+        workoutPlanGroupId: groupId,
+        name,
+        occurredAt,
+        comment: comment ?? null,
+        versionStatus: "draft",
+        versionNumber: maxVersion + 1,
+        createdBy,
+        updatedBy: createdBy,
+      })
+      .returning();
+
+    const inputs: ExerciseInput[] =
+      exerciseInputs ??
+      published.exercises.map((ex) => ({
+        name: ex.name,
+        type: ex.type,
+        sets: ex.sets,
+        reps: ex.reps,
+        durationSeconds: ex.durationSeconds,
+        weightLbs: ex.weightLbs,
+        comment: ex.comment,
+        videoIds: ex.videoLinks.map((vl) => vl.videoId),
+      }));
+
+    await insertExercises(
+      tx,
+      draft.id,
+      inputs.map((input, position) => ({ input, position })),
+      createdBy,
+    );
+
+    return draft;
   });
 }

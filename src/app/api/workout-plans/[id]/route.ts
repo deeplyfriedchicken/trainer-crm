@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { db } from "@/db";
 import {
   type ExerciseInput,
+  forkDraftFromPublished,
   updateWorkoutPlan,
 } from "@/db/queries/workout-plans";
 import { workoutPlans } from "@/db/schema";
@@ -62,32 +63,68 @@ export async function PATCH(
   if (!existing)
     return Response.json({ error: "Plan not found" }, { status: 404 });
 
-  if (
-    (existing.versionStatus === "published" ||
-      existing.versionStatus === "archived") &&
-    body.exercises !== undefined
-  ) {
+  if (existing.versionStatus === "archived") {
     return Response.json(
-      {
-        error:
-          "Cannot edit exercises of a published plan. Publish a new version instead.",
-      },
+      { error: "Cannot edit an archived plan." },
       { status: 400 },
     );
   }
 
-  const plan = await updateWorkoutPlan({
-    planId: id,
+  // Draft → update in place. Exercises are only touched when explicitly supplied.
+  if (existing.versionStatus === "draft") {
+    const plan = await updateWorkoutPlan({
+      planId: id,
+      name: body.name.trim(),
+      occurredAt: body.occurredAt
+        ? new Date(body.occurredAt)
+        : existing.occurredAt,
+      comment: body.comment,
+      updatedBy: user.id,
+      exerciseInputs: body.exercises, // undefined = leave exercises untouched
+    });
+    return Response.json({ data: plan });
+  }
+
+  // Published → find or create a draft in the same group, then apply the patch.
+  const groupId = existing.workoutPlanGroupId;
+
+  const existingDraft = groupId
+    ? await db.query.workoutPlans.findFirst({
+        where: and(
+          eq(workoutPlans.workoutPlanGroupId, groupId),
+          eq(workoutPlans.versionStatus, "draft"),
+          isNull(workoutPlans.deletedAt),
+        ),
+      })
+    : null;
+
+  if (existingDraft) {
+    const plan = await updateWorkoutPlan({
+      planId: existingDraft.id,
+      name: body.name.trim(),
+      occurredAt: body.occurredAt
+        ? new Date(body.occurredAt)
+        : existingDraft.occurredAt,
+      comment: body.comment,
+      updatedBy: user.id,
+      exerciseInputs: body.exercises,
+    });
+    return Response.json({ data: plan });
+  }
+
+  // No draft yet — fork from the published plan.
+  const draft = await forkDraftFromPublished({
+    publishedPlanId: id,
     name: body.name.trim(),
     occurredAt: body.occurredAt
       ? new Date(body.occurredAt)
       : existing.occurredAt,
-    comment: body.comment,
-    updatedBy: user.id,
-    exerciseInputs: body.exercises ?? [],
+    comment: body.comment !== undefined ? body.comment : existing.comment,
+    exerciseInputs: body.exercises,
+    createdBy: user.id,
   });
 
-  return Response.json({ data: plan });
+  return Response.json({ data: draft });
 }
 
 // @invokes db.update(workoutPlans).set({ deletedAt }) WHERE id — soft delete, preserves exercises and workout history

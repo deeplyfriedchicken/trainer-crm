@@ -101,7 +101,10 @@ export async function getClientData(traineeId: string) {
 
   const workoutPlans = user.workoutPlanGroups
     .map((g) => g.currentVersion)
-    .filter((v) => v !== null)
+    .filter(
+      (v): v is Exclude<typeof v, null> =>
+        v !== null && v.versionStatus === "published",
+    )
     .sort(
       (a, b) =>
         new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
@@ -215,7 +218,8 @@ export async function getClientMetadata(traineeId: string) {
     columns: { name: true },
     with: {
       workoutPlans: {
-        where: (wp, { isNull }) => isNull(wp.deletedAt),
+        where: (wp, { isNull, and, eq }) =>
+          and(isNull(wp.deletedAt), eq(wp.versionStatus, "published")),
         orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
         limit: 1,
         columns: { name: true },

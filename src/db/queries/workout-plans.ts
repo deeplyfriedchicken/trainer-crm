@@ -107,12 +107,6 @@ export async function createWorkoutPlan({
       createdBy,
     );
 
-    // Point the group at this first plan as its current version.
-    await tx
-      .update(workoutPlanGroups)
-      .set({ currentVersionId: plan.id, updatedBy: createdBy })
-      .where(eq(workoutPlanGroups.id, groupId));
-
     return plan;
   });
 }

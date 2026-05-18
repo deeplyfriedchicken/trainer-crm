@@ -25,7 +25,8 @@ export async function getClientData(traineeId: string) {
           currentVersion: {
             with: {
               exercises: {
-                where: (ex, { isNull }) => isNull(ex.deletedAt),
+                where: (ex, { isNull, and, eq }) =>
+                  and(isNull(ex.deletedAt), eq(ex.isHidden, false)),
                 orderBy: (ex, { asc }) => [asc(ex.position)],
                 with: {
                   videoLinks: {

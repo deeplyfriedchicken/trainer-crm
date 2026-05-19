@@ -132,6 +132,7 @@ export async function getTraineeById(id: string) {
               reps: true,
               durationSeconds: true,
               position: true,
+              metadata: true,
             },
           },
         },

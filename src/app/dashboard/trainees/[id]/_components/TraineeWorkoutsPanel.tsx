@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { LuDumbbell } from "react-icons/lu";
+import { LuCheck, LuDumbbell, LuX } from "react-icons/lu";
 import { updateSessionQuality } from "../actions";
 
 type WorkoutSet = {
@@ -11,6 +11,7 @@ type WorkoutSet = {
   reps: number | null;
   durationSeconds: number | null;
   position: number;
+  metadata: unknown;
 };
 
 type WorkoutExerciseLink = {
@@ -32,6 +33,7 @@ export type WorkoutPanelEntry = {
   preSessionEnergy: number | null;
   preSessionSoreness: number | null;
   preSessionStress: number | null;
+  preSessionNote: string | null;
   postSessionEnergy: number | null;
   sessionQuality: number | null;
   adherencePercent: number | null;
@@ -79,6 +81,86 @@ function scoreColor(n: number, inverted: boolean): string {
   return "#4ade80";
 }
 
+function SectionLabel({
+  dot,
+  label,
+}: {
+  dot: string;
+  label: string;
+}) {
+  return (
+    <div
+      style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: 10,
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: "0.1em",
+        color: "rgba(255,255,255,0.4)",
+        marginBottom: 8,
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+      }}
+    >
+      <span style={{ width: 5, height: 5, borderRadius: "50%", background: dot }} />
+      {label}
+    </div>
+  );
+}
+
+function MetricPill({
+  label,
+  value,
+  inverted,
+}: {
+  label: string;
+  value: number;
+  inverted: boolean;
+}) {
+  return (
+    <div
+      style={{
+        padding: "8px 11px",
+        marginBottom: 6,
+        background: "rgba(255,255,255,0.04)",
+        border: "1px solid rgba(255,255,255,0.07)",
+        borderRadius: 10,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 10.5,
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          color: "rgba(255,255,255,0.45)",
+        }}
+      >
+        {label}
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
+        <span
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: 20,
+            fontWeight: 800,
+            color: scoreColor(value, inverted),
+            lineHeight: 1,
+          }}
+        >
+          {value}
+        </span>
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>/10</span>
+      </div>
+    </div>
+  );
+}
+
 function WorkoutCard({
   workout,
   accentColor,
@@ -98,6 +180,7 @@ function WorkoutCard({
     });
   }
 
+  // Group sets by exerciseId
   const setsByExercise = new Map<string, WorkoutSet[]>();
   for (const s of workout.sets) {
     const arr = setsByExercise.get(s.exerciseId) ?? [];
@@ -106,12 +189,13 @@ function WorkoutCard({
   }
 
   const exerciseRows = workout.exerciseLinks.map(({ exercise }) => {
-    const exSets = setsByExercise.get(exercise.id) ?? [];
-    const setsCompleted = exSets.length > 0 ? exSets.filter((s) => s.completed).length : exercise.sets;
+    const exSets = (setsByExercise.get(exercise.id) ?? []).sort(
+      (a, b) => a.position - b.position,
+    );
+    const setsCompleted =
+      exSets.length > 0 ? exSets.filter((s) => s.completed).length : exercise.sets;
     const setsExpected = exercise.sets;
-    const lastWeight =
-      exSets.find((s) => s.weightLbs != null)?.weightLbs ?? exercise.weightLbs;
-    return { exercise, setsCompleted, setsExpected, lastWeight, hasSetData: exSets.length > 0 };
+    return { exercise, exSets, setsCompleted, setsExpected, hasSetData: exSets.length > 0 };
   });
 
   const totalCompleted = exerciseRows.reduce((a, e) => a + e.setsCompleted, 0);
@@ -120,10 +204,17 @@ function WorkoutCard({
     totalExpected > 0
       ? Math.round((totalCompleted / totalExpected) * 100)
       : workout.adherencePercent != null
-      ? Math.round(workout.adherencePercent)
-      : null;
+        ? Math.round(workout.adherencePercent)
+        : null;
 
   const hasSetData = exerciseRows.some((r) => r.hasSetData);
+
+  const hasRightContent =
+    workout.preSessionEnergy != null ||
+    workout.preSessionSoreness != null ||
+    workout.preSessionStress != null ||
+    workout.postSessionEnergy != null ||
+    completion != null;
 
   return (
     <div
@@ -200,12 +291,14 @@ function WorkoutCard({
             {hasSetData && totalExpected > 0
               ? ` · ${totalCompleted}/${totalExpected} sets (${completion}%)`
               : completion != null
-              ? ` · ${completion}% completion`
-              : ""}
+                ? ` · ${completion}% completion`
+                : ""}
           </div>
         </div>
         {rating != null && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 }}
+          >
             <div
               style={{
                 fontFamily: "var(--font-display)",
@@ -236,128 +329,222 @@ function WorkoutCard({
         )}
       </div>
 
-      {/* Body — 3-column grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr" }}>
+      {/* Comment */}
+      {workout.comment && (
+        <div
+          style={{
+            padding: "10px 18px",
+            fontSize: 13,
+            color: "rgba(255,255,255,0.6)",
+            fontStyle: "italic",
+            lineHeight: 1.55,
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          {workout.comment}
+        </div>
+      )}
+
+      {/* Body — 2-column grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr" }}>
         {/* Exercises table */}
         <div style={{ padding: "14px 18px", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
-          <div
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              color: "rgba(255,255,255,0.4)",
-              marginBottom: 10,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <span style={{ width: 5, height: 5, borderRadius: "50%", background: CYAN }} />
-            Exercises
-          </div>
+          <SectionLabel dot={CYAN} label="Exercises" />
           {exerciseRows.length > 0 ? (
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "4px 0 8px",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 9.5,
-                      fontWeight: 700,
-                      color: "rgba(255,255,255,0.35)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                      borderBottom: "1px dashed rgba(255,255,255,0.08)",
-                    }}
-                  >
-                    Exercise
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "right",
-                      padding: "4px 8px 8px",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 9.5,
-                      fontWeight: 700,
-                      color: "rgba(255,255,255,0.35)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                      borderBottom: "1px dashed rgba(255,255,255,0.08)",
-                      width: 90,
-                    }}
-                  >
-                    Sets
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "right",
-                      padding: "4px 0 8px 8px",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 9.5,
-                      fontWeight: 700,
-                      color: "rgba(255,255,255,0.35)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                      borderBottom: "1px dashed rgba(255,255,255,0.08)",
-                      width: 110,
-                    }}
-                  >
-                    Weight
-                  </th>
-                </tr>
-              </thead>
               <tbody>
                 {exerciseRows.map(
-                  ({ exercise, setsCompleted, setsExpected, lastWeight, hasSetData: exHasData }, i) => {
+                  ({ exercise, exSets, setsCompleted, setsExpected, hasSetData: exHasData }) => {
                     const miss = exHasData && setsCompleted < setsExpected;
-                    const isLast = i === exerciseRows.length - 1;
                     return (
-                      <tr key={exercise.id}>
-                        <td
-                          style={{
-                            padding: "10px 8px 10px 0",
-                            fontSize: 13,
-                            fontWeight: 600,
-                            color: "rgba(255,255,255,0.92)",
-                            borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.04)",
-                          }}
-                        >
-                          {exercise.name}
-                        </td>
-                        <td
-                          style={{
-                            padding: "10px 8px",
-                            fontFamily: "var(--font-mono)",
-                            fontSize: 12.5,
-                            textAlign: "right",
-                            borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.04)",
-                          }}
-                        >
-                          <span style={{ color: miss ? "#fbbf24" : "#fff", fontWeight: 700 }}>
-                            {setsCompleted}
-                          </span>
-                          <span style={{ color: "rgba(255,255,255,0.4)" }}>
-                            {" "}/ {setsExpected}
-                          </span>
-                        </td>
-                        <td
-                          style={{
-                            padding: "10px 0 10px 8px",
-                            fontFamily: "var(--font-mono)",
-                            fontSize: 12,
-                            color: "rgba(255,255,255,0.75)",
-                            fontWeight: 600,
-                            textAlign: "right",
-                            borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.04)",
-                          }}
-                        >
-                          {lastWeight != null ? `${lastWeight} lb` : "—"}
-                        </td>
-                      </tr>
+                      <>
+                        {/* Exercise sub-header row */}
+                        <tr key={`hdr-${exercise.id}`}>
+                          <td
+                            colSpan={4}
+                            style={{
+                              padding: "8px 6px 5px",
+                              background: "rgba(255,255,255,0.03)",
+                              borderRadius: 6,
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: 13,
+                                  fontWeight: 600,
+                                  color: "rgba(255,255,255,0.92)",
+                                }}
+                              >
+                                {exercise.name}
+                              </span>
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-mono)",
+                                  fontSize: 10,
+                                  fontWeight: 700,
+                                  color: miss ? "#fbbf24" : "rgba(255,255,255,0.45)",
+                                }}
+                              >
+                                {setsCompleted}/{setsExpected}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Set rows */}
+                        {exHasData
+                          ? exSets.map((set, si) => {
+                              const meta =
+                                set.metadata !== null &&
+                                typeof set.metadata === "object"
+                                  ? (set.metadata as Record<string, unknown>)
+                                  : null;
+                              const side =
+                                typeof meta?.side === "string" ? meta.side : null;
+                              const repVal =
+                                exercise.type === "duration"
+                                  ? set.durationSeconds != null
+                                    ? `${set.durationSeconds}s`
+                                    : "—"
+                                  : set.reps != null
+                                    ? String(set.reps)
+                                    : "—";
+
+                              return (
+                                <tr key={`set-${exercise.id}-${si}`}>
+                                  {/* Set label + side */}
+                                  <td
+                                    style={{
+                                      padding: "5px 6px 5px 10px",
+                                      borderBottom: "1px solid rgba(255,255,255,0.03)",
+                                    }}
+                                  >
+                                    <div
+                                      style={{ display: "flex", alignItems: "center", gap: 5 }}
+                                    >
+                                      {side && (
+                                        <span
+                                          style={{
+                                            fontFamily: "var(--font-mono)",
+                                            fontSize: 9,
+                                            fontWeight: 700,
+                                            color: CYAN,
+                                            background: `${CYAN}15`,
+                                            border: `1px solid ${CYAN}33`,
+                                            borderRadius: 4,
+                                            padding: "1px 4px",
+                                          }}
+                                        >
+                                          {side.toUpperCase()}
+                                        </span>
+                                      )}
+                                      <span
+                                        style={{
+                                          fontFamily: "var(--font-mono)",
+                                          fontSize: 10,
+                                          color: "rgba(255,255,255,0.35)",
+                                        }}
+                                      >
+                                        SET {si + 1}
+                                      </span>
+                                    </div>
+                                  </td>
+                                  {/* Reps / Duration */}
+                                  <td
+                                    style={{
+                                      padding: "5px 6px",
+                                      fontFamily: "var(--font-mono)",
+                                      fontSize: 12,
+                                      color: "rgba(255,255,255,0.75)",
+                                      fontWeight: 600,
+                                      borderBottom: "1px solid rgba(255,255,255,0.03)",
+                                    }}
+                                  >
+                                    {repVal}
+                                  </td>
+                                  {/* Weight */}
+                                  <td
+                                    style={{
+                                      padding: "5px 6px",
+                                      fontFamily: "var(--font-mono)",
+                                      fontSize: 12,
+                                      color: "rgba(255,255,255,0.55)",
+                                      textAlign: "right",
+                                      borderBottom: "1px solid rgba(255,255,255,0.03)",
+                                    }}
+                                  >
+                                    {set.weightLbs != null ? `${set.weightLbs} lb` : "—"}
+                                  </td>
+                                  {/* Status */}
+                                  <td
+                                    style={{
+                                      padding: "5px 6px 5px 8px",
+                                      textAlign: "right",
+                                      borderBottom: "1px solid rgba(255,255,255,0.03)",
+                                      width: 22,
+                                    }}
+                                  >
+                                    {set.completed ? (
+                                      <LuCheck
+                                        size={12}
+                                        color="#4ade80"
+                                        strokeWidth={2.5}
+                                      />
+                                    ) : (
+                                      <LuX
+                                        size={11}
+                                        color="rgba(248,113,113,0.6)"
+                                        strokeWidth={2.5}
+                                      />
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          : /* Fallback summary row when no set data */ (
+                            <tr key={`fallback-${exercise.id}`}>
+                              <td
+                                style={{
+                                  padding: "5px 6px 5px 10px",
+                                  fontFamily: "var(--font-mono)",
+                                  fontSize: 11,
+                                  color: "rgba(255,255,255,0.4)",
+                                  borderBottom: "1px solid rgba(255,255,255,0.03)",
+                                }}
+                              >
+                                {exercise.sets}×
+                                {exercise.type === "duration"
+                                  ? `${exercise.durationSeconds}s`
+                                  : exercise.reps}
+                              </td>
+                              <td
+                                colSpan={3}
+                                style={{
+                                  padding: "5px 6px",
+                                  fontFamily: "var(--font-mono)",
+                                  fontSize: 11,
+                                  color: "rgba(255,255,255,0.4)",
+                                  textAlign: "right",
+                                  borderBottom: "1px solid rgba(255,255,255,0.03)",
+                                }}
+                              >
+                                {exercise.weightLbs != null ? `${exercise.weightLbs} lb` : "—"}
+                              </td>
+                            </tr>
+                          )}
+
+                        {/* Spacer between exercises */}
+                        <tr key={`spacer-${exercise.id}`}>
+                          <td colSpan={4} style={{ height: 6 }} />
+                        </tr>
+                      </>
                     );
                   },
                 )}
@@ -370,195 +557,92 @@ function WorkoutCard({
           )}
         </div>
 
-        {/* Pre-session */}
-        <div style={{ padding: "14px 18px", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
-          <div
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              color: "rgba(255,255,255,0.4)",
-              marginBottom: 10,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#a78bfa" }} />
-            Pre-session
-          </div>
-          {(
-            [
-              { lbl: "Energy", v: workout.preSessionEnergy, inv: false },
-              { lbl: "Soreness", v: workout.preSessionSoreness, inv: true },
-              { lbl: "Stress", v: workout.preSessionStress, inv: true },
-            ] as const
-          ).map(({ lbl, v, inv }) =>
-            v != null ? (
-              <div
-                key={lbl}
-                style={{
-                  padding: "9px 11px",
-                  marginBottom: 8,
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 10,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
+        {/* Right panel: pre-session + post-session + completion */}
+        <div style={{ padding: "14px 16px" }}>
+          {/* Pre-session */}
+          {(workout.preSessionEnergy != null ||
+            workout.preSessionSoreness != null ||
+            workout.preSessionStress != null ||
+            workout.preSessionNote) && (
+            <div style={{ marginBottom: 14 }}>
+              <SectionLabel dot="#a78bfa" label="Pre-session" />
+              {workout.preSessionEnergy != null && (
+                <MetricPill label="Energy" value={workout.preSessionEnergy} inverted={false} />
+              )}
+              {workout.preSessionSoreness != null && (
+                <MetricPill
+                  label="Soreness"
+                  value={workout.preSessionSoreness}
+                  inverted={true}
+                />
+              )}
+              {workout.preSessionStress != null && (
+                <MetricPill label="Stress" value={workout.preSessionStress} inverted={true} />
+              )}
+              {workout.preSessionNote && (
                 <div
                   style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 10.5,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    color: "rgba(255,255,255,0.45)",
+                    marginTop: 6,
+                    fontSize: 11,
+                    fontStyle: "italic",
+                    color: "rgba(255,255,255,0.5)",
+                    lineHeight: 1.5,
                   }}
                 >
-                  {lbl}
-                </div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 22,
-                      fontWeight: 800,
-                      color: scoreColor(v, inv),
-                      lineHeight: 1,
-                    }}
-                  >
-                    {v}
-                  </span>
-                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>
-                    /10
-                  </span>
-                </div>
-              </div>
-            ) : null,
-          )}
-          {workout.preSessionEnergy == null &&
-            workout.preSessionSoreness == null &&
-            workout.preSessionStress == null && (
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>No data</div>
-            )}
-        </div>
-
-        {/* Post-session */}
-        <div style={{ padding: "14px 18px" }}>
-          <div
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              color: "rgba(255,255,255,0.4)",
-              marginBottom: 10,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#fbbf24" }} />
-            Post-session
-          </div>
-          {workout.postSessionEnergy != null && (
-            <div
-              style={{
-                padding: "9px 11px",
-                marginBottom: 8,
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 10,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 10.5,
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  color: "rgba(255,255,255,0.45)",
-                }}
-              >
-                Energy after
-              </div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
-                <span
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: 22,
-                    fontWeight: 800,
-                    color: scoreColor(workout.postSessionEnergy, false),
-                    lineHeight: 1,
-                  }}
-                >
-                  {workout.postSessionEnergy}
-                </span>
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>
-                  /10
-                </span>
-              </div>
-            </div>
-          )}
-          {completion != null && (
-            <div
-              style={{
-                marginTop: workout.postSessionEnergy != null ? 14 : 0,
-                padding: "10px 12px",
-                background: `${accentColor}08`,
-                border: `1px solid ${accentColor}22`,
-                borderRadius: 10,
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 9.5,
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  color: "rgba(255,255,255,0.45)",
-                  marginBottom: 2,
-                }}
-              >
-                Completion
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: 18,
-                  fontWeight: 800,
-                  color: accentColor,
-                  lineHeight: 1,
-                }}
-              >
-                {completion}%
-              </div>
-              {hasSetData && (
-                <div
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 10.5,
-                    color: "rgba(255,255,255,0.4)",
-                    marginTop: 2,
-                  }}
-                >
-                  {totalCompleted} of {totalExpected} sets
+                  "{workout.preSessionNote}"
                 </div>
               )}
             </div>
           )}
-          {workout.postSessionEnergy == null && completion == null && (
+
+          {/* Post-session */}
+          {workout.postSessionEnergy != null && (
+            <div style={{ marginBottom: 14 }}>
+              <SectionLabel dot="#fbbf24" label="Post-session" />
+              <MetricPill label="Energy after" value={workout.postSessionEnergy} inverted={false} />
+            </div>
+          )}
+
+          {/* Completion */}
+          {completion != null && (
+            <div>
+              <SectionLabel dot={accentColor} label="Completion" />
+              <div
+                style={{
+                  padding: "10px 12px",
+                  background: `${accentColor}08`,
+                  border: `1px solid ${accentColor}22`,
+                  borderRadius: 10,
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 22,
+                    fontWeight: 800,
+                    color: accentColor,
+                    lineHeight: 1,
+                  }}
+                >
+                  {completion}%
+                </div>
+                {hasSetData && (
+                  <div
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 10.5,
+                      color: "rgba(255,255,255,0.4)",
+                      marginTop: 3,
+                    }}
+                  >
+                    {totalCompleted} of {totalExpected} sets
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!hasRightContent && (
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>No data</div>
           )}
         </div>
@@ -608,13 +692,13 @@ function WorkoutCard({
                   background: selected
                     ? `linear-gradient(135deg, ${PINK}, #e855a0)`
                     : inRange
-                    ? "rgba(253,109,187,0.08)"
-                    : "rgba(255,255,255,0.03)",
+                      ? "rgba(253,109,187,0.08)"
+                      : "rgba(255,255,255,0.03)",
                   color: selected
                     ? "#1a0010"
                     : inRange
-                    ? "rgba(253,109,187,0.65)"
-                    : "rgba(255,255,255,0.5)",
+                      ? "rgba(253,109,187,0.65)"
+                      : "rgba(255,255,255,0.5)",
                   borderRadius: 8,
                   fontFamily: "var(--font-display)",
                   fontSize: 15,
@@ -666,7 +750,9 @@ export function TraineeWorkoutsPanel({
         >
           Logged Workouts
         </div>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+        <span
+          style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "rgba(255,255,255,0.4)" }}
+        >
           · {workouts.length}
         </span>
       </div>
@@ -685,12 +771,7 @@ export function TraineeWorkoutsPanel({
           </div>
         ) : (
           workouts.map((w) => (
-            <WorkoutCard
-              key={w.id}
-              workout={w}
-              accentColor={accentColor}
-              traineeId={traineeId}
-            />
+            <WorkoutCard key={w.id} workout={w} accentColor={accentColor} traineeId={traineeId} />
           ))
         )}
       </div>

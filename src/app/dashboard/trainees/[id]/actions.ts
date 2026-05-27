@@ -42,7 +42,6 @@ export async function createPlan(
   traineeId: string,
   data: {
     name: string;
-    occurredAt: Date;
     comment?: string | null;
     exercises: ExerciseInput[];
   },
@@ -51,7 +50,6 @@ export async function createPlan(
   return createWorkoutPlan({
     traineeId,
     name: data.name,
-    occurredAt: data.occurredAt,
     comment: data.comment,
     createdBy: user.id,
     exerciseInputs: data.exercises,
@@ -151,7 +149,6 @@ export async function updatePlan(
   planId: string,
   data: {
     name: string;
-    occurredAt: Date;
     comment?: string | null;
     exercises: ExerciseInput[];
   },
@@ -162,9 +159,9 @@ export async function updatePlan(
     where: eq(workoutPlans.id, planId),
     columns: {
       id: true,
+      traineeId: true,
       versionStatus: true,
       workoutPlanGroupId: true,
-      occurredAt: true,
       comment: true,
     },
   });
@@ -178,9 +175,9 @@ export async function updatePlan(
     return updateWorkoutPlan({
       planId,
       name: data.name,
-      occurredAt: data.occurredAt,
       comment: data.comment,
       updatedBy: user.id,
+      traineeId: existing.traineeId,
       exerciseInputs: data.exercises,
     });
   }
@@ -201,9 +198,9 @@ export async function updatePlan(
     return updateWorkoutPlan({
       planId: existingDraft.id,
       name: data.name,
-      occurredAt: data.occurredAt,
       comment: data.comment,
       updatedBy: user.id,
+      traineeId: existing.traineeId,
       exerciseInputs: data.exercises,
     });
   }
@@ -211,7 +208,6 @@ export async function updatePlan(
   return forkDraftFromPublished({
     publishedPlanId: planId,
     name: data.name,
-    occurredAt: data.occurredAt,
     comment: data.comment,
     exerciseInputs: data.exercises,
     createdBy: user.id,

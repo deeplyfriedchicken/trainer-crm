@@ -1,8 +1,9 @@
-import { eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   exercises,
   exerciseVideos,
+  videos,
   workoutPlanGroups,
   workoutPlans,
 } from "@/db/schema";
@@ -25,6 +26,7 @@ export async function insertExercises(
   workoutPlanId: string,
   inputs: { input: ExerciseInput; position: number }[],
   userId: string,
+  traineeId: string,
 ) {
   for (const { input: ex, position } of inputs) {
     const [exercise] = await tx
@@ -54,13 +56,19 @@ export async function insertExercises(
         updatedBy: userId,
       });
     }
+
+    if (ex.videoIds && ex.videoIds.length > 0) {
+      await tx
+        .update(videos)
+        .set({ traineeId })
+        .where(and(inArray(videos.id, ex.videoIds), isNull(videos.traineeId)));
+    }
   }
 }
 
 export async function createWorkoutPlan({
   traineeId,
   name,
-  occurredAt,
   comment,
   createdBy,
   exerciseInputs,
@@ -68,7 +76,6 @@ export async function createWorkoutPlan({
 }: {
   traineeId: string;
   name: string;
-  occurredAt: Date;
   comment?: string | null;
   createdBy: string;
   exerciseInputs: ExerciseInput[];
@@ -91,7 +98,6 @@ export async function createWorkoutPlan({
         traineeId,
         workoutPlanGroupId: groupId,
         name,
-        occurredAt,
         comment: comment ?? null,
         versionStatus: "draft",
         versionNumber: 1,
@@ -105,6 +111,7 @@ export async function createWorkoutPlan({
       plan.id,
       exerciseInputs.map((input, position) => ({ input, position })),
       createdBy,
+      traineeId,
     );
 
     return plan;
@@ -114,22 +121,22 @@ export async function createWorkoutPlan({
 export async function updateWorkoutPlan({
   planId,
   name,
-  occurredAt,
   comment,
   updatedBy,
+  traineeId,
   exerciseInputs,
 }: {
   planId: string;
   name: string;
-  occurredAt: Date;
   comment?: string | null;
   updatedBy: string;
+  traineeId: string;
   exerciseInputs?: ExerciseInput[]; // undefined = leave exercises untouched
 }) {
   return db.transaction(async (tx) => {
     const [plan] = await tx
       .update(workoutPlans)
-      .set({ name, occurredAt, comment: comment ?? null, updatedBy })
+      .set({ name, comment: comment ?? null, updatedBy })
       .where(eq(workoutPlans.id, planId))
       .returning();
 
@@ -191,9 +198,15 @@ export async function updateWorkoutPlan({
           updatedBy,
         });
       }
+      if (ex.videoIds && ex.videoIds.length > 0) {
+        await tx
+          .update(videos)
+          .set({ traineeId })
+          .where(and(inArray(videos.id, ex.videoIds), isNull(videos.traineeId)));
+      }
     }
 
-    await insertExercises(tx, planId, toInsert, updatedBy);
+    await insertExercises(tx, planId, toInsert, updatedBy, traineeId);
     return plan;
   });
 }
@@ -203,14 +216,12 @@ export async function updateWorkoutPlan({
 export async function forkDraftFromPublished({
   publishedPlanId,
   name,
-  occurredAt,
   comment,
   exerciseInputs,
   createdBy,
 }: {
   publishedPlanId: string;
   name: string;
-  occurredAt: Date;
   comment?: string | null;
   exerciseInputs?: ExerciseInput[];
   createdBy: string;
@@ -243,7 +254,6 @@ export async function forkDraftFromPublished({
         traineeId: published.traineeId,
         workoutPlanGroupId: groupId,
         name,
-        occurredAt,
         comment: comment ?? null,
         versionStatus: "draft",
         versionNumber: maxVersion + 1,
@@ -270,6 +280,7 @@ export async function forkDraftFromPublished({
       draft.id,
       inputs.map((input, position) => ({ input, position })),
       createdBy,
+      published.traineeId,
     );
 
     return draft;

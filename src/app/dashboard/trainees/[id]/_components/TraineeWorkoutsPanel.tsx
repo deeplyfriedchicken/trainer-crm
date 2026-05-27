@@ -38,7 +38,7 @@ export type WorkoutPanelEntry = {
   sessionQuality: number | null;
   adherencePercent: number | null;
   comment: string | null;
-  workoutPlan: { id: string; name: string; occurredAt: Date } | null;
+  workoutPlan: { id: string; name: string } | null;
   exerciseLinks: WorkoutExerciseLink[];
   sets: WorkoutSet[];
 };

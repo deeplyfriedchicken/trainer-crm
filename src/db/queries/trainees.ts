@@ -19,7 +19,7 @@ export async function listTrainees(options: ListTraineesOptions) {
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
       planCount: count(workoutPlans.id),
-      lastPlanAt: max(workoutPlans.occurredAt),
+      lastPlanAt: max(workoutPlans.createdAt),
     })
     .from(users)
     .leftJoin(
@@ -50,23 +50,8 @@ export async function getTraineeById(id: string) {
       workoutPlans: {
         where: (wp, { isNull, and, ne }) =>
           and(isNull(wp.deletedAt), ne(wp.versionStatus, "archived")),
-        orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
+        orderBy: (wp, { desc }) => [desc(wp.createdAt)],
         with: {
-          videoLinks: {
-            where: (vl) => inArray(vl.videoId, activeVideoIds()),
-            with: {
-              video: {
-                columns: {
-                  id: true,
-                  title: true,
-                  fileKey: true,
-                  fileUrl: true,
-                  durationSeconds: true,
-                  status: true,
-                },
-              },
-            },
-          },
           exercises: {
             where: (ex, { isNull }) => isNull(ex.deletedAt),
             orderBy: (ex, { asc }) => [asc(ex.position)],
@@ -93,7 +78,7 @@ export async function getTraineeById(id: string) {
       workouts: {
         orderBy: (w, { desc }) => [desc(w.createdAt)],
         with: {
-          workoutPlan: { columns: { id: true, name: true, occurredAt: true } },
+          workoutPlan: { columns: { id: true, name: true } },
           videoLinks: {
             where: (vl) => inArray(vl.videoId, activeVideoIds()),
             with: {

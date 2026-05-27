@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
+  LuCheck,
   LuChevronDown,
   LuChevronRight,
   LuClock,
@@ -11,6 +12,7 @@ import {
   LuPlus,
   LuVideo,
   LuWeight,
+  LuX,
 } from "react-icons/lu";
 import { Badge } from "@/app/components/Badge";
 import { BottomSheet } from "@/app/components/BottomSheet";
@@ -19,7 +21,11 @@ import { Tab, TabGroup } from "@/app/components/TabGroup";
 import type { ClientChat, ClientData } from "@/db/queries/client";
 import { ClientChatPanel } from "./ClientChatPanel";
 import { InstallGuideSheet } from "./InstallGuideSheet";
-import { isPwa, PushPermissionPrompt, shouldShowPrompt } from "./PushPermissionPrompt";
+import {
+  isPwa,
+  PushPermissionPrompt,
+  shouldShowPrompt,
+} from "./PushPermissionPrompt";
 
 type Plan = ClientData["workoutPlans"][number];
 type Workout = ClientData["workouts"][number];
@@ -61,7 +67,8 @@ function PlanCard({
         <div style={{ flex: 1 }}>
           <div className="plan-name">{plan.name}</div>
           <div className="plan-meta">
-            {fmtDate(plan.occurredAt)} · {plan.exercises.length} exercise
+            {fmtDate(plan.publishedAt ?? plan.createdAt)} ·{" "}
+            {plan.exercises.length} exercise
             {plan.exercises.length !== 1 ? "s" : ""}
           </div>
         </div>
@@ -130,53 +137,21 @@ function SetCheck({ status }: { status: ReturnType<typeof getSetStatus> }) {
   if (status === "done") {
     return (
       <span className="history-ex-set-check">
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M2 6l3 3 5-5" />
-        </svg>
+        <LuCheck size={12} strokeWidth={2.5} />
       </span>
     );
   }
   if (status === "donePaused") {
     return (
       <span className="history-ex-set-check paused">
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M2 6l3 3 5-5" />
-        </svg>
+        <LuCheck size={12} strokeWidth={2.5} />
       </span>
     );
   }
   if (status === "cancelled") {
     return (
       <span className="history-ex-set-cancel">
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        >
-          <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
-        </svg>
+        <LuX size={10} strokeWidth={2.5} />
       </span>
     );
   }
@@ -381,7 +356,9 @@ function HistoryCard({ workout }: { workout: Workout }) {
         <div className="history-exercises">
           {workout.exerciseLinks.map(({ exercise }) => {
             const exSets = (setsByExercise.get(exercise.id) ?? []).filter(
-              (s) => s.completed || (s.metadata as SetMeta as { cancelled?: boolean })?.cancelled,
+              (s) =>
+                s.completed ||
+                (s.metadata as SetMeta as { cancelled?: boolean })?.cancelled,
             );
             return (
               <div key={exercise.id} className="history-ex-card">
@@ -657,7 +634,7 @@ export function WorkoutPlansView({
                       marginTop: 2,
                     }}
                   >
-                    {fmtDate(p.occurredAt)}
+                    {fmtDate(p.publishedAt ?? p.createdAt)}
                   </div>
                 </div>
                 <span className="sheet-plan-count">

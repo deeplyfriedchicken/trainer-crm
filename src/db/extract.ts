@@ -130,7 +130,6 @@ async function extract() {
       `        workout_videos,\n` +
       `        workout_exercises,\n` +
       `        workouts,\n` +
-      `        workout_plan_videos,\n` +
       `        exercise_videos,\n` +
       `        exercises,\n` +
       `        workout_plans,\n` +

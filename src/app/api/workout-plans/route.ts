@@ -9,7 +9,7 @@ import { workoutPlans } from "@/db/schema";
 import { getRequestUser } from "@/lib/request-auth";
 
 // @query traineeId: string (required)
-// @invokes db.query.workoutPlans.findMany({ where: traineeId, with: exercises, orderBy: occurredAt desc })
+// @invokes db.query.workoutPlans.findMany({ where: traineeId, with: exercises, orderBy: createdAt desc })
 // @errors 400 traineeId required | 401 unauthorized
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       eq(workoutPlans.traineeId, traineeId),
       isNull(workoutPlans.deletedAt),
     ),
-    orderBy: [desc(workoutPlans.occurredAt)],
+    orderBy: [desc(workoutPlans.createdAt)],
     with: {
       exercises: {
         where: (ex, { isNull }) => isNull(ex.deletedAt),
@@ -40,8 +40,8 @@ export async function GET(request: NextRequest) {
   return Response.json({ data: plans });
 }
 
-// @body { traineeId: string; name: string; occurredAt?: string (ISO 8601); comment?: string; exercises?: ExerciseInput[] }
-// @invokes createWorkoutPlan({ traineeId, name, occurredAt, comment, createdBy, exerciseInputs })
+// @body { traineeId: string; name: string; comment?: string; exercises?: ExerciseInput[] }
+// @invokes createWorkoutPlan({ traineeId, name, comment, createdBy, exerciseInputs })
 // @errors 400 traineeId and name required | 401 unauthorized | 201 created
 export async function POST(request: NextRequest) {
   const user = await getRequestUser(request);
@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as {
     traineeId?: string;
     name?: string;
-    occurredAt?: string;
     comment?: string;
     exercises?: ExerciseInput[];
     workoutPlanGroupId?: string;
@@ -66,7 +65,6 @@ export async function POST(request: NextRequest) {
   const plan = await createWorkoutPlan({
     traineeId: body.traineeId,
     name: body.name.trim(),
-    occurredAt: body.occurredAt ? new Date(body.occurredAt) : new Date(),
     comment: body.comment,
     createdBy: user.id,
     exerciseInputs: body.exercises ?? [],

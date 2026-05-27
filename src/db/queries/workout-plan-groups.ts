@@ -20,7 +20,6 @@ export async function listWorkoutPlanGroupsForTrainee(traineeId: string) {
         columns: {
           id: true,
           name: true,
-          occurredAt: true,
           versionStatus: true,
           versionNumber: true,
           publishedAt: true,
@@ -89,14 +88,12 @@ export async function updateWorkoutPlanGroupName({
 export async function publishNewVersion({
   groupId,
   name,
-  occurredAt,
   comment,
   exerciseInputs,
   publishedBy,
 }: {
   groupId: string;
   name: string;
-  occurredAt: Date;
   comment?: string | null;
   exerciseInputs: ExerciseInput[];
   publishedBy: string;
@@ -128,7 +125,6 @@ export async function publishNewVersion({
         traineeId: group.traineeId,
         workoutPlanGroupId: groupId,
         name,
-        occurredAt,
         comment: comment ?? null,
         versionStatus: "published",
         versionNumber: nextVersion,
@@ -143,6 +139,7 @@ export async function publishNewVersion({
       newPlan.id,
       exerciseInputs.map((input, position) => ({ input, position })),
       publishedBy,
+      group.traineeId,
     );
 
     // Archive the previously-current version and any remaining drafts in the

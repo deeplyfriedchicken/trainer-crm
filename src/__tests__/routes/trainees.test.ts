@@ -92,7 +92,6 @@ const mockTrainee = {
     {
       id: "plan_1",
       name: "Lower Body",
-      occurredAt: new Date(),
       videoLinks: [{ videoId: "video_1", video: mockVideo }],
       exercises: [
         {
@@ -111,7 +110,7 @@ const mockTrainee = {
   workouts: [
     {
       id: "workout_1",
-      workoutPlan: { id: "plan_1", name: "Lower Body", occurredAt: new Date() },
+      workoutPlan: { id: "plan_1", name: "Lower Body" },
       videoLinks: [{ videoId: "video_1", video: mockVideo }],
       exerciseLinks: [
         {

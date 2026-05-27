@@ -290,7 +290,9 @@ Story files live alongside their component (`Alert.stories.tsx` next to `Alert.t
 
 ## Icons — `react-icons`
 
-The project uses [`react-icons`](https://react-icons.github.io/react-icons/) for all icons. **Do not write custom inline SVGs** — find the equivalent in react-icons instead.
+**NEVER write a custom `<svg>` element.** Every icon must come from `react-icons`. This includes small inline indicators like checkmarks, crosses, arrows, or spinners — there is always a react-icons equivalent. If you find yourself typing `<svg`, stop and look up the icon instead.
+
+The project uses [`react-icons`](https://react-icons.github.io/react-icons/) for all icons.
 
 **Preferred sets (in order):**
 1. **Lucide** (`react-icons/lu`) — stroke-based, consistent weight, matches the UI aesthetic. Use for almost everything: navigation, actions, status, UI chrome.
@@ -298,11 +300,13 @@ The project uses [`react-icons`](https://react-icons.github.io/react-icons/) for
 
 **Usage:**
 ```tsx
-import { LuSearch, LuBell } from "react-icons/lu";
+import { LuSearch, LuBell, LuCheck, LuX } from "react-icons/lu";
 import { FaPlay } from "react-icons/fa6";
 
 <LuSearch size={13} />
 <LuBell size={18} />
+<LuCheck size={12} strokeWidth={2.5} />   // ✓ not a custom <svg>
+<LuX size={10} strokeWidth={2.5} />       // ✗ not a custom <svg>
 <FaPlay size={14} color="#34FDFE" />
 ```
 

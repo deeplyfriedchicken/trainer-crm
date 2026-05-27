@@ -45,7 +45,6 @@ const exerciseSchema = z
 
 const sessionSchema = z.object({
   name: z.string().min(1, "Name required"),
-  occurredAt: z.string().min(1, "Date required"),
   comment: z.string().optional(),
   exercises: z.array(exerciseSchema),
 });
@@ -53,14 +52,6 @@ const sessionSchema = z.object({
 type FormValues = z.infer<typeof sessionSchema>;
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-
-function toDateInput(d: Date): string {
-  return new Date(d).toISOString().slice(0, 10);
-}
-
-function today(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function defaultName(): string {
   return new Date().toLocaleDateString("en-US", {
@@ -74,13 +65,11 @@ function buildDefaults(session?: SessionEntry | null): FormValues {
   if (!session)
     return {
       name: defaultName(),
-      occurredAt: today(),
       comment: "",
       exercises: [],
     };
   return {
     name: session.name ?? defaultName(),
-    occurredAt: toDateInput(session.occurredAt),
     comment: session.comment ?? "",
     exercises: session.exercises.map((ex) => ({
       exerciseId: ex.id,
@@ -448,14 +437,12 @@ export function SessionFormModal({
       if (isEdit && initialData) {
         await updatePlan(initialData.id, {
           name: values.name,
-          occurredAt: new Date(values.occurredAt),
           comment: values.comment || null,
           exercises: exList,
         });
       } else {
         await createPlan(traineeId, {
           name: values.name,
-          occurredAt: new Date(values.occurredAt),
           comment: values.comment || null,
           exercises: exList,
         });
@@ -532,27 +519,6 @@ export function SessionFormModal({
                     {...register("name")}
                     placeholder="e.g. Lower Body Power"
                     className={`${styles.input}${errors.name ? ` ${styles.inputError}` : ""}`}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="session-plan-date"
-                    className={`${styles.fieldLabel}${errors.occurredAt ? ` ${styles.fieldLabelError}` : ""}`}
-                  >
-                    Date
-                    {errors.occurredAt && (
-                      <span className={styles.fieldError}>
-                        {" "}
-                        — {errors.occurredAt.message}
-                      </span>
-                    )}
-                  </label>
-                  <input
-                    id="session-plan-date"
-                    type="date"
-                    {...register("occurredAt")}
-                    className={`${styles.input}${errors.occurredAt ? ` ${styles.inputError}` : ""}`}
-                    style={{ colorScheme: "dark" }}
                   />
                 </div>
               </div>

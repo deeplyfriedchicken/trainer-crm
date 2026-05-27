@@ -158,7 +158,7 @@ export async function listWorkoutsForTrainee(traineeId: string) {
     orderBy: [desc(workouts.createdAt)],
     with: {
       workoutPlan: {
-        columns: { id: true, name: true, occurredAt: true },
+        columns: { id: true, name: true },
       },
       exerciseLinks: {
         with: {

@@ -14,7 +14,6 @@ export async function POST(
 
   const body = (await request.json()) as {
     name?: string;
-    occurredAt?: string;
     comment?: string;
     exercises?: ExerciseInput[];
   };
@@ -27,7 +26,6 @@ export async function POST(
     const plan = await publishNewVersion({
       groupId: id,
       name: body.name.trim(),
-      occurredAt: body.occurredAt ? new Date(body.occurredAt) : new Date(),
       comment: body.comment,
       exerciseInputs: body.exercises ?? [],
       publishedBy: user.id,

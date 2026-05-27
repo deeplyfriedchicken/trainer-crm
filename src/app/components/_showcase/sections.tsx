@@ -669,6 +669,7 @@ export function TableSection() {
 const SHOWCASE_SESSIONS: SessionEntry[] = [
   {
     id: "s1",
+    name: "Lower Body A",
     occurredAt: new Date("2026-04-22"),
     energyRating: 5,
     painRating: 2,
@@ -681,6 +682,7 @@ const SHOWCASE_SESSIONS: SessionEntry[] = [
   },
   {
     id: "s2",
+    name: "Upper Body B",
     occurredAt: new Date("2026-04-19"),
     energyRating: 3,
     painRating: 4,
@@ -692,6 +694,7 @@ const SHOWCASE_SESSIONS: SessionEntry[] = [
   },
   {
     id: "s3",
+    name: "Recovery",
     occurredAt: new Date("2026-04-16"),
     energyRating: null,
     painRating: null,

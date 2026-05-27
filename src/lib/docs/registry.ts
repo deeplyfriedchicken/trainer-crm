@@ -31,7 +31,7 @@ const AGENTS_PATH = path.join(PROJECT_ROOT, "AGENTS.md");
 
 async function walkRoutes(dir: string): Promise<string[]> {
   const out: string[] = [];
-  let entries: Awaited<ReturnType<typeof fs.readdir>>;
+  let entries: import("node:fs").Dirent<string>[];
   try {
     entries = await fs.readdir(dir, { withFileTypes: true });
   } catch {
@@ -68,7 +68,7 @@ export async function getApiRoutes(): Promise<RouteDoc[]> {
 
 export async function getDbQueries(): Promise<QueryFileDoc[]> {
   return memo("queries", async () => {
-    let entries: Awaited<ReturnType<typeof fs.readdir>>;
+    let entries: import("node:fs").Dirent<string>[];
     try {
       entries = await fs.readdir(QUERIES_ROOT, { withFileTypes: true });
     } catch {

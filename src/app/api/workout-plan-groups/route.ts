@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as {
     traineeId?: string;
     name?: string;
-    occurredAt?: string;
     comment?: string;
     exercises?: ExerciseInput[];
   };
@@ -42,7 +41,6 @@ export async function POST(request: NextRequest) {
   const plan = await createWorkoutPlan({
     traineeId: body.traineeId,
     name: body.name.trim(),
-    occurredAt: body.occurredAt ? new Date(body.occurredAt) : new Date(),
     comment: body.comment,
     createdBy: user.id,
     exerciseInputs: body.exercises ?? [],

@@ -85,7 +85,6 @@ const mockPlan = {
   id: "plan_1",
   name: "Upper Body",
   traineeId: "trainee_1",
-  occurredAt: new Date(),
   comment: null,
   exercises: [
     { id: "ex_1", name: "Bench Press", type: "reps", sets: 3, reps: 10 },
@@ -186,7 +185,6 @@ describe("POST /api/workout-plans", () => {
       body: {
         traineeId: "trainee_1",
         name: "Upper Body",
-        occurredAt: "2025-01-01T00:00:00Z",
         comment: "Focus on form",
         exercises: [mockExerciseInput],
       },
@@ -269,8 +267,7 @@ describe("PATCH /api/workout-plans/[id]", () => {
 
   it("returns 200 with updated workout plan", async () => {
     mockGetRequestUser.mockResolvedValue(trainerUser);
-    const existingPlan = { ...mockPlan, occurredAt: new Date("2025-01-01") };
-    mockFindFirst.mockResolvedValue(existingPlan);
+    mockFindFirst.mockResolvedValue(mockPlan);
     const updatedPlan = { ...mockPlan, name: "Updated Upper Body" };
     mockUpdateWorkoutPlan.mockResolvedValue(updatedPlan);
     const req = nextRequest({
@@ -293,8 +290,7 @@ describe("PATCH /api/workout-plans/[id]", () => {
 
   it("forwards exercise ids to updateWorkoutPlan so existing exercises are updated in place", async () => {
     mockGetRequestUser.mockResolvedValue(trainerUser);
-    const existingPlan = { ...mockPlan, occurredAt: new Date("2025-01-01") };
-    mockFindFirst.mockResolvedValue(existingPlan);
+    mockFindFirst.mockResolvedValue(mockPlan);
     mockUpdateWorkoutPlan.mockResolvedValue(mockPlan);
     const req = nextRequest({
       method: "PATCH",

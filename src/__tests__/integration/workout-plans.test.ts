@@ -35,7 +35,7 @@ async function seedUsers() {
 async function truncateAll() {
   await db.execute(
     sql`TRUNCATE users, user_roles, workout_plans, exercises, exercise_videos,
-        workout_plan_videos, workouts, workout_exercises, workout_videos,
+        workouts, workout_exercises, workout_videos,
         videos, video_tags, tags, chats, messages RESTART IDENTITY CASCADE`,
   );
 }
@@ -59,7 +59,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
       .values({
         traineeId,
         name: "Original Plan",
-        occurredAt: new Date(),
+
         createdBy: trainerId,
         updatedBy: trainerId,
       })
@@ -102,8 +102,8 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     await updateWorkoutPlan({
       planId: plan.id,
       name: "Updated Plan",
-      occurredAt: new Date(),
       updatedBy: trainerId,
+      traineeId,
       exerciseInputs: [
         { id: exercise.id, name: "Back Squat", type: "reps", sets: 4, reps: 8 },
       ],
@@ -132,7 +132,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
       .values({
         traineeId,
         name: "Plan",
-        occurredAt: new Date(),
+
         createdBy: trainerId,
         updatedBy: trainerId,
       })
@@ -197,8 +197,8 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     await updateWorkoutPlan({
       planId: plan.id,
       name: "Plan",
-      occurredAt: new Date(),
       updatedBy: trainerId,
+      traineeId,
       exerciseInputs: [
         { id: exA.id, name: "Squat", type: "reps", sets: 3, reps: 10 },
       ],
@@ -225,7 +225,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     const plan = await createWorkoutPlan({
       traineeId,
       name: "Plan",
-      occurredAt: new Date(),
+
       createdBy: trainerId,
       exerciseInputs: [
         { name: "A", type: "reps", sets: 3, reps: 10 },
@@ -251,7 +251,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     const plan = await createWorkoutPlan({
       traineeId,
       name: "Plan",
-      occurredAt: new Date(),
+
       createdBy: trainerId,
       exerciseInputs: [
         { name: "A", type: "reps", sets: 3, reps: 10 },
@@ -271,8 +271,8 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     await updateWorkoutPlan({
       planId: plan.id,
       name: "Plan",
-      occurredAt: new Date(),
       updatedBy: trainerId,
+      traineeId,
       exerciseInputs: [
         { id: byName.C, name: "C", type: "reps", sets: 3, reps: 10 },
         { id: byName.A, name: "A", type: "reps", sets: 3, reps: 10 },
@@ -299,7 +299,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     const plan = await createWorkoutPlan({
       traineeId,
       name: "Plan",
-      occurredAt: new Date(),
+
       createdBy: trainerId,
       exerciseInputs: [
         { name: "A", type: "reps", sets: 3, reps: 10 },
@@ -318,8 +318,8 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
     await updateWorkoutPlan({
       planId: plan.id,
       name: "Plan",
-      occurredAt: new Date(),
       updatedBy: trainerId,
+      traineeId,
       exerciseInputs: [
         { id: byName.B, name: "B", type: "reps", sets: 3, reps: 10 },
         { id: byName.A, name: "A", type: "reps", sets: 3, reps: 10 },
@@ -345,7 +345,7 @@ describe("updateWorkoutPlan — exercise history preservation", () => {
       .values({
         traineeId,
         name: "Plan",
-        occurredAt: new Date(),
+
         createdBy: trainerId,
         updatedBy: trainerId,
       })

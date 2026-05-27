@@ -66,7 +66,7 @@ export async function listVideos(options: ListVideosOptions) {
     options.search
       ? or(
           ilike(videos.title, `%${options.search}%`),
-          inArray(videos.id, tagMatchSubquery!),
+          inArray(videos.id, tagMatchSubquery || []),
         )
       : undefined,
   ].filter((f): f is NonNullable<typeof f> => f !== undefined);
@@ -90,13 +90,6 @@ export async function getVideoById(id: string) {
       uploader: { columns: { id: true, name: true, email: true } },
       trainee: { columns: { id: true, name: true } },
       videoTags: { with: { tag: { columns: { id: true, name: true } } } },
-      workoutPlanLinks: {
-        with: {
-          workoutPlan: {
-            columns: { id: true, name: true, traineeId: true },
-          },
-        },
-      },
       exerciseLinks: {
         with: {
           exercise: {

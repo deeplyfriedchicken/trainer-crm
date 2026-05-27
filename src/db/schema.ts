@@ -171,7 +171,6 @@ export const workoutPlans = pgTable(
       { onDelete: "cascade" },
     ),
     name: text("name").notNull().default(""),
-    occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
     comment: text("comment"),
     versionStatus: text("version_status").notNull().default("draft"),
     versionNumber: integer("version_number").notNull().default(1),
@@ -183,7 +182,6 @@ export const workoutPlans = pgTable(
   (t) => [
     index("workout_plans_trainee_idx").on(t.traineeId),
     index("workout_plans_group_idx").on(t.workoutPlanGroupId),
-    index("workout_plans_occurred_at_idx").on(t.occurredAt),
     index("workout_plans_created_by_idx").on(t.createdBy),
   ],
 );
@@ -222,27 +220,6 @@ export const exercises = pgTable(
       "exercises_type_fields_check",
       sql`(${t.type} = 'reps' AND ${t.reps} IS NOT NULL) OR (${t.type} = 'duration' AND ${t.durationSeconds} IS NOT NULL)`,
     ),
-  ],
-);
-
-/* ──────────────────── Workout Plan ↔ Video links ──────────────── */
-
-export const workoutPlanVideos = pgTable(
-  "workout_plan_videos",
-  {
-    workoutPlanId: text("workout_plan_id")
-      .notNull()
-      .references(() => workoutPlans.id, { onDelete: "cascade" }),
-    videoId: text("video_id")
-      .notNull()
-      .references(() => videos.id, { onDelete: "cascade" }),
-    ...timestamps,
-    ...authorship,
-  },
-  (t) => [
-    primaryKey({ columns: [t.workoutPlanId, t.videoId] }),
-    index("workout_plan_videos_video_idx").on(t.videoId),
-    index("workout_plan_videos_created_by_idx").on(t.createdBy),
   ],
 );
 
@@ -624,7 +601,6 @@ export const videosRelations = relations(videos, ({ one, many }) => ({
     relationName: "videos_trainee",
   }),
   exerciseLinks: many(exerciseVideos),
-  workoutPlanLinks: many(workoutPlanVideos),
   workoutLinks: many(workoutVideos),
   videoTags: many(videoTags),
   workoutSets: many(workoutSets),
@@ -681,22 +657,7 @@ export const workoutPlansRelations = relations(
       relationName: "workout_plans_updater",
     }),
     exercises: many(exercises),
-    videoLinks: many(workoutPlanVideos),
     workouts: many(workouts),
-  }),
-);
-
-export const workoutPlanVideosRelations = relations(
-  workoutPlanVideos,
-  ({ one }) => ({
-    workoutPlan: one(workoutPlans, {
-      fields: [workoutPlanVideos.workoutPlanId],
-      references: [workoutPlans.id],
-    }),
-    video: one(videos, {
-      fields: [workoutPlanVideos.videoId],
-      references: [videos.id],
-    }),
   }),
 );
 
@@ -918,8 +879,6 @@ export type Exercise = typeof exercises.$inferSelect;
 export type NewExercise = typeof exercises.$inferInsert;
 export type ExerciseVideo = typeof exerciseVideos.$inferSelect;
 export type NewExerciseVideo = typeof exerciseVideos.$inferInsert;
-export type WorkoutPlanVideo = typeof workoutPlanVideos.$inferSelect;
-export type NewWorkoutPlanVideo = typeof workoutPlanVideos.$inferInsert;
 export type Workout = typeof workouts.$inferSelect;
 export type NewWorkout = typeof workouts.$inferInsert;
 export type WorkoutExercise = typeof workoutExercises.$inferSelect;

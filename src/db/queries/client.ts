@@ -61,7 +61,7 @@ export async function getClientData(traineeId: string) {
           createdAt: true,
         },
         with: {
-          workoutPlan: { columns: { id: true, name: true, occurredAt: true } },
+          workoutPlan: { columns: { id: true, name: true } },
           exerciseLinks: {
             with: {
               exercise: {
@@ -108,7 +108,8 @@ export async function getClientData(traineeId: string) {
     )
     .sort(
       (a, b) =>
-        new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
+        new Date(b.publishedAt ?? b.createdAt).getTime() -
+        new Date(a.publishedAt ?? a.createdAt).getTime(),
     );
 
   return {
@@ -169,8 +170,9 @@ export async function getPlanForLog(planId: string, traineeId: string) {
       id: true,
       traineeId: true,
       name: true,
-      occurredAt: true,
       comment: true,
+      publishedAt: true,
+      createdAt: true,
     },
     with: {
       exercises: {
@@ -221,7 +223,7 @@ export async function getClientMetadata(traineeId: string) {
       workoutPlans: {
         where: (wp, { isNull, and, eq }) =>
           and(isNull(wp.deletedAt), eq(wp.versionStatus, "published")),
-        orderBy: (wp, { desc }) => [desc(wp.occurredAt)],
+        orderBy: (wp, { desc }) => [desc(wp.createdAt)],
         limit: 1,
         columns: { name: true },
       },

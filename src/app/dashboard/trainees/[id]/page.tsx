@@ -71,7 +71,6 @@ export default async function TraineePage({
     trainee.workoutPlans.map(async (p) => ({
       id: p.id,
       name: p.name,
-      occurredAt: p.occurredAt,
       comment: p.comment,
       createdAt: p.createdAt,
       versionStatus: p.versionStatus,

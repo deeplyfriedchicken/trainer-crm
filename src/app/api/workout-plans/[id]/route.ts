@@ -34,8 +34,8 @@ export async function GET(
   return Response.json({ data: plan });
 }
 
-// @body { name: string; occurredAt?: string (ISO 8601); comment?: string; exercises?: ExerciseInput[] }
-// @invokes updateWorkoutPlan({ planId, name, occurredAt, comment, updatedBy, exerciseInputs })
+// @body { name: string; comment?: string; exercises?: ExerciseInput[] }
+// @invokes updateWorkoutPlan({ planId, name, comment, updatedBy, exerciseInputs })
 // @errors 400 name required | 401 unauthorized | 404 plan not found
 export async function PATCH(
   request: NextRequest,
@@ -48,7 +48,6 @@ export async function PATCH(
 
   const body = (await request.json()) as {
     name?: string;
-    occurredAt?: string;
     comment?: string;
     exercises?: ExerciseInput[];
   };
@@ -75,11 +74,9 @@ export async function PATCH(
     const plan = await updateWorkoutPlan({
       planId: id,
       name: body.name.trim(),
-      occurredAt: body.occurredAt
-        ? new Date(body.occurredAt)
-        : existing.occurredAt,
       comment: body.comment,
       updatedBy: user.id,
+      traineeId: existing.traineeId,
       exerciseInputs: body.exercises, // undefined = leave exercises untouched
     });
     return Response.json({ data: plan });
@@ -102,11 +99,9 @@ export async function PATCH(
     const plan = await updateWorkoutPlan({
       planId: existingDraft.id,
       name: body.name.trim(),
-      occurredAt: body.occurredAt
-        ? new Date(body.occurredAt)
-        : existingDraft.occurredAt,
       comment: body.comment,
       updatedBy: user.id,
+      traineeId: existing.traineeId,
       exerciseInputs: body.exercises,
     });
     return Response.json({ data: plan });
@@ -116,9 +111,6 @@ export async function PATCH(
   const draft = await forkDraftFromPublished({
     publishedPlanId: id,
     name: body.name.trim(),
-    occurredAt: body.occurredAt
-      ? new Date(body.occurredAt)
-      : existing.occurredAt,
     comment: body.comment !== undefined ? body.comment : existing.comment,
     exerciseInputs: body.exercises,
     createdBy: user.id,

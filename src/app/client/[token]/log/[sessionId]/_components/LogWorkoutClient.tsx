@@ -346,7 +346,7 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
     });
   };
 
-  const fmtDate = new Date(plan.occurredAt).toLocaleDateString("en-US", {
+  const fmtDate = new Date(plan.publishedAt ?? plan.createdAt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",

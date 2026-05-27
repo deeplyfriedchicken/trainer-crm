@@ -89,4 +89,4 @@ const SelectBase = forwardRef<HTMLSelectElement, NeonSelectProps>(
   },
 );
 
-export const Select = chakra(SelectBase);
+export const Select = chakra(SelectBase) as typeof SelectBase;

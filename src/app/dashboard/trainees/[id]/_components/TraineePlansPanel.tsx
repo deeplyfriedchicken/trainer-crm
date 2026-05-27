@@ -31,7 +31,6 @@ export type PlanExercise = {
 export type PlanData = {
   id: string;
   name: string;
-  occurredAt: Date;
   comment: string | null;
   createdAt: Date;
   versionStatus: string;
@@ -71,7 +70,7 @@ function planToSessionEntry(plan: PlanData): SessionEntry {
   return {
     id: plan.id,
     name: plan.name,
-    occurredAt: plan.occurredAt,
+    occurredAt: plan.publishedAt ?? plan.createdAt,
     comment: plan.comment,
     exercises: plan.exercises.map((ex) => ({
       id: ex.id,

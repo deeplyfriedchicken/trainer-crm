@@ -2,13 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { FaPlay } from "react-icons/fa6";
 import {
   LuArrowUpFromLine,
+  LuChevronLeft,
+  LuChevronRight,
   LuDumbbell,
   LuPencil,
   LuPlus,
   LuTrash2,
 } from "react-icons/lu";
+import { Dialog, DialogBody } from "@/app/components/Dialog";
 import type {
   ColorVariant,
   SessionEntry,
@@ -113,6 +117,8 @@ export function TraineePlansPanel({
     id: string;
     name: string;
   } | null>(null);
+  const [videoExercise, setVideoExercise] = useState<PlanExercise | null>(null);
+  const [videoIdx, setVideoIdx] = useState(0);
 
   const accentColor =
     colorVariant === "secondary"
@@ -536,12 +542,51 @@ export function TraineePlansPanel({
                           {fmtSets(ex)}
                         </div>
                       </div>
+                      {ex.videos.length > 0 && (
+                        <button
+                          type="button"
+                          aria-label={`Play videos for ${ex.name}`}
+                          onClick={() => {
+                            setVideoExercise(ex);
+                            setVideoIdx(0);
+                          }}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 5,
+                            padding: "4px 9px",
+                            borderRadius: 20,
+                            background: "rgba(52,253,254,0.1)",
+                            border: "1px solid rgba(52,253,254,0.28)",
+                            color: "#34fdfe",
+                            cursor: "pointer",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <FaPlay size={8} />
+                          {ex.videos.length > 1 && (
+                            <span
+                              style={{
+                                fontFamily: "var(--font-mono)",
+                                fontSize: 10,
+                                fontWeight: 700,
+                                lineHeight: 1,
+                              }}
+                            >
+                              {ex.videos.length}
+                            </span>
+                          )}
+                        </button>
+                      )}
                       {isDraft && (
                         <button
                           type="button"
                           aria-label={`Delete ${ex.name}`}
                           onClick={() =>
-                            setDeleteExerciseTarget({ id: ex.id, name: ex.name })
+                            setDeleteExerciseTarget({
+                              id: ex.id,
+                              name: ex.name,
+                            })
                           }
                           style={{
                             background: "none",
@@ -924,6 +969,144 @@ export function TraineePlansPanel({
           </div>
         </div>
       )}
+
+      {/* Exercise video gallery modal */}
+      {videoExercise && (() => {
+        const videos = videoExercise.videos;
+        const current = videos[videoIdx];
+        const total = videos.length;
+        if (!current) return null;
+        return (
+          <Dialog isOpen onClose={() => setVideoExercise(null)} maxWidth={880}>
+            <video
+              key={current.url}
+              src={current.url}
+              controls
+              autoPlay
+              style={{
+                width: "100%",
+                display: "block",
+                maxHeight: "52vh",
+                background: "#000",
+              }}
+            />
+            <DialogBody>
+              {total > 1 && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 12,
+                    marginBottom: 14,
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setVideoIdx((i) => Math.max(0, i - 1))}
+                    disabled={videoIdx === 0}
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      borderRadius: 8,
+                      color: videoIdx === 0 ? "rgba(255,255,255,0.2)" : "#fff",
+                      cursor: videoIdx === 0 ? "not-allowed" : "pointer",
+                      padding: "4px 8px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <LuChevronLeft size={16} />
+                  </button>
+
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    {videos.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setVideoIdx(i)}
+                        aria-label={`Video ${i + 1}`}
+                        style={{
+                          width: i === videoIdx ? 18 : 7,
+                          height: 7,
+                          borderRadius: 999,
+                          border: "none",
+                          cursor: "pointer",
+                          padding: 0,
+                          background:
+                            i === videoIdx
+                              ? accentColor
+                              : "rgba(255,255,255,0.2)",
+                          transition: "width 0.2s, background 0.2s",
+                          boxShadow:
+                            i === videoIdx ? `0 0 8px ${accentColor}80` : "none",
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setVideoIdx((i) => Math.min(total - 1, i + 1))
+                    }
+                    disabled={videoIdx === total - 1}
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      borderRadius: 8,
+                      color:
+                        videoIdx === total - 1
+                          ? "rgba(255,255,255,0.2)"
+                          : "#fff",
+                      cursor:
+                        videoIdx === total - 1 ? "not-allowed" : "pointer",
+                      padding: "4px 8px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <LuChevronRight size={16} />
+                  </button>
+
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 11,
+                      color: "rgba(255,255,255,0.35)",
+                      minWidth: 32,
+                    }}
+                  >
+                    {videoIdx + 1}/{total}
+                  </span>
+                </div>
+              )}
+
+              <div
+                style={{
+                  fontSize: 17,
+                  fontWeight: 700,
+                  color: "#fff",
+                  marginBottom: 4,
+                }}
+              >
+                {videoExercise.name}
+              </div>
+              {current.title && (
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: accentColor,
+                    opacity: 0.75,
+                  }}
+                >
+                  {current.title}
+                </div>
+              )}
+            </DialogBody>
+          </Dialog>
+        );
+      })()}
     </>
   );
 }

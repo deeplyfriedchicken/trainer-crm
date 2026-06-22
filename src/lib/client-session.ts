@@ -50,6 +50,9 @@ export async function getClientSession(): Promise<{
 
     // Reject sessions issued before the PIN was last reset. pinUpdatedAt is
     // set to now() on reset, so any token with an older iat is invalidated.
+    // Floor pinUpdatedAt to seconds — JWT iat is integer seconds, and a
+    // sub-second jitter inside a single create-then-mint cycle would otherwise
+    // reject the session we just minted.
     if (payload.iat) {
       const user = await db.query.users.findFirst({
         where: eq(users.id, payload.traineeId),
@@ -57,7 +60,7 @@ export async function getClientSession(): Promise<{
       });
       if (
         user?.pinUpdatedAt &&
-        user.pinUpdatedAt.getTime() / 1000 > payload.iat
+        Math.floor(user.pinUpdatedAt.getTime() / 1000) > payload.iat
       ) {
         return null;
       }

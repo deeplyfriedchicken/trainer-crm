@@ -9,15 +9,12 @@ function getKey(): Buffer {
   return buf;
 }
 
-const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-
-export function encryptUserId(userId: string, ttlMs = TOKEN_TTL_MS): string {
+export function encryptUserId(userId: string): string {
   const key = getKey();
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", key, iv);
-  const payload = `${userId}:${Date.now() + ttlMs}`;
   const encrypted = Buffer.concat([
-    cipher.update(payload, "utf8"),
+    cipher.update(userId, "utf8"),
     cipher.final(),
   ]);
   const tag = cipher.getAuthTag();
@@ -38,12 +35,9 @@ export function decryptUserId(token: string): string | null {
       decipher.update(encrypted),
       decipher.final(),
     ]).toString("utf8");
-    const sep = payload.lastIndexOf(":");
-    if (sep === -1) return null;
-    const userId = payload.slice(0, sep);
-    const expiresAt = Number(payload.slice(sep + 1));
-    if (!expiresAt || Date.now() > expiresAt) return null;
-    return userId;
+    // Legacy tokens encoded `userId:expiresAt`; strip the suffix if present.
+    const sep = payload.indexOf(":");
+    return sep === -1 ? payload : payload.slice(0, sep);
   } catch {
     return null;
   }

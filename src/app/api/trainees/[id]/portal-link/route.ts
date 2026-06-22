@@ -4,7 +4,6 @@ import { encryptUserId } from "@/lib/client-token";
 import { getRequestUser } from "@/lib/request-auth";
 
 const ALLOWED_ROLES = new Set(["admin", "trainer_manager", "trainer"] as const);
-const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 // @invokes getTraineeById(id), encryptUserId(trainee.id)
 // @errors 401 unauthorized | 403 forbidden | 404 trainee not found
@@ -27,7 +26,6 @@ export async function GET(
   const token = encryptUserId(trainee.id);
   const baseUrl = process.env.APP_URL;
   const url = `${baseUrl}/client/${token}`;
-  const expiresAt = new Date(Date.now() + TOKEN_TTL_MS).toISOString();
 
-  return Response.json({ data: { url, expiresAt } });
+  return Response.json({ data: { url } });
 }

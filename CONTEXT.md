@@ -12,7 +12,10 @@ A logged record of a trainee actually performing a Plan. Captures which exercise
 A single movement within a Plan. Has a type (reps-based or duration-based), sets, and optional weight. Exercises have a display order (position) within the plan.
 
 ### Client Portal
-The trainee-facing PWA. Official name is TBD — working name is "Client Training App". Accessed via a unique encrypted URL (`/client/[token]`). Trainees use it to view their current plan, log workouts, and report pain flags. Installable as a home-screen app.
+The trainee-facing PWA. Official name is TBD — working name is "Client Training App". Accessed via a unique encrypted URL (`/client/[token]`) — see [[Portal Link Token]]. Trainees use it to view their current plan, log workouts, and report pain flags. Installable as a home-screen app.
+
+### Portal Link Token
+The encrypted segment in a [[Client Portal]] URL (`/client/[token]`). Encodes the trainee's user ID with AES-256-GCM using a server-static secret (`CLIENT_TOKEN_SECRET`). Acts as a **stable, non-enumerable identifier** for the trainee — it does not expire and is not a credential. The actual auth boundary is the trainee's 6-digit PIN, which mints a 7-day `client_session` JWT cookie. A leaked URL is harmless on its own; a holder still needs the PIN. See [ADR 0003](docs/adr/0003-portal-link-token-is-stable-identifier.md).
 
 ### Pain Flag
 A pain report created by a trainee during a workout in the Client Portal. Records a body-part location, severity, and whether the pain is recurring. Optionally linked to a specific exercise or set within the workout. Trainers review pain flags to monitor client health.

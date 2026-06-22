@@ -37,7 +37,7 @@ export function PinModal({ token, hasPin }: Props) {
       const next = [...digits, key];
       setDigits(next);
 
-      if (next.length < 6) return;
+      if (next.length < 4) return;
 
       const pin = next.join("");
 
@@ -90,9 +90,9 @@ export function PinModal({ token, hasPin }: Props) {
 
   const subtitle =
     mode === "enter"
-      ? "Enter your 6-digit PIN to continue"
+      ? "Enter your 4-digit PIN to continue"
       : mode === "create"
-        ? "Choose a 6-digit PIN to secure your portal"
+        ? "Choose a 4-digit PIN to secure your portal"
         : "Re-enter your PIN to confirm";
 
   const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "del"];
@@ -107,7 +107,7 @@ export function PinModal({ token, hasPin }: Props) {
         <div className="pin-subtitle">{subtitle}</div>
 
         <div ref={dotsRef} className={`pin-dots${shaking ? " shake" : ""}`}>
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
               className={`pin-dot${
@@ -136,7 +136,7 @@ export function PinModal({ token, hasPin }: Props) {
                 key={i}
                 className="pin-key"
                 onClick={() => handleKey(k)}
-                disabled={isPending || digits.length >= 6}
+                disabled={isPending || digits.length >= 4}
                 type="button"
               >
                 {k}

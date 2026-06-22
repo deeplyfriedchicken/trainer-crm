@@ -26,7 +26,7 @@ export async function authenticate(
   const traineeId = decryptUserId(token);
   if (!traineeId) return { error: "Invalid link." };
 
-  if (!/^\d{6}$/.test(pin)) return { error: "PIN must be 6 digits." };
+  if (!/^\d{4}$/.test(pin)) return { error: "PIN must be 4 digits." };
 
   const user = await db.query.users.findFirst({
     where: eq(users.id, traineeId),

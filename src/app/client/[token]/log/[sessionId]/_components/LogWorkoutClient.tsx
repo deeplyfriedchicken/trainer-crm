@@ -16,6 +16,11 @@ import type { PlanForLog } from "@/db/queries/client";
 import { BottomSheet } from "@/app/components/BottomSheet";
 import { IconButton } from "@/app/components/IconButton";
 import { FeedbackModal } from "./FeedbackModal";
+import {
+  type CountdownState,
+  type PreCountdownState,
+  useCountdownBeeps,
+} from "./useCountdownBeeps";
 
 interface Props {
   token: string;
@@ -184,21 +189,17 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
   ).length;
 
   // Duration countdown
-  const cdRef = useRef<{
-    exIdx: number;
-    setIdx: number;
-    remaining: number;
-    total: number;
-  } | null>(null);
-  const [cdState, setCdState] = useState<{
-    exIdx: number;
-    setIdx: number;
-    remaining: number;
-    total: number;
-  } | null>(null);
+  const cdRef = useRef<NonNullable<CountdownState> | null>(null);
+  const [cdState, setCdState] = useState<CountdownState>(null);
   const cdWasPausedRef = useRef(false);
-  const pausedRef = useRef(paused);
-  pausedRef.current = paused;
+
+  // Pre-countdown (Ready / Set / Go!)
+  const preCdRef = useRef<
+    (NonNullable<PreCountdownState> & { duration: number }) | null
+  >(null);
+  const [preCdState, setPreCdState] = useState<PreCountdownState>(null);
+
+  useCountdownBeeps(preCdState, cdState);
 
   const [log, setLog] = useState<ExerciseLog[]>(() =>
     plan.exercises.map((ex) => ({
@@ -231,13 +232,17 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
     return () => clearInterval(interval);
   }, [paused]);
 
-  // Duration countdown ticker
+  // Duration countdown ticker — each tick is exactly 1000ms after the previous
+  // state change (not a shared interval since mount, which would land the first
+  // decrement anywhere from 0–1000ms after the user tapped).
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (pausedRef.current) {
-        if (cdRef.current) cdWasPausedRef.current = true;
-        return;
-      }
+    if (!cdState) return;
+    if (paused) {
+      cdWasPausedRef.current = true;
+      return;
+    }
+
+    const timeout = setTimeout(() => {
       if (!cdRef.current) return;
 
       if (cdRef.current.remaining > 1) {
@@ -259,8 +264,43 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
         });
       }
     }, 1000);
-    return () => clearInterval(interval);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => clearTimeout(timeout);
+  }, [cdState, paused]);
+
+  // Pre-countdown ticker — Ready (3) → Set (2) → Go! (1) → main timer.
+  // Each step is exactly 1500ms after the previous, measured from the state
+  // change (not a shared interval — that would make the first step land
+  // anywhere from 0ms to 1500ms after the tap).
+  // Not pauseable; cancel via handleCancelPreTimer leaves the set pending.
+  useEffect(() => {
+    if (!preCdState) return;
+    const timeout = setTimeout(() => {
+      if (!preCdRef.current) return;
+
+      if (preCdRef.current.n > 1) {
+        const next = {
+          ...preCdRef.current,
+          n: (preCdRef.current.n - 1) as 1 | 2 | 3,
+        };
+        preCdRef.current = next;
+        setPreCdState({ exIdx: next.exIdx, setIdx: next.setIdx, n: next.n });
+      } else {
+        const { exIdx, setIdx, duration } = preCdRef.current;
+        preCdRef.current = null;
+        setPreCdState(null);
+        cdRef.current = {
+          exIdx,
+          setIdx,
+          remaining: duration,
+          total: duration,
+          skipStartBeep: true,
+        };
+        cdWasPausedRef.current = false;
+        setCdState({ ...cdRef.current });
+      }
+    }, 1500);
+    return () => clearTimeout(timeout);
+  }, [preCdState]);
 
   const updateReps = (exIdx: number, setIdx: number, val: number) => {
     setLog((prev) => {
@@ -310,13 +350,17 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
       if (duration <= 0) {
         markDone(exIdx, setIdx, false);
       } else {
-        cdRef.current = { exIdx, setIdx, remaining: duration, total: duration };
-        cdWasPausedRef.current = false;
-        setCdState({ ...cdRef.current });
+        preCdRef.current = { exIdx, setIdx, n: 3, duration };
+        setPreCdState({ exIdx, setIdx, n: 3 });
       }
     } else {
       markDone(exIdx, setIdx, false);
     }
+  };
+
+  const handleCancelPreTimer = () => {
+    preCdRef.current = null;
+    setPreCdState(null);
   };
 
   const markDone = (exIdx: number, setIdx: number, wasPaused: boolean) => {
@@ -487,6 +531,13 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
           ).length;
           const isDuration = ex.type === "duration";
           const hasActiveTimer = cdState?.exIdx === exIdx;
+          const hasPreTimer = preCdState?.exIdx === exIdx;
+          const preLabel =
+            preCdState?.n === 3
+              ? "Ready"
+              : preCdState?.n === 2
+                ? "Set"
+                : "Go!";
 
           return (
             <div key={ex.id} className="log-exercise-card">
@@ -511,7 +562,25 @@ export function LogWorkoutClient({ token, plan, backHref }: Props) {
                 </div>
               </div>
 
-              {hasActiveTimer ? (
+              {hasPreTimer ? (
+                <div className="log-timer-body">
+                  <div className="log-timer-label">
+                    <span className="log-timer-pulse" />
+                    Get ready
+                  </div>
+                  <div className="log-timer-countdown pre">{preLabel}</div>
+                  <div className="log-timer-controls">
+                    <button
+                      type="button"
+                      className="log-timer-btn cancel"
+                      onClick={handleCancelPreTimer}
+                      title="Cancel"
+                    >
+                      <LuX size={18} />
+                    </button>
+                  </div>
+                </div>
+              ) : hasActiveTimer ? (
                 <div className="log-timer-body">
                   <div
                     className={`log-timer-label${paused ? " paused" : ""}`}

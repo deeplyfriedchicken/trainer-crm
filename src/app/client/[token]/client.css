@@ -1213,6 +1213,12 @@ body::after {
 .log-timer-countdown.paused {
   color: var(--color-primary);
 }
+.log-timer-countdown.pre {
+  color: var(--color-primary);
+  font-variant-numeric: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
 .log-timer-controls {
   display: flex;
   gap: 14px;
